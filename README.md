@@ -6,7 +6,7 @@ A Vue.js application for creating beautiful layouts of two pictures with customi
 
 - Select frame orientation (portrait or landscape)
 - Multiple aspect ratios (3:2, 4:3, 5:4, 16:9)
-- Custom background color selection with native HTML color picker
+- Custom frame color selection
 - Configurable frame width and outer border size
 - Drag-and-drop image upload
 - Light and dark theme support
@@ -14,24 +14,24 @@ A Vue.js application for creating beautiful layouts of two pictures with customi
 
 ## Tech Stack
 
-- **Framework**: Vue 3 (Composition API)
+- **Framework**: Vue 3
 - **Canvas**: Konva.js with vue-konva
 - **Styling**: Tailwind CSS
 - **Build Tool**: Vite 5
 - **Testing**: Vitest with @vue/test-utils
-- **Linting**: ESLint with Vue 3 rules
+- **Linting**: ESLint
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 24+ and npm
 
 ### Installation
 
 ```bash
 # Install dependencies
-npm install
+npm ci
 ```
 
 ### Development
