@@ -1,0 +1,3 @@
+[tools]
+node = "24.9.0"
+docker-cli = "28.5.0"

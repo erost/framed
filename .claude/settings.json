@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm ci)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:coverage:*)"
+    ],
+    "deny": [
+      "Bash(curl:*)",
+      "Bash(git push:*)"
+    ],
+    "ask": [
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run lint:*)",
+      "Bash(git:*)"
+    ]
+  },
+  "env": {
+    "OTEL_METRICS_EXPORTER": "otlp"
+  }
+}

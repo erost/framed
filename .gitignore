@@ -1,0 +1,13 @@
+# dependencies
+node_modules
+
+# outputs
+coverage
+dist
+
+# user environment
+.env
+.claude/settings.local.json
+
+# MacOS
+.DS_Store

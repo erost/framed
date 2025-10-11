@@ -1,0 +1,88 @@
+/**
+ * Main stylesheet - Tailwind CSS v4
+ */
+
+@import 'tailwindcss';
+
+/* Theme configuration */
+@theme {
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #60a5fa;
+  --color-background-light: #ffffff;
+  --color-background-dark: #1f2937;
+  --color-surface-light: #f9fafb;
+  --color-surface-dark: #374151;
+  --color-text-primary-light: #1f2937;
+  --color-text-primary-dark: #f9fafb;
+  --color-text-secondary-light: #6b7280;
+  --color-text-secondary-dark: #d1d5db;
+  --color-border-light: #e5e7eb;
+  --color-border-dark: #4b5563;
+
+  --spacing-config-bar: 80px;
+}
+
+/* Global styles */
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-800;
+    @apply text-gray-900 dark:text-gray-100;
+    @apply transition-colors duration-200;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .config-bar {
+    @apply flex items-center gap-4 p-4;
+    @apply bg-gray-50 dark:bg-gray-700;
+    @apply border-b border-gray-200 dark:border-gray-600;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 rounded-md;
+    @apply bg-blue-500 dark:bg-blue-400;
+    @apply text-white font-medium;
+    @apply hover:opacity-90 transition-opacity;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-md;
+    @apply bg-gray-50 dark:bg-gray-700;
+    @apply text-gray-900 dark:text-gray-100;
+    @apply border border-gray-200 dark:border-gray-600;
+    @apply hover:bg-white dark:hover:bg-gray-800;
+    @apply transition-colors;
+  }
+
+  .input-field {
+    @apply px-3 py-2 rounded-md;
+    @apply bg-white dark:bg-gray-800;
+    @apply border border-gray-200 dark:border-gray-600;
+    @apply text-gray-900 dark:text-gray-100;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+}
+
+/* Pickr color picker theme overrides */
+@layer utilities {
+  .pickr {
+    @apply inline-block;
+  }
+
+  .pcr-app {
+    @apply shadow-lg rounded-md;
+    @apply bg-gray-50 dark:bg-gray-700;
+    @apply border border-gray-200 dark:border-gray-600;
+  }
+
+  .pcr-button {
+    @apply rounded-md border-2;
+    @apply border-gray-200 dark:border-gray-600;
+  }
+}
