@@ -10,7 +10,7 @@
     <label
       v-if="label"
       :for="inputId"
-      class="text-sm font-medium text-gray-700 dark:text-gray-300"
+      class="text-sm font-medium text-gray-300"
     >
       {{ label }}
       <span
@@ -33,12 +33,11 @@
         :placeholder="placeholder"
         :aria-invalid="!!error"
         :aria-describedby="error ? `${inputId}-error` : undefined"
-        class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white 
-               text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-               disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 
-               dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
+        class="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-800
+               text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+               disabled:opacity-50 disabled:cursor-not-allowed"
         :class="[
-          { 'border-red-500 dark:border-red-400': error },
+          { 'border-red-400': error },
           { 'pr-10': unit }
         ]"
         data-testid="number-input"
@@ -48,7 +47,7 @@
 
       <span
         v-if="unit"
-        class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400"
         aria-hidden="true"
       >
         {{ unit }}
@@ -58,7 +57,7 @@
     <span
       v-if="error"
       :id="`${inputId}-error`"
-      class="text-sm text-red-600 dark:text-red-400"
+      class="text-sm text-red-400"
       role="alert"
       data-testid="input-error"
     >
@@ -67,7 +66,7 @@
 
     <span
       v-if="hint && !error"
-      class="text-sm text-gray-500 dark:text-gray-400"
+      class="text-sm text-gray-400"
       data-testid="input-hint"
     >
       {{ hint }}

@@ -4,8 +4,8 @@
 -->
 <template>
   <div
-    class="w-full max-w-[1024px] mx-auto bg-white dark:bg-gray-800 border
-           border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-6 py-4"
+    class="w-full max-w-[1024px] mx-auto bg-gray-800 border
+           border-gray-700 rounded-lg shadow-sm px-6 py-4"
     data-testid="action-bar"
   >
     <div class="flex flex-col gap-6">

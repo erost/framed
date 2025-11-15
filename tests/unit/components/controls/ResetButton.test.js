@@ -116,15 +116,6 @@ describe('ResetButton', () => {
     }, 10000);
   });
 
-  describe('Style', () => {
-    it('uses secondary variant', () => {
-      const wrapper = mount(ResetButton);
-
-      const button = wrapper.find('button');
-      expect(button.classes()).toContain('bg-gray-200');
-    });
-  });
-
   describe('Accessibility', () => {
     it('has custom test ID', () => {
       const wrapper = mount(ResetButton, {

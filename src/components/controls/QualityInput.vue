@@ -7,9 +7,9 @@
     class="flex flex-col gap-1"
     :data-testid="testId"
   >
-    <label 
+    <label
       for="quality"
-      class="text-sm font-medium text-gray-700 dark:text-gray-300"
+      class="text-sm font-medium text-gray-300"
     >
       Quality
     </label>

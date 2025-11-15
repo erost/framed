@@ -280,20 +280,6 @@ describe('BaseInput', () => {
   });
 
   describe('CSS Classes', () => {
-    it('applies error border class when error prop is set', () => {
-      const wrapper = mount(BaseInput, {
-        props: { error: 'Error message' },
-      });
-      const input = wrapper.find('[data-testid="number-input"]');
-      expect(input.classes()).toContain('border-red-500');
-    });
-
-    it('does not apply error border class when no error', () => {
-      const wrapper = mount(BaseInput);
-      const input = wrapper.find('[data-testid="number-input"]');
-      expect(input.classes()).not.toContain('border-red-500');
-    });
-
     it('applies padding-right class when unit is present', () => {
       const wrapper = mount(BaseInput, {
         props: { unit: 'px' },

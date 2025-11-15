@@ -5,7 +5,7 @@
 -->
 <template>
   <div
-    class="frame-canvas-container relative bg-gray-100 dark:bg-gray-900 rounded-lg p-4"
+    class="frame-canvas-container relative bg-gray-900 rounded-lg p-4"
     :data-testid="testId"
   >
     <!-- Konva Canvas -->
@@ -86,10 +86,10 @@
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+              <p class="text-sm font-medium text-gray-300">
                 {{ orientation === 'portrait' ? 'Top' : 'Left' }} Image
               </p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p class="text-xs text-gray-400 mt-1">
                 Click or drop
               </p>
             </div>
@@ -157,10 +157,10 @@
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+              <p class="text-sm font-medium text-gray-300">
                 {{ orientation === 'portrait' ? 'Bottom' : 'Right' }} Image
               </p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p class="text-xs text-gray-400 mt-1">
                 Click or drop
               </p>
             </div>
@@ -193,7 +193,7 @@
     <!-- Empty State (when no canvas yet) -->
     <div
       v-if="!stageConfig"
-      class="flex items-center justify-center h-96 text-gray-500 dark:text-gray-400"
+      class="flex items-center justify-center h-96 text-gray-400"
       data-testid="canvas-placeholder"
     >
       <div class="text-center">
@@ -346,9 +346,9 @@ const getUploadZoneClass = (index) => {
 
   return {
     'border-2 border-dashed': !hasImage,
-    'border-blue-400 bg-blue-50 dark:bg-blue-900/20': !hasImage && isDragging,
+    'border-blue-400 bg-blue-900/20': !hasImage && isDragging,
     // eslint-disable-next-line max-len
-    'border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10': !hasImage && !isDragging,
+    'border-gray-600 bg-gray-800/50 hover:border-blue-400 hover:bg-blue-900/10': !hasImage && !isDragging,
     '': hasImage,
   };
 };

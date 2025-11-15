@@ -35,13 +35,13 @@ Picture Frame Creator is a Vue.js-based web application that allows users to cre
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         App.vue                              │
-│  (Root Component - Theme, Layout Container)                  │
+│                         App.vue                             │
+│  (Root Component - Layout Container)                        │
 └────────┬───────────────────────────────┬────────────────────┘
          │                               │
 ┌────────▼────────┐             ┌────────▼─────────┐
 │ AppHeader.vue   │             │CanvasContainer   │
-│ (Header+Theme)  │             │  FrameCanvas     │
+│ (Header)        │             │  FrameCanvas     │
 └─────────────────┘             │  (Rendering)     │
                                 └────────┬─────────┘
 ┌─────────────────┐                      │
@@ -72,9 +72,9 @@ Picture Frame Creator is a Vue.js-based web application that allows users to cre
 └──────┘  └─────────┘
 
            Composables Layer (Business Logic)
-┌──────────────┬──────────────┬──────────────┬──────────────┐
-│useFrameConfig│useImageState │useCanvasRender│useTheme      │
-└──────────────┴──────────────┴──────────────┴──────────────┘
+┌──────────────┬──────────────┬──────────────┐
+│useFrameConfig│useImageState │useCanvasRender│
+└──────────────┴──────────────┴──────────────┘
 
               Utilities Layer (Pure Functions)
 ┌──────────────┬──────────────┬──────────────┐
@@ -120,7 +120,7 @@ src/
 │       └── main.css            # Tailwind imports, global styles
 ├── components/
 │   ├── layout/
-│   │   ├── AppHeader.vue       # Header with theme toggle
+│   │   ├── AppHeader.vue       # Header
 │   │   ├── ConfigBar.vue       # Configuration controls bar (2 rows)
 │   │   ├── ActionBar.vue       # Action buttons bar (below canvas)
 │   │   └── CanvasContainer.vue # Canvas wrapper with upload zones
@@ -141,7 +141,6 @@ src/
 │   ├── useFrameConfig.js       # Frame configuration state
 │   ├── useImageState.js        # Image upload and management
 │   ├── useCanvasRenderer.js    # Canvas rendering logic
-│   └── useTheme.js             # Theme management
 └── utils/
     ├── calculations.js         # Dimension calculations
     ├── validation.js           # Validation functions
@@ -156,14 +155,12 @@ src/
 
 #### **App.vue**
 - Root application container
-- Initializes global theme state
 - Provides main layout structure
 - Manages canvas stage reference and preview width
 - Coordinates ConfigBar, CanvasContainer, and ActionBar
 
 #### **AppHeader.vue**
 - Application title ("Framed")
-- Theme toggle (light/dark mode)
 
 #### **ConfigBar.vue**
 - Groups frame configuration controls in 2 rows:
@@ -274,13 +271,6 @@ The application uses Vue 3 Composition API composables for state management, pro
 }
 ```
 
-#### **Theme State** (`useTheme.js`)
-```javascript
-{
-  theme: 'light' | 'dark'
-}
-```
-
 ---
 
 ## 7. Konva Integration
@@ -359,41 +349,7 @@ Images are positioned using the `calculateImageLayout()` utility:
 
 ## 9. Theme Management
 
-### 9.1 Implementation
-
-Uses Tailwind CSS dark mode with class strategy:
-
-```javascript
-// tailwind.config.js
-module.exports = {
-  darkMode: 'class',
-  // ...
-}
-```
-
-### 9.2 Theme Composable
-
-```javascript
-// useTheme.js
-export function useTheme() {
-  const theme = ref(localStorage.getItem('theme') || 'light');
-
-  const toggleTheme = () => {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-  };
-
-  watch(theme, (newTheme) => {
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', newTheme);
-  }, { immediate: true });
-
-  return { theme, toggleTheme };
-}
-```
+Removed, only dark UI
 
 ---
 

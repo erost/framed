@@ -4,10 +4,10 @@
 -->
 <template>
   <header
-    class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4"
+    class="w-full bg-gray-800 border-b border-gray-700 px-6 py-4"
     data-testid="app-header"
   >
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+    <h1 class="text-2xl font-bold text-gray-100">
       Framed
     </h1>
   </header>

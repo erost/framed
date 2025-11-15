@@ -7,8 +7,8 @@
     :data-testid="testId"
   >
     <div
-      class="flex w-full rounded-lg border border-gray-300 dark:border-gray-600 
-             p-1 bg-gray-50 dark:bg-gray-800"
+      class="flex w-full rounded-lg border border-gray-600
+             p-1 bg-gray-800"
       role="group"
       aria-label="Frame orientation"
     >
@@ -125,7 +125,7 @@ const handleSelect = (value) => {
  * Applied to the currently selected orientation
  */
 .btn-active {
-  @apply bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm;
+  @apply bg-gray-700 text-blue-400 shadow-sm;
 }
 
 /**
@@ -133,6 +133,6 @@ const handleSelect = (value) => {
  * Applied to the non-selected orientation
  */
 .btn-inactive {
-  @apply text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100;
+  @apply text-gray-300 hover:text-gray-100;
 }
 </style>

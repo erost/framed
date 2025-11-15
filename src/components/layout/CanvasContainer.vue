@@ -5,8 +5,8 @@
 <template>
   <div
     ref="containerRef"
-    class="w-full max-w-[1024px] mx-auto bg-white dark:bg-gray-800 border 
-           border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6"
+    class="w-full max-w-[1024px] mx-auto bg-gray-800 border
+           border-gray-700 rounded-lg shadow-sm p-6"
     data-testid="canvas-container"
   >
     <div class="w-full flex items-center justify-center">
