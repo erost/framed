@@ -8,6 +8,7 @@ dist
 # user environment
 .env
 .claude/settings.local.json
+.vscode
 
 # MacOS
 .DS_Store

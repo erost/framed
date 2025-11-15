@@ -7,6 +7,7 @@ import { ref } from 'vue';
 import { useCanvasRenderer } from '@/composables/useCanvasRenderer.js';
 import * as useFrameConfigModule from '@/composables/useFrameConfig.js';
 import * as useImageStateModule from '@/composables/useImageState.js';
+import { EXPORT_DEFAULT } from '@/utils/constants.js';
 
 describe('useCanvasRenderer', () => {
   let mockFrameConfig;
@@ -30,6 +31,12 @@ describe('useCanvasRenderer', () => {
     // Mock the composables
     vi.spyOn(useFrameConfigModule, 'useFrameConfig').mockReturnValue(mockFrameConfig);
     vi.spyOn(useImageStateModule, 'useImageState').mockReturnValue(mockImageState);
+
+    // Reset singleton state to defaults
+    const renderer = useCanvasRenderer();
+    renderer.fileName.value = EXPORT_DEFAULT.defaultFileName;
+    renderer.quality.value = EXPORT_DEFAULT.defaultQuality;
+    renderer.format.value = EXPORT_DEFAULT.defaultFormat;
   });
 
   afterEach(() => {
@@ -379,15 +386,54 @@ describe('useCanvasRenderer', () => {
   });
 
   describe('canExport State', () => {
-    it('should match isReady state', () => {
+    it('should be false when images are not ready', () => {
       const renderer = useCanvasRenderer();
 
-      expect(renderer.canExport.value).toBe(renderer.isReady.value);
+      expect(renderer.canExport.value).toBe(false);
+    });
 
+    it('should be false when filename is invalid even if images are ready', () => {
       mockImageState.images.value[0] = { width: 1800, height: 1200 };
       mockImageState.images.value[1] = { width: 1800, height: 1200 };
 
-      expect(renderer.canExport.value).toBe(renderer.isReady.value);
+      const renderer = useCanvasRenderer();
+
+      // Set invalid filename
+      renderer.fileName.value = 'invalid/filename';
+
+      expect(renderer.isReady.value).toBe(true);
+      expect(renderer.canExport.value).toBe(false);
+    });
+
+    it('should be true when images are ready and filename is valid', () => {
+      mockImageState.images.value[0] = { width: 1800, height: 1200 };
+      mockImageState.images.value[1] = { width: 1800, height: 1200 };
+
+      const renderer = useCanvasRenderer();
+
+      // Set valid filename
+      renderer.fileName.value = 'valid-filename';
+
+      expect(renderer.isReady.value).toBe(true);
+      expect(renderer.canExport.value).toBe(true);
+    });
+
+    it('should update reactively when filename validity changes', () => {
+      mockImageState.images.value[0] = { width: 1800, height: 1200 };
+      mockImageState.images.value[1] = { width: 1800, height: 1200 };
+
+      const renderer = useCanvasRenderer();
+
+      // Start with valid filename
+      renderer.fileName.value = 'valid-filename';
+      expect(renderer.canExport.value).toBe(true);
+
+      // Change to invalid filename
+      renderer.fileName.value = 'invalid/filename';
+      expect(renderer.canExport.value).toBe(false);
+
+      // Change back to valid
+      renderer.fileName.value = 'another_valid_filename';
       expect(renderer.canExport.value).toBe(true);
     });
   });
@@ -428,36 +474,45 @@ describe('useCanvasRenderer', () => {
       renderer.downloadImage(mockStage);
 
       // PixelRatio = frameWidth / previewWidth = 3000 / 800 = 3.75
+      // Quality = default 85% = 0.85
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/png',
-        quality: 0.95,
+        qualityPercentage: 0.85,
         pixelRatio: 3.75,
       });
-      expect(mockLink.download).toBe('frame.png');
+      expect(mockLink.download).toBe('framed.png');
       expect(mockLink.click).toHaveBeenCalled();
     });
 
-    it('should download JPEG with custom filename', () => {
+    it('should download JPEG with custom format', () => {
       const renderer = useCanvasRenderer({ previewWidth: ref(800) });
 
-      renderer.downloadImage(mockStage, 'custom.jpg', 'jpeg');
+      // Set custom format and filename via singleton
+      renderer.format.value = 'image/jpeg';
+      renderer.fileName.value = 'custom';
+
+      renderer.downloadImage(mockStage);
 
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/jpeg',
-        quality: 0.95,
+        qualityPercentage: 0.85,
         pixelRatio: 3.75,
       });
-      expect(mockLink.download).toBe('custom.jpg');
+      expect(mockLink.download).toBe('custom.jpeg');
     });
 
     it('should use custom quality', () => {
       const renderer = useCanvasRenderer({ previewWidth: ref(800) });
 
-      renderer.downloadImage(mockStage, 'test.jpg', 'jpeg', 0.8);
+      // Set custom quality via singleton (80%)
+      renderer.quality.value = 80;
+      renderer.format.value = 'image/jpeg';
+
+      renderer.downloadImage(mockStage);
 
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/jpeg',
-        quality: 0.8,
+        qualityPercentage: 0.8,
         pixelRatio: 3.75,
       });
     });
@@ -473,7 +528,7 @@ describe('useCanvasRenderer', () => {
       renderer.downloadImage(mockStage);
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/png',
-        quality: 0.95,
+        qualityPercentage: 0.85,
         pixelRatio: 3000 / 800, // frameWidth / stageWidth = 3.75
       });
 
@@ -485,7 +540,7 @@ describe('useCanvasRenderer', () => {
       renderer.downloadImage(mockStage);
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/png',
-        quality: 0.95,
+        qualityPercentage: 0.85,
         pixelRatio: 3000 / 400, // frameWidth / stageWidth = 7.5
       });
 
@@ -497,7 +552,7 @@ describe('useCanvasRenderer', () => {
       renderer.downloadImage(mockStage);
       expect(mockStage.toDataURL).toHaveBeenCalledWith({
         mimeType: 'image/png',
-        quality: 0.95,
+        qualityPercentage: 0.85,
         pixelRatio: 3000 / 600, // frameWidth / stageWidth = 5.0
       });
 

@@ -2,7 +2,7 @@
  * Validation utilities for images and configuration
  */
 
-import { IMAGE_CONSTRAINTS } from './constants.js';
+import { IMAGE_CONSTRAINTS, FILE_NAME_VALIDATOR } from './constants.js';
 
 /**
  * Validate image file before upload
@@ -103,6 +103,19 @@ export function validateSpacing(size, minSize = 0, maxSize = 500) {
       valid: false,
       error: `Spacing must not exceed ${maxSize}px`,
       clamped: maxSize,
+    };
+  }
+
+  return { valid: true };
+}
+
+export function validateFileName(value) {
+  const validator = FILE_NAME_VALIDATOR;
+
+  if (!validator.test(value)) {
+    return {
+      valid: false,
+      error: 'Invalid filename. Only alphanumeric, spaces, underscope, and dashes are allowed',
     };
   }
 

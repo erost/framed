@@ -31,8 +31,8 @@ export const DEFAULT_CONFIG = {
   orientation: 'portrait',
   aspectRatio: '3:2',
   backgroundColor: '#FFFFFF',
-  frameSize: 3000, // Size of the longest side (height for portrait, width for landscape)
-  spacing: 100,
+  frameSize: 2048, // Size of the longest side (height for portrait, width for landscape)
+  spacing: 20,
 };
 
 /**
@@ -58,18 +58,26 @@ export const FRAME_CONSTRAINTS = {
 };
 
 /**
- * Theme values
- * @constant {Object.<string, string>}
- */
-export const THEMES = {
-  LIGHT: 'light',
-  DARK: 'dark',
-};
-
-/**
  * Canvas preview constraints
  * @constant {Object}
  */
 export const PREVIEW_CONSTRAINTS = {
   defaultWidth: 800,
 };
+
+/**
+ * Image export formats with mime type and file extension
+ * @constant {Array.<Object>}
+ */
+export const IMAGE_FORMATS = [
+  { mimeType: 'image/png', extension: 'png' },
+  { mimeType: 'image/jpeg', extension: 'jpeg' },
+];
+
+export const EXPORT_DEFAULT = {
+  defaultQuality: 85,
+  defaultFileName: 'framed',
+  defaultFormat: IMAGE_FORMATS[0].mimeType,
+};
+
+export const FILE_NAME_VALIDATOR = /^[\w,\s-]+$/;

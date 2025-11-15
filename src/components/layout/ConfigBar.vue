@@ -11,7 +11,7 @@
     <div class="flex flex-col gap-6">
       <!-- Row 1: Orientation and Aspect Ratio Controls -->
       <div
-        class="flex flex-col md:flex-row gap-4 md:items-start"
+        class="flex flex-col md:flex-row gap-4 md:items-center"
         data-testid="row-orientation-aspect"
       >
         <div class="flex-1">
