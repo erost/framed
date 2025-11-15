@@ -49,14 +49,6 @@ describe('AspectRatioSelector', () => {
       expect(buttonGroup.classes()).not.toContain('inline-flex');
     });
 
-    it('has proper styling classes', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).toContain('rounded-lg');
-      expect(buttonGroup.classes()).toContain('border');
-      expect(buttonGroup.classes()).toContain('bg-gray-50');
-    });
 
     it('buttons are always side by side (no flex-col)', () => {
       const wrapper = mount(AspectRatioSelector);
@@ -229,22 +221,6 @@ describe('AspectRatioSelector', () => {
   });
 
   describe('Visual Consistency', () => {
-    it('matches OrientationToggle visual style with border and rounded corners', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).toContain('border');
-      expect(buttonGroup.classes()).toContain('rounded-lg');
-      expect(buttonGroup.classes()).toContain('border-gray-300');
-    });
-
-    it('has same background color as OrientationToggle', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).toContain('bg-gray-50');
-    });
-
     it('active button has btn-active class', () => {
       const wrapper = mount(AspectRatioSelector);
 

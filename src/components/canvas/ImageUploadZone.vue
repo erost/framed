@@ -26,7 +26,7 @@
       class="upload-content"
     >
       <svg
-        class="w-12 h-12 mb-4 text-gray-400 dark:text-gray-500"
+        class="w-12 h-12 mb-4 text-gray-400"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -39,13 +39,13 @@
           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
         />
       </svg>
-      <p class="text-base font-medium text-gray-700 dark:text-gray-300 mb-1">
+      <p class="text-base font-medium text-gray-300 mb-1">
         {{ position === 0 ? 'Upload First Image' : 'Upload Second Image' }}
       </p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
+      <p class="text-sm text-gray-400">
         Click or drag & drop
       </p>
-      <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
+      <p class="text-xs text-gray-400 mt-2">
         JPEG, PNG, or WebP (max 10MB)
       </p>
     </div>
@@ -137,11 +137,11 @@ const image = computed(() => images.value[props.position] || null);
  * Compute zone classes based on state
  */
 const zoneClasses = computed(() => ({
-  'border-blue-500 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20': isDragging.value,
+  'border-blue-500 bg-blue-900 bg-opacity-20': isDragging.value,
   // eslint-disable-next-line max-len
-  'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500': !isDragging.value && !image.value,
-  'border-green-500 dark:border-green-400': image.value && !error.value,
-  'border-red-500 dark:border-red-400': error.value,
+  'border-gray-600 hover:border-gray-400': !isDragging.value && !image.value,
+  'border-green-400': image.value && !error.value,
+  'border-red-400': error.value,
 }));
 
 /**

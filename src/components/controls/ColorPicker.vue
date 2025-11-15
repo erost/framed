@@ -9,7 +9,7 @@
   >
     <label
       for="background-color"
-      class="text-sm font-medium text-gray-700 dark:text-gray-300"
+      class="text-sm font-medium text-gray-300"
     >
       Frame Color
     </label>
@@ -36,7 +36,7 @@
       >
     </div>
 
-    <span class="text-sm text-gray-500 dark:text-gray-400">
+    <span class="text-sm text-gray-400">
       (hex format)
     </span>
   </div>
@@ -125,8 +125,7 @@ watch(backgroundColor, (newColor) => {
  * Sized to match BaseInput height (py-2 = ~40px)
  */
 .color-picker-swatch {
-  @apply w-10 h-10 border border-gray-300 rounded-lg cursor-pointer;
-  @apply dark:border-gray-600;
+  @apply w-10 h-10 border border-gray-600 rounded-lg cursor-pointer;
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
   -webkit-appearance: none;
   padding: 0;
@@ -137,10 +136,9 @@ watch(backgroundColor, (newColor) => {
  * Matches BaseInput styling
  */
 .color-text-input {
-  @apply flex-1 px-3 py-2 border border-gray-300 rounded-lg;
-  @apply bg-white text-gray-900 text-sm;
+  @apply flex-1 px-3 py-2 border border-gray-600 rounded-lg;
+  @apply bg-gray-800 text-gray-100 text-sm;
   @apply focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
-  @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100;
 }
 
 /* Remove default color input styling on some browsers */

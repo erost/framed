@@ -9,7 +9,6 @@ A Vue.js application for creating beautiful layouts of two pictures with customi
 - Custom frame color selection
 - Configurable frame width and outer border size
 - Drag-and-drop image upload
-- Light and dark theme support
 - High-resolution image export
 
 ## Tech Stack

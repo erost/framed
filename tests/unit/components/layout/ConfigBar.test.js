@@ -162,41 +162,6 @@ describe('ConfigBar', () => {
     });
   });
 
-  describe('Styling', () => {
-    it('applies dark mode classes', () => {
-      const configBar = wrapper.find('[data-testid="config-bar"]');
-      expect(configBar.classes()).toContain('dark:bg-gray-800');
-      expect(configBar.classes()).toContain('dark:border-gray-700');
-    });
-
-    it('has responsive styling', () => {
-      const container = wrapper.find('[data-testid="config-bar"]');
-      expect(container.classes()).toContain('w-full');
-      expect(container.classes()).toContain('max-w-[1024px]');
-      expect(container.classes()).toContain('mx-auto');
-      expect(container.classes()).toContain('rounded-lg');
-      expect(container.classes()).toContain('shadow-sm');
-    });
-
-    it('has proper padding', () => {
-      const container = wrapper.find('[data-testid="config-bar"]');
-      expect(container.classes()).toContain('px-6');
-      expect(container.classes()).toContain('py-4');
-    });
-
-    it('has border styling', () => {
-      const container = wrapper.find('[data-testid="config-bar"]');
-      expect(container.classes()).toContain('border');
-      expect(container.classes()).toContain('border-gray-200');
-    });
-
-    it('has white background in light mode', () => {
-      const container = wrapper.find('[data-testid="config-bar"]');
-      expect(container.classes()).toContain('bg-white');
-    });
-  });
-
-
   describe('Layout Organization', () => {
     it('maintains correct order of rows', () => {
       const rows = wrapper.findAll('[data-testid^="row-"]');

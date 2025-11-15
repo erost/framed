@@ -55,14 +55,6 @@ describe('CanvasContainer', () => {
     expect(container.classes()).toContain('mx-auto');
   });
 
-  it('applies dark mode classes', () => {
-    wrapper = mount(CanvasContainer, {
-      props: { previewWidth: 800 },
-    });
-    const container = wrapper.find('[data-testid="canvas-container"]');
-    expect(container.classes()).toContain('dark:bg-gray-800');
-  });
-
   it('has padding for content spacing', () => {
     wrapper = mount(CanvasContainer, {
       props: { previewWidth: 800 },

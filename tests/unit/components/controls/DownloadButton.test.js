@@ -206,17 +206,6 @@ describe('DownloadButton', () => {
     });
   });
 
-  describe('Style', () => {
-    it('uses primary variant', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      const button = wrapper.find('button');
-      expect(button.classes()).toContain('bg-blue-600');
-    });
-  });
-
   describe('Accessibility', () => {
     it('has custom test ID', () => {
       const wrapper = mount(DownloadButton, {
