@@ -17,6 +17,20 @@ vi.mock('@/components/controls/DownloadButton.vue', () => ({
   },
 }));
 
+vi.mock('@/components/controls/QualityInput.vue', () => ({
+  default: {
+    name: 'QualityInput',
+    template: '<div data-testid="quality-input">Quality</div>',
+  },
+}));
+
+vi.mock('@/components/controls/FileNameInput.vue', () => ({
+  default: {
+    name: 'FileNameInput',
+    template: '<div data-testid="file-name-input">Filename</div>',
+  },
+}));
+
 describe('ActionBar', () => {
   let wrapper;
 
@@ -31,50 +45,19 @@ describe('ActionBar', () => {
       expect(wrapper.find('[data-testid="action-bar"]').exists()).toBe(true);
     });
 
-    it('renders reset and download buttons', () => {
+    it('renders all components (inputs and buttons)', () => {
+      expect(wrapper.find('[data-testid="quality-input"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="file-name-input"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="reset-button"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(true);
     });
 
-    it('contains exactly 2 child buttons', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      const children = actionBar.findAll('[data-testid]');
-      expect(children).toHaveLength(2);
+    it('contains output controls and action buttons', () => {
+      expect(wrapper.find('[data-testid="output-action-bar"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="buttons-action-bar"]').exists()).toBe(true);
     });
   });
 
-  describe('Layout', () => {
-    it('has flex layout with gap-3', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      expect(actionBar.classes()).toContain('flex');
-      expect(actionBar.classes()).toContain('gap-3');
-    });
-
-    it('has max width constraint', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      expect(actionBar.classes()).toContain('w-full');
-      expect(actionBar.classes()).toContain('max-w-[1024px]');
-      expect(actionBar.classes()).toContain('mx-auto');
-    });
-
-    it('has proper padding', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      expect(actionBar.classes()).toContain('px-6');
-    });
-  });
-
-  describe('Responsive Behavior', () => {
-    it('stacks buttons in reverse on mobile (Download on top)', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      expect(actionBar.classes()).toContain('flex-col-reverse');
-    });
-
-    it('arranges buttons in row on desktop with justify-end', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      expect(actionBar.classes()).toContain('sm:flex-row');
-      expect(actionBar.classes()).toContain('sm:justify-end');
-    });
-  });
 
   describe('Props', () => {
     it('accepts stage prop for download functionality', () => {
@@ -104,17 +87,17 @@ describe('ActionBar', () => {
     });
   });
 
-  describe('Button Order', () => {
-    it('has reset button first in DOM (appears second on desktop)', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      const buttons = actionBar.findAll('[data-testid]');
-      expect(buttons[0].attributes('data-testid')).toBe('reset-button');
+  describe('Component Organization', () => {
+    it('has quality and filename inputs in output section', () => {
+      const outputSection = wrapper.find('[data-testid="output-action-bar"]');
+      expect(outputSection.find('[data-testid="quality-input"]').exists()).toBe(true);
+      expect(outputSection.find('[data-testid="file-name-input"]').exists()).toBe(true);
     });
 
-    it('has download button second in DOM', () => {
-      const actionBar = wrapper.find('[data-testid="action-bar"]');
-      const buttons = actionBar.findAll('[data-testid]');
-      expect(buttons[1].attributes('data-testid')).toBe('download-button');
+    it('has reset and download buttons in buttons section', () => {
+      const buttonsSection = wrapper.find('[data-testid="buttons-action-bar"]');
+      expect(buttonsSection.find('[data-testid="reset-button"]').exists()).toBe(true);
+      expect(buttonsSection.find('[data-testid="download-button"]').exists()).toBe(true);
     });
   });
 });

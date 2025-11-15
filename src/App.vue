@@ -3,10 +3,7 @@
   Picture Frame Creator - Main application layout
 -->
 <template>
-  <div
-    class="min-h-screen transition-colors"
-    :class="themeClass"
-  >
+  <div class="min-h-screen bg-gray-900">
     <!-- Header -->
     <AppHeader />
 
@@ -51,8 +48,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useTheme } from '@/composables/useTheme';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
 import AppHeader from '@/components/layout/AppHeader.vue';
 import ConfigBar from '@/components/layout/ConfigBar.vue';
@@ -61,10 +57,8 @@ import ActionBar from '@/components/layout/ActionBar.vue';
 
 /**
  * Root application component
- * Integrates all major components and provides global theme management
+ * Integrates all major components
  */
-
-const { theme } = useTheme();
 
 const canvasContainerRef = ref(null);
 const mainContentRef = ref(null);
@@ -72,15 +66,6 @@ const stage = ref(null);
 const previewWidth = ref(PREVIEW_CONSTRAINTS.defaultWidth);
 let resizeObserver = null;
 let resizeTimeout = null;
-
-/**
- * Apply theme class to root element
- */
-const themeClass = computed(() => ({
-  'dark': theme.value === 'dark',
-  'bg-gray-50': theme.value === 'light',
-  'bg-gray-900': theme.value === 'dark',
-}));
 
 /**
  * Handle canvas ready event

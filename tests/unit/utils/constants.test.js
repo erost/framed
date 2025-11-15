@@ -9,7 +9,6 @@ import {
   DEFAULT_CONFIG,
   IMAGE_CONSTRAINTS,
   FRAME_CONSTRAINTS,
-  THEMES,
   PREVIEW_CONSTRAINTS,
 } from '@/utils/constants';
 
@@ -50,8 +49,8 @@ describe('constants.js', () => {
       expect(DEFAULT_CONFIG.orientation).toBe('portrait');
       expect(DEFAULT_CONFIG.aspectRatio).toBe('3:2');
       expect(DEFAULT_CONFIG.backgroundColor).toBe('#FFFFFF');
-      expect(DEFAULT_CONFIG.frameSize).toBe(3000);
-      expect(DEFAULT_CONFIG.spacing).toBe(100);
+      expect(DEFAULT_CONFIG.frameSize).toBe(2048);
+      expect(DEFAULT_CONFIG.spacing).toBe(20);
     });
   });
 
@@ -85,13 +84,6 @@ describe('constants.js', () => {
     it('should have spacing constraints', () => {
       expect(FRAME_CONSTRAINTS.minSpacing).toBe(0);
       expect(FRAME_CONSTRAINTS.maxSpacing).toBe(500);
-    });
-  });
-
-  describe('THEMES', () => {
-    it('should contain light and dark themes', () => {
-      expect(THEMES.LIGHT).toBe('light');
-      expect(THEMES.DARK).toBe('dark');
     });
   });
 

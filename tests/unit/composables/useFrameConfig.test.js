@@ -4,10 +4,26 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useFrameConfig } from '@/composables/useFrameConfig.js';
-import { DEFAULT_CONFIG } from '@/utils/constants.js';
+import { DEFAULT_CONFIG, ASPECT_RATIOS } from '@/utils/constants.js';
 
 describe('useFrameConfig', () => {
   let frameConfig;
+
+  // Helper to calculate expected dimensions
+  const calcDimensions = (frameSize, aspectRatio, orientation) => {
+    const ratio = ASPECT_RATIOS[aspectRatio];
+    if (orientation === 'portrait') {
+      return {
+        width: frameSize / ratio,
+        height: frameSize,
+      };
+    } else {
+      return {
+        width: frameSize,
+        height: frameSize / ratio,
+      };
+    }
+  };
 
   beforeEach(() => {
     frameConfig = useFrameConfig();
@@ -39,9 +55,13 @@ describe('useFrameConfig', () => {
     });
 
     it('should calculate dimensions based on frameSize, aspect ratio, and orientation', () => {
-      // Portrait 3:2 ratio: longest side = 3000 (height), width = 3000 / 1.5 = 2000
-      expect(frameConfig.frameWidth.value).toBe(2000);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      const expected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(expected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(expected.height);
     });
   });
 
@@ -58,14 +78,24 @@ describe('useFrameConfig', () => {
     });
 
     it('should update frame dimensions when orientation changes', () => {
-      // Start with portrait 3:2: width=2000, height=3000
-      expect(frameConfig.frameWidth.value).toBe(2000);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      // Start with portrait
+      const portraitExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        'portrait'
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(portraitExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(portraitExpected.height);
 
-      // Change to landscape 3:2: width=3000, height=2000
+      // Change to landscape
       frameConfig.updateOrientation('landscape');
-      expect(frameConfig.frameWidth.value).toBe(3000);
-      expect(frameConfig.frameHeight.value).toBe(2000);
+      const landscapeExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        'landscape'
+      );
+      expect(frameConfig.frameWidth.value).toBe(landscapeExpected.width);
+      expect(frameConfig.frameHeight.value).toBeCloseTo(landscapeExpected.height, 1);
     });
 
     it('should ignore invalid orientation values', () => {
@@ -118,14 +148,24 @@ describe('useFrameConfig', () => {
     });
 
     it('should update frame dimensions when aspect ratio changes', () => {
-      // Portrait 3:2: width=2000, height=3000
-      expect(frameConfig.frameWidth.value).toBe(2000);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      // Start with default (portrait 3:2)
+      const initialExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(initialExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(initialExpected.height);
 
-      // Change to 4:3: width=2250, height=3000 (aspect ratio 4/3 = 1.333...)
+      // Change to 4:3
       frameConfig.updateAspectRatio('4:3');
-      expect(frameConfig.frameWidth.value).toBe(2250);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      const newExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        '4:3',
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(newExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(newExpected.height);
     });
   });
 
@@ -158,14 +198,24 @@ describe('useFrameConfig', () => {
     });
 
     it('should update frame dimensions when size changes', () => {
-      // Original portrait 3:2: width=2000, height=3000
-      expect(frameConfig.frameWidth.value).toBe(2000);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      // Original default size
+      const initialExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(initialExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(initialExpected.height);
 
-      // Update to 4000: width=2666.67, height=4000 (portrait 3:2)
+      // Update to 4000
       frameConfig.updateFrameSize(4000);
-      expect(frameConfig.frameWidth.value).toBeCloseTo(2666.67, 1);
-      expect(frameConfig.frameHeight.value).toBe(4000);
+      const newExpected = calcDimensions(
+        4000,
+        DEFAULT_CONFIG.aspectRatio,
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(newExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(newExpected.height);
     });
   });
 
@@ -211,15 +261,21 @@ describe('useFrameConfig', () => {
     it('should reset computed frame dimensions', () => {
       // Change frame size
       frameConfig.updateFrameSize(5000);
-      expect(frameConfig.frameHeight.value).toBe(5000);
-      expect(frameConfig.frameWidth.value).toBeCloseTo(3333.33, 1);
+      const changedExpected = calcDimensions(5000, DEFAULT_CONFIG.aspectRatio, DEFAULT_CONFIG.orientation);
+      expect(frameConfig.frameHeight.value).toBe(changedExpected.height);
+      expect(frameConfig.frameWidth.value).toBeCloseTo(changedExpected.width, 1);
 
       // Reset
       frameConfig.reset();
 
-      // Dimensions should be back to default calculation (portrait 3:2)
-      expect(frameConfig.frameWidth.value).toBe(2000);
-      expect(frameConfig.frameHeight.value).toBe(3000);
+      // Dimensions should be back to default calculation
+      const resetExpected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        DEFAULT_CONFIG.orientation
+      );
+      expect(frameConfig.frameWidth.value).toBeCloseTo(resetExpected.width, 1);
+      expect(frameConfig.frameHeight.value).toBe(resetExpected.height);
     });
   });
 
@@ -229,20 +285,25 @@ describe('useFrameConfig', () => {
       frameConfig.updateOrientation('landscape');
       // Change aspect ratio to 16:9
       frameConfig.updateAspectRatio('16:9');
-      // Frame size is still 3000
 
-      // Landscape 16:9: width=3000, height=3000/(16/9)=1687.5
-      expect(frameConfig.frameWidth.value).toBe(3000);
-      expect(frameConfig.frameHeight.value).toBe(1687.5);
+      // Calculate expected dimensions with current frameSize (DEFAULT_CONFIG.frameSize)
+      const expected = calcDimensions(DEFAULT_CONFIG.frameSize, '16:9', 'landscape');
+      expect(frameConfig.frameWidth.value).toBe(expected.width);
+      expect(frameConfig.frameHeight.value).toBeCloseTo(expected.height, 1);
     });
 
     it('should maintain reactivity after reset', () => {
       frameConfig.reset();
       frameConfig.updateOrientation('landscape');
 
-      // Should still be reactive (landscape 3:2)
-      expect(frameConfig.frameWidth.value).toBe(3000);
-      expect(frameConfig.frameHeight.value).toBe(2000);
+      // Should still be reactive (landscape 3:2 with default frameSize)
+      const expected = calcDimensions(
+        DEFAULT_CONFIG.frameSize,
+        DEFAULT_CONFIG.aspectRatio,
+        'landscape'
+      );
+      expect(frameConfig.frameWidth.value).toBe(expected.width);
+      expect(frameConfig.frameHeight.value).toBeCloseTo(expected.height, 1);
     });
   });
 

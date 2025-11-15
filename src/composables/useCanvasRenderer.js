@@ -4,7 +4,7 @@
  * Generates Konva configuration objects for canvas layers
  */
 
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import {
   calculateImageLayout,
   calculatePreviewScale,
@@ -13,7 +13,12 @@ import {
 } from '@/utils/calculations.js';
 import { useFrameConfig } from '@/composables/useFrameConfig';
 import { useImageState } from '@/composables/useImageState';
-import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
+import { EXPORT_DEFAULT, IMAGE_FORMATS, PREVIEW_CONSTRAINTS } from '@/utils/constants';
+import { validateFileName } from '@/utils/validation';
+
+const fileName = ref(EXPORT_DEFAULT.defaultFileName);
+const quality = ref(EXPORT_DEFAULT.defaultQuality);
+const format = ref(EXPORT_DEFAULT.defaultFormat);
 
 /**
  * Composable for canvas rendering and export
@@ -25,6 +30,27 @@ import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
 export function useCanvasRenderer(options = {}) {
   const frameConfig = useFrameConfig();
   const imageState = useImageState();
+
+  /**
+   * Update quality for export
+   * @param {string} value - New value
+   */
+  const updateQuality = (value) => {
+    quality.value = value;
+  };
+
+  /**
+   * Update image format for export
+   * @param {string} value - New mime type value
+   */
+  const updateFormat = (value) => {
+    const validFormats = IMAGE_FORMATS.map(f => f.mimeType);
+    if (!validFormats.includes(value)) {
+      throw new Error('Not a valid image format');
+    }
+
+    format.value = value;
+  };
 
   const previewWidthRef = computed(() => {
     const width = options.previewWidth;
@@ -157,6 +183,15 @@ export function useCanvasRenderer(options = {}) {
   });
 
   /**
+   * @param {string} desiredFilename - Input filename
+   * @param {string} format - Image format ('png' or 'jpeg')
+   * @returns {string} the filename with extension based on format
+   */
+  const composeFileName = (desiredFileName, format) => {
+    return desiredFileName + '.' + format.split('/')[1];
+  };
+
+  /**
    * Download canvas as image
    * @param {Object} stage - Konva stage instance
    * @param {string} filename - Download filename
@@ -164,7 +199,7 @@ export function useCanvasRenderer(options = {}) {
    * @param {number} quality - Image quality (0-1) for JPEG
    * @returns {void}
    */
-  const downloadImage = (stage, filename = 'frame.png', format = 'png', quality = 0.95) => {
+  const downloadImage = (stage) => {
     if (!stage) {
       throw new Error('Stage instance is required for download');
     }
@@ -173,18 +208,20 @@ export function useCanvasRenderer(options = {}) {
     const currentStageWidth = stageConfig.value.width;
     const currentFrameWidth = frameConfig.frameWidth.value;
     const pixelRatio = currentFrameWidth / currentStageWidth;
+    const qualityPercentage = quality.value / 100;
+    const downloadFileName = composeFileName(fileName.value, format.value);
 
     try {
-      const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+      const mimeType = format.value;
       const dataURL = stage.toDataURL({
         mimeType,
-        quality,
+        qualityPercentage,
         pixelRatio, // Scale up to full frame size
       });
 
       // Create download link
       const link = document.createElement('a');
-      link.download = filename;
+      link.download = downloadFileName;
       link.href = dataURL;
       document.body.appendChild(link);
       link.click();
@@ -203,11 +240,19 @@ export function useCanvasRenderer(options = {}) {
   });
 
   /**
+   * Check if filename is valid
+   * @type {import('vue').ComputedRef<boolean>}
+   */
+  const isFileNameValid = computed(() => {
+    return validateFileName(fileName.value).valid;
+  });
+
+  /**
    * Check if canvas is ready for export
    * @type {import('vue').ComputedRef<boolean>}
    */
   const canExport = computed(() => {
-    return isReady.value;
+    return isReady.value && isFileNameValid.value;
   });
 
   // Return public API
@@ -227,7 +272,14 @@ export function useCanvasRenderer(options = {}) {
     isReady,
     canExport,
 
+    // Export configuration refs
+    fileName,
+    quality,
+    format,
+
     // Methods
+    updateFormat,
+    updateQuality,
     downloadImage,
   };
 }
