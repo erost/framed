@@ -72,5 +72,15 @@ npm run lint:fix
 npm run format
 ```
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+### Automated Workflows
+
+- **CI**: Runs linter, tests, and build on all non-main branches and pull requests
+- **Build and Deploy**: Automatically builds and deploys to GitHub Pages on every tag
+- **Version Bump**: Creates a PR with a minor version bump after successful deployment
+
 ## AI Disclaimer
 AI tools have been used to contribute to this project.
