@@ -8,61 +8,76 @@
   "theme_color": "#1f2937",
   "orientation": "any",
   "icons": [
-  {
-    "purpose": "any",
-    "sizes": "48x48",
-    "src": "/icons/maskable_icon_x48.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "72x72",
-    "src": "/icons/maskable_icon_x72.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "96x96",
-    "src": "/icons/maskable_icon_x96.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "128x128",
-    "src": "/icons/maskable_icon_x128.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "192x192",
-    "src": "/icons/maskable_icon_x192.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "384x384",
-    "src": "/icons/maskable_icon_x384.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "any",
-    "sizes": "512x512",
-    "src": "/icons/maskable_icon_x512.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "maskable",
-    "sizes": "192x192",
-    "src": "/icons/maskable_icon_x192.png",
-    "type": "image/png"
-  },
-  {
-    "purpose": "maskable",
-    "sizes": "512x512",
-    "src": "/icons/maskable_icon_x512.png",
-    "type": "image/png"
-  }
-],
-  "categories": ["photo", "graphics", "utilities"],
-  "screenshots": []
+    {
+      "purpose": "any",
+      "sizes": "48x48",
+      "src": "/icons/maskable_icon_x48.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "72x72",
+      "src": "/icons/maskable_icon_x72.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "96x96",
+      "src": "/icons/maskable_icon_x96.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "128x128",
+      "src": "/icons/maskable_icon_x128.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "/icons/maskable_icon_x192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "384x384",
+      "src": "/icons/maskable_icon_x384.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "/icons/maskable_icon_x512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "sizes": "192x192",
+      "src": "/icons/maskable_icon_x192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "/icons/maskable_icon_x512.png",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["photography", "photo"],
+  "screenshots": [
+    {
+      "src": "/screenshots/framed-wide.png",
+      "sizes": "2328x1164",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Framed desktop"
+    },
+    {
+      "src": "/screenshots/framed-portrait.png",
+      "sizes": "625x1056",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Framed mobile"
+    }
+  ]
 }
