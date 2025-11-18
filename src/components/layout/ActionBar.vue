@@ -46,7 +46,7 @@
 <script setup>
 import ResetButton from '@/components/controls/ResetButton.vue';
 import DownloadButton from '@/components/controls/DownloadButton.vue';
-import FileNameInput from '@/components/controls/FilenameInput.vue';
+import FileNameInput from '@/components/controls/FileNameInput.vue';
 import QualityInput from '@/components/controls/QualityInput.vue';
 import FormatSelector from '@/components/controls/FormatSelector.vue';
 
