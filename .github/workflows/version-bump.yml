@@ -1,0 +1,64 @@
+name: Version Bump
+
+on:
+  workflow_run:
+    workflows: ["Build and Deploy to GitHub Pages"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    # Only run if the previous workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create version bump branch
+        run: |
+          BRANCH_NAME="version-bump-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Bump version
+        run: npm version minor --no-git-tag-version
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git commit -m "chore: bump version to $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Push changes
+        run: git push origin $BRANCH_NAME
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --title "chore: bump version to $NEW_VERSION" \
+            --body "Automated version bump to \`$NEW_VERSION\` after successful deployment.
+
+          This PR was automatically created by the version-bump workflow." \
+            --base main \
+            --head $BRANCH_NAME
