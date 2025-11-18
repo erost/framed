@@ -261,7 +261,11 @@ describe('useFrameConfig', () => {
     it('should reset computed frame dimensions', () => {
       // Change frame size
       frameConfig.updateFrameSize(5000);
-      const changedExpected = calcDimensions(5000, DEFAULT_CONFIG.aspectRatio, DEFAULT_CONFIG.orientation);
+      const changedExpected = calcDimensions(
+        5000, 
+        DEFAULT_CONFIG.aspectRatio, 
+        DEFAULT_CONFIG.orientation
+      );
       expect(frameConfig.frameHeight.value).toBe(changedExpected.height);
       expect(frameConfig.frameWidth.value).toBeCloseTo(changedExpected.width, 1);
 
