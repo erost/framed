@@ -138,7 +138,6 @@ const image = computed(() => images.value[props.position] || null);
  */
 const zoneClasses = computed(() => ({
   'border-blue-500 bg-blue-900 bg-opacity-20': isDragging.value,
-  // eslint-disable-next-line max-len
   'border-gray-600 hover:border-gray-400': !isDragging.value && !image.value,
   'border-green-400': image.value && !error.value,
   'border-red-400': error.value,
