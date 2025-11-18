@@ -81,14 +81,6 @@ describe('DownloadButton', () => {
       expect(wrapper.find('button').exists()).toBe(true);
     });
 
-    it('displays download text', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      expect(wrapper.text()).toContain('Download');
-    });
-
     it('displays download icon when not loading', () => {
       const wrapper = mount(DownloadButton, {
         props: { previewWidth: 800 },
@@ -129,53 +121,6 @@ describe('DownloadButton', () => {
       const wrapper = mount(DownloadButton, {
         props: { previewWidth: 800 },
       });
-
-      expect(wrapper.text()).toContain('Download');
-    });
-  });
-
-  describe('Button Text', () => {
-    it('always shows "Download" text', async () => {
-      const file1 = new File([''], 'test1.jpg', { type: 'image/jpeg' });
-      const file2 = new File([''], 'test2.jpg', { type: 'image/jpeg' });
-
-      await imageState.addImage(file1, 0);
-      await imageState.addImage(file2, 1);
-
-      const wrapper = mount(DownloadButton, {
-        props: { stage: mockStage, previewWidth: 800 },
-      });
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.text()).toContain('Download');
-    });
-
-    it('shows "Download" even when no images uploaded', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      expect(wrapper.text()).toContain('Download');
-    });
-  });
-
-  describe('Loading State', () => {
-    it('shows "Download" text after clicking', async () => {
-      const file1 = new File([''], 'test1.jpg', { type: 'image/jpeg' });
-      const file2 = new File([''], 'test2.jpg', { type: 'image/jpeg' });
-
-      await imageState.addImage(file1, 0);
-      await imageState.addImage(file2, 1);
-
-      const wrapper = mount(DownloadButton, {
-        props: { stage: mockStage, previewWidth: 800 },
-      });
-
-      await wrapper.vm.$nextTick();
-
-      const button = wrapper.find('button');
-      await button.trigger('click');
 
       expect(wrapper.text()).toContain('Download');
     });

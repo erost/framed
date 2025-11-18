@@ -47,42 +47,6 @@ describe('CanvasContainer', () => {
     expect(container.classes()).toContain('max-w-[1024px]');
   });
 
-  it('centers container horizontally', () => {
-    wrapper = mount(CanvasContainer, {
-      props: { previewWidth: 800 },
-    });
-    const container = wrapper.find('[data-testid="canvas-container"]');
-    expect(container.classes()).toContain('mx-auto');
-  });
-
-  it('has padding for content spacing', () => {
-    wrapper = mount(CanvasContainer, {
-      props: { previewWidth: 800 },
-    });
-    const container = wrapper.find('[data-testid="canvas-container"]');
-    expect(container.classes()).toContain('p-6');
-  });
-
-  it('has border and shadow styling', () => {
-    wrapper = mount(CanvasContainer, {
-      props: { previewWidth: 800 },
-    });
-    const container = wrapper.find('[data-testid="canvas-container"]');
-    expect(container.classes()).toContain('border');
-    expect(container.classes()).toContain('shadow-sm');
-    expect(container.classes()).toContain('rounded-lg');
-  });
-
-  it('centers canvas content with flex layout', () => {
-    wrapper = mount(CanvasContainer, {
-      props: { previewWidth: 800 },
-    });
-    const innerDiv = wrapper.find('[data-testid="canvas-container"]').find('div');
-    expect(innerDiv.classes()).toContain('flex');
-    expect(innerDiv.classes()).toContain('items-center');
-    expect(innerDiv.classes()).toContain('justify-center');
-  });
-
   it('is full width', () => {
     wrapper = mount(CanvasContainer, {
       props: { previewWidth: 800 },

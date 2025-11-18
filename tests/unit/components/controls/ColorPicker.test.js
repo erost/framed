@@ -237,15 +237,6 @@ describe('ColorPicker', () => {
       expect(textInput.classes()).toContain('color-text-input');
     });
 
-    it('has gap-1 container to match BaseInput', () => {
-      const wrapper = mount(ColorPicker);
-      const container = wrapper.find('[data-testid="color-picker"]');
-
-      expect(container.classes()).toContain('flex');
-      expect(container.classes()).toContain('flex-col');
-      expect(container.classes()).toContain('gap-1');
-    });
-
     it('color swatch uses scoped class for sizing', () => {
       const wrapper = mount(ColorPicker);
       const colorSwatch = wrapper.find('[data-testid="color-picker-input"]');

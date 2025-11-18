@@ -14,17 +14,17 @@
         class="flex flex-col lg:flex-row gap-6 lg:items-start"
         data-testid="output-action-bar"
       >
-        <div class="flex-1">
-          <QualityInput />
-        </div>
         <!-- Filename and Format stay together on mobile and desktop -->
-        <div class="flex flex-1 gap-2 items-end">
+        <div class="flex flex-1 gap-2 items-start">
           <div class="flex-1">
             <FileNameInput />
           </div>
-          <div class="w-24">
+          <div class="w-14">
             <FormatSelector />
           </div>
+        </div>
+        <div class="flex-1">
+          <QualityInput />
         </div>
       </div>
 
