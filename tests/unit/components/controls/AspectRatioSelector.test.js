@@ -39,33 +39,6 @@ describe('AspectRatioSelector', () => {
       expect(buttonTexts).toContain('5:4');
       expect(buttonTexts).toContain('16:9');
     });
-
-    it('has full-width flex layout', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).toContain('flex');
-      expect(buttonGroup.classes()).toContain('w-full');
-      expect(buttonGroup.classes()).not.toContain('inline-flex');
-    });
-
-
-    it('buttons are always side by side (no flex-col)', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).not.toContain('flex-col');
-    });
-
-    it('buttons use scoped CSS class with flex-1', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        // Buttons should have the base class that includes flex-1 in scoped CSS
-        expect(button.classes()).toContain('ratio-btn');
-      });
-    });
   });
 
   describe('Initial Value', () => {

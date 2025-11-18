@@ -96,6 +96,6 @@ const handleSelect = (ratio) => {
  * Applied to non-selected aspect ratios
  */
 .btn-inactive {
-  @apply text-gray-300 hover:text-gray-100;
+  @apply text-gray-300 hover:text-gray-100 hover:bg-gray-700 cursor-pointer;
 }
 </style>

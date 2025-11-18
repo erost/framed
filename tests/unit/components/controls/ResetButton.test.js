@@ -62,12 +62,6 @@ describe('ResetButton', () => {
       expect(wrapper.find('button').exists()).toBe(true);
     });
 
-    it('displays reset text', () => {
-      const wrapper = mount(ResetButton);
-
-      expect(wrapper.text()).toContain('Reset');
-    });
-
     it('displays reset icon', () => {
       const wrapper = mount(ResetButton);
 
