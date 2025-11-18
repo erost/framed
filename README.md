@@ -10,6 +10,7 @@ A Vue.js application for creating beautiful layouts of two pictures with customi
 - Configurable frame width and outer border size
 - Drag-and-drop image upload
 - High-resolution image export
+- PWA support - installable on mobile and desktop devices
 
 ## Tech Stack
 
@@ -80,7 +81,6 @@ This project uses GitHub Actions for continuous integration and deployment:
 
 - **CI**: Runs linter, tests, and build on all non-main branches and pull requests
 - **Build and Deploy**: Automatically builds and deploys to GitHub Pages on every tag
-- **Version Bump**: Creates a PR with a minor version bump after successful deployment
 
 ## AI Disclaimer
 AI tools have been used to contribute to this project.
