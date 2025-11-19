@@ -52,8 +52,7 @@ describe('ActionBar', () => {
       expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(true);
     });
 
-    it('contains output controls and action buttons', () => {
-      expect(wrapper.find('[data-testid="output-action-bar"]').exists()).toBe(true);
+    it('contains action buttons section', () => {
       expect(wrapper.find('[data-testid="buttons-action-bar"]').exists()).toBe(true);
     });
   });
@@ -88,10 +87,10 @@ describe('ActionBar', () => {
   });
 
   describe('Component Organization', () => {
-    it('has quality and filename inputs in output section', () => {
-      const outputSection = wrapper.find('[data-testid="output-action-bar"]');
-      expect(outputSection.find('[data-testid="quality-input"]').exists()).toBe(true);
-      expect(outputSection.find('[data-testid="file-name-input"]').exists()).toBe(true);
+    it('has output settings on desktop (hidden on mobile)', () => {
+      // Output settings (filename, format, quality) are in a hidden div on mobile
+      expect(wrapper.find('[data-testid="quality-input"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="file-name-input"]').exists()).toBe(true);
     });
 
     it('has reset and download buttons in buttons section', () => {

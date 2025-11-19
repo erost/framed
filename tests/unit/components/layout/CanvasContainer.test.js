@@ -39,12 +39,12 @@ describe('CanvasContainer', () => {
     expect(wrapper.find('[data-testid="frame-canvas"]').exists()).toBe(true);
   });
 
-  it('has max width constraint', () => {
+  it('is full height', () => {
     wrapper = mount(CanvasContainer, {
       props: { previewWidth: 800 },
     });
     const container = wrapper.find('[data-testid="canvas-container"]');
-    expect(container.classes()).toContain('max-w-[1024px]');
+    expect(container.classes()).toContain('h-full');
   });
 
   it('is full width', () => {

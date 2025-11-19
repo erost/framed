@@ -5,17 +5,14 @@
 <template>
   <div
     ref="containerRef"
-    class="w-full max-w-[1024px] mx-auto bg-gray-800 border
-           border-gray-700 rounded-lg shadow-sm p-6"
+    class="w-full h-full flex items-center justify-center"
     data-testid="canvas-container"
   >
-    <div class="w-full flex items-center justify-center">
-      <FrameCanvas
-        ref="canvasRef"
-        :preview-width="previewWidth"
-        @ready="handleCanvasReady"
-      />
-    </div>
+    <FrameCanvas
+      ref="canvasRef"
+      :preview-width="previewWidth"
+      @ready="handleCanvasReady"
+    />
   </div>
 </template>
 

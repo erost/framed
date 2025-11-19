@@ -1,7 +1,27 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { ref } from 'vue';
 import App from '@/App.vue';
 import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
+
+// Mock useFrameConfig composable
+vi.mock('@/composables/useFrameConfig', () => ({
+  useFrameConfig: () => ({
+    frameWidth: ref(1000),
+    frameHeight: ref(750),
+    orientation: ref('landscape'),
+    aspectRatio: ref('4:3'),
+    frameSize: ref(100),
+    spacing: ref(20),
+    frameColor: ref('#ffffff'),
+    backgroundColor: ref('#000000'),
+    updateBackgroundColor: vi.fn(),
+    updateAspectRatio: vi.fn(),
+    updateFrameSize: vi.fn(),
+    updateSpacing: vi.fn(),
+    reset: vi.fn(),
+  }),
+}));
 
 describe('App.vue - Window Resize', () => {
   let mockResizeObserver;
@@ -24,6 +44,28 @@ describe('App.vue - Window Resize', () => {
       return id;
     });
     global.cancelAnimationFrame = vi.fn();
+
+    // Mock window.matchMedia
+    global.window.matchMedia = vi.fn((query) => ({
+      matches: query === '(min-width: 768px)',
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    // Mock window dimensions (default to desktop size)
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1280,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      configurable: true,
+      value: 800,
+    });
   });
 
   afterEach(() => {
@@ -31,105 +73,156 @@ describe('App.vue - Window Resize', () => {
   });
 
   describe('updatePreviewWidth()', () => {
-    it('does nothing when mainContentRef is not set', () => {
-      const wrapper = mount(App);
-      const initialWidth = wrapper.vm.previewWidth;
-
-      wrapper.vm.mainContentRef = null;
-      wrapper.vm.updatePreviewWidth();
-
-      expect(wrapper.vm.previewWidth).toBe(initialWidth);
-    });
-
-    it('calculates preview width from container width', () => {
+    it('calculates preview width from window dimensions', () => {
       const wrapper = mount(App);
 
-      // Mock mainContentRef with specific width
-      wrapper.vm.mainContentRef = {
-        clientWidth: 1000,
+      // Mock window dimensions
+      window.innerWidth = 1280;
+      window.innerHeight = 800;
+
+      // Mock asideRef with sidebar width (desktop: 320px)
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 1000px
-      // Effective width: min(1000, 1024) = 1000
-      // Available width: 1000 - 32 - 48 = 920
-      // Preview width: min(920, 800) = 800
+      // Desktop mode: Window: 1280px x 800px, Aside: 320px wide
+      // Available width: 1280 - 320 = 960, minus padding: 960 - 48 = 912
+      // Available height: 800, minus padding: 800 - 48 = 752
+      // Frame: 1000px x 750px
+      // Scale by width: 912 / 1000 = 0.912
+      // Scale by height: 752 / 750 = 1.0027
+      // Use min scale: 0.912
+      // Scaled width: 1000 * 0.912 = 912
+      // Preview width: min(912, 800) = 800
       expect(wrapper.vm.previewWidth).toBe(800);
     });
 
-    it('caps at max width of 1024px', () => {
+    it('caps at max width of 800px', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 2000,
+      // Large window
+      window.innerWidth = 2000;
+      window.innerHeight = 1500;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 2000px
-      // Effective width: min(2000, 1024) = 1024
-      // Available width: 1024 - 32 - 48 = 944
-      // Preview width: min(944, 800) = 800
+      // Desktop mode: Window: 2000px x 1500px, Aside: 320px
+      // Available width: 2000 - 320 - 48 = 1632
+      // Available height: 1500 - 48 = 1452
+      // Frame: 1000px x 750px
+      // Scale by width: 1632 / 1000 = 1.632
+      // Scale by height: 1452 / 750 = 1.936
+      // Use min scale: 1.632
+      // Scaled width: 1000 * 1.632 = 1632
+      // Preview width: min(1632, 800) = 800 (capped)
       expect(wrapper.vm.previewWidth).toBe(800);
     });
 
-    it('subtracts padding from available width', () => {
+    it('subtracts padding and aside from available space', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 500,
+      // Small window
+      window.innerWidth = 820;
+      window.innerHeight = 600;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 500px
-      // Effective width: min(500, 1024) = 500
-      // Available width: 500 - 32 - 48 = 420
-      // Preview width: min(420, 800) = 420
-      expect(wrapper.vm.previewWidth).toBe(420);
+      // Desktop mode: Window: 820px x 600px, Aside: 320px
+      // Available width: 820 - 320 - 48 = 452
+      // Available height: 600 - 48 = 552
+      // Frame: 1000px x 750px
+      // Scale by width: 452 / 1000 = 0.452
+      // Scale by height: 552 / 750 = 0.736
+      // Use min scale: 0.452
+      // Scaled width: 1000 * 0.452 = 452
+      expect(wrapper.vm.previewWidth).toBe(452);
     });
 
     it('caps at PREVIEW_CONSTRAINTS.defaultWidth', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 1024,
+      window.innerWidth = 1520;
+      window.innerHeight = 900;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 1024px
-      // Effective width: min(1024, 1024) = 1024
-      // Available width: 1024 - 32 - 48 = 944
-      // Preview width: min(944, 800) = 800
+      // Desktop mode: Window: 1520px x 900px, Aside: 320px
+      // Available width: 1520 - 320 - 48 = 1152
+      // Available height: 900 - 48 = 852
+      // Frame: 1000px x 750px
+      // Scale by width: 1152 / 1000 = 1.152
+      // Scale by height: 852 / 750 = 1.136
+      // Use min scale: 1.136
+      // Scaled width: 1000 * 1.136 = 1136
+      // Preview width: min(1136, 800) = 800 (capped)
       expect(wrapper.vm.previewWidth).toBe(PREVIEW_CONSTRAINTS.defaultWidth);
     });
 
-    it('handles small container widths', () => {
+    it('handles mobile mode with bottom aside', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 200,
+      // Mock mobile mode for small screens
+      global.window.matchMedia = vi.fn((query) => ({
+        matches: false, // Mobile mode
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      window.innerWidth = 400;
+      window.innerHeight = 800;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 400,
+        clientHeight: 150, // Bottom aside height
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 200px
-      // Effective width: min(200, 1024) = 200
-      // Available width: 200 - 32 - 48 = 120
-      // Preview width: min(120, 800) = 120
-      expect(wrapper.vm.previewWidth).toBe(120);
+      // Mobile mode: Window: 400px x 800px, Aside: 150px height at bottom
+      // Available width: 400 - 32 = 368
+      // Available height: 800 - 150 - 32 = 618
+      // Frame: 1000px x 750px
+      // Scale by width: 368 / 1000 = 0.368
+      // Scale by height: 618 / 750 = 0.824
+      // Use min scale: 0.368
+      // Scaled width: 1000 * 0.368 = 368
+      expect(wrapper.vm.previewWidth).toBe(368);
     });
 
     it('handles exact default width scenario', () => {
       const wrapper = mount(App);
 
       // To get exactly 800px preview width:
-      // Available width = 800
-      // Container width = 800 + 32 + 48 = 880
-      wrapper.vm.mainContentRef = {
-        clientWidth: 880,
+      // Need scale of 0.8 (800 / 1000)
+      // Available width needed: 1000 * 0.8 = 800
+      // Window width: 800 + 320 (aside) + 48 (padding) = 1168
+      window.innerWidth = 1168;
+      window.innerHeight = 900;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
@@ -142,9 +235,12 @@ describe('App.vue - Window Resize', () => {
     it('calls updatePreviewWidth on mount', () => {
       const wrapper = mount(App);
 
-      // Mock mainContentRef
-      wrapper.vm.mainContentRef = {
-        clientWidth: 1000,
+      window.innerWidth = 1280;
+      window.innerHeight = 800;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       // Manually trigger mounted behavior
@@ -175,7 +271,9 @@ describe('App.vue - Window Resize', () => {
       await wrapper.vm.$nextTick();
 
       if (resizeObserverCallback) {
-        wrapper.vm.mainContentRef = { clientWidth: 1000 };
+        window.innerWidth = 1280;
+        window.innerHeight = 800;
+        wrapper.vm.asideRef = { clientWidth: 320, clientHeight: 100 };
         resizeObserverCallback();
         expect(global.requestAnimationFrame).toHaveBeenCalled();
       }
@@ -186,7 +284,9 @@ describe('App.vue - Window Resize', () => {
       await wrapper.vm.$nextTick();
 
       if (resizeObserverCallback) {
-        wrapper.vm.mainContentRef = { clientWidth: 1000 };
+        window.innerWidth = 1280;
+        window.innerHeight = 800;
+        wrapper.vm.asideRef = { clientWidth: 320, clientHeight: 100 };
 
         // First resize
         resizeObserverCallback();
@@ -300,7 +400,9 @@ describe('App.vue - Window Resize', () => {
       await wrapper.vm.$nextTick();
 
       if (resizeObserverCallback) {
-        wrapper.vm.mainContentRef = { clientWidth: 1000 };
+        window.innerWidth = 1280;
+        window.innerHeight = 800;
+        wrapper.vm.asideRef = { clientWidth: 320, clientHeight: 100 };
 
         // Simulate rapid resize events
         resizeObserverCallback();
@@ -317,62 +419,96 @@ describe('App.vue - Window Resize', () => {
       await wrapper.vm.$nextTick();
 
       if (resizeObserverCallback) {
-        
-
-        wrapper.vm.mainContentRef = { clientWidth: 600 };
+        window.innerWidth = 920;
+        window.innerHeight = 800;
+        wrapper.vm.asideRef = { clientWidth: 320, clientHeight: 100 };
         resizeObserverCallback();
 
         // Width should be updated (via requestAnimationFrame callback)
-        // Available width: 600 - 32 - 48 = 520
-        expect(wrapper.vm.previewWidth).toBe(520);
+        // Desktop mode: Window: 920px x 800px, Aside: 320px
+        // Available width: 920 - 320 - 48 = 552
+        // Available height: 800 - 48 = 752
+        // Frame: 1000px x 750px
+        // Scale by width: 552 / 1000 = 0.552
+        // Scale by height: 752 / 750 = 1.0027
+        // Use min scale: 0.552
+        // Scaled width: 1000 * 0.552 = 552
+        expect(wrapper.vm.previewWidth).toBe(552);
       }
     });
   });
 
   describe('Edge Cases', () => {
-    it('handles zero width container', () => {
+    it('handles very small window width', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 0,
+      window.innerWidth = 368;
+      window.innerHeight = 800;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 0px
-      // Effective width: min(0, 1024) = 0
-      // Available width: 0 - 32 - 48 = -80
-      // Preview width: min(-80, 800) = -80
-      expect(wrapper.vm.previewWidth).toBeLessThan(0);
+      // Desktop mode: Window: 368px x 800px, Aside: 320px
+      // Available width: 368 - 320 - 48 = 0
+      // Available height: 800 - 48 = 752
+      // Scale by width: 0 / 1000 = 0
+      // Scale by height: 752 / 750 = 1.0027
+      // Use min scale: 0
+      // Scaled width: 1000 * 0 = 0
+      expect(wrapper.vm.previewWidth).toBe(0);
     });
 
-    it('handles very large container width', () => {
+    it('handles very large window dimensions', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 10000,
+      window.innerWidth = 10000;
+      window.innerHeight = 8000;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Still capped at 1024 max width, then 800 preview max
+      // Desktop mode: Window: 10000px x 8000px, Aside: 320px
+      // Available width: 10000 - 320 - 48 = 9632
+      // Available height: 8000 - 48 = 7952
+      // Frame: 1000px x 750px
+      // Scale by width: 9632 / 1000 = 9.632
+      // Scale by height: 7952 / 750 = 10.603
+      // Use min scale: 9.632
+      // Scaled width: 1000 * 9.632 = 9632
+      // Capped at 800
       expect(wrapper.vm.previewWidth).toBe(800);
     });
 
-    it('handles negative width scenarios gracefully', () => {
+    it('handles small window with aside', () => {
       const wrapper = mount(App);
 
-      wrapper.vm.mainContentRef = {
-        clientWidth: 50, // Less than padding total (80)
+      window.innerWidth = 620;
+      window.innerHeight = 600;
+
+      wrapper.vm.asideRef = {
+        clientWidth: 320,
+        clientHeight: 100,
       };
 
       wrapper.vm.updatePreviewWidth();
 
-      // Container: 50px
-      // Effective width: min(50, 1024) = 50
-      // Available width: 50 - 32 - 48 = -30
-      // Preview width: min(-30, 800) = -30
-      expect(wrapper.vm.previewWidth).toBe(-30);
+      // Desktop mode: Window: 620px x 600px, Aside: 320px
+      // Available width: 620 - 320 - 48 = 252
+      // Available height: 600 - 48 = 552
+      // Frame: 1000px x 750px
+      // Scale by width: 252 / 1000 = 0.252
+      // Scale by height: 552 / 750 = 0.736
+      // Use min scale: 0.252
+      // Scaled width: 1000 * 0.252 = 252
+      expect(wrapper.vm.previewWidth).toBe(252);
     });
   });
 });
