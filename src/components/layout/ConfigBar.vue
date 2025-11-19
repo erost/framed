@@ -1,41 +1,31 @@
 <!--
   ConfigBar Component
-  Top configuration bar with all frame controls and action buttons
+  Configuration controls for frame settings
+  Desktop: Vertical stack in sidebar
+  Mobile: Horizontal row at bottom
 -->
 <template>
   <div
-    class="w-full max-w-[1024px] mx-auto bg-gray-800 border
-           border-gray-700 rounded-lg shadow-sm px-6 py-4"
+    class="bg-gray-800 md:bg-transparent md:border-0 border-t border-gray-700
+           md:rounded-none md:shadow-none md:px-0 md:py-0 px-4 py-3"
     data-testid="config-bar"
   >
-    <div class="flex flex-col gap-6">
-      <!-- Row 1: Orientation and Aspect Ratio Controls -->
-      <div
-        class="flex flex-col md:flex-row gap-4 md:items-center"
-        data-testid="row-orientation-aspect"
-      >
-        <div class="flex-1">
-          <OrientationToggle />
-        </div>
-        <div class="flex-1">
-          <AspectRatioSelector />
-        </div>
+    <!-- Mobile: Horizontal scrollable row -->
+    <div class="flex md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-x-visible">
+      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+        <OrientationToggle />
       </div>
-
-      <!-- Row 2: Frame Configuration Controls -->
-      <div
-        class="flex flex-col md:flex-row gap-4"
-        data-testid="row-frame-config"
-      >
-        <div class="flex-1">
-          <ColorPicker />
-        </div>
-        <div class="flex-1">
-          <FrameSizeInput />
-        </div>
-        <div class="flex-1">
-          <SpacingInput />
-        </div>
+      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+        <AspectRatioSelector />
+      </div>
+      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+        <ColorPicker />
+      </div>
+      <div class="flex-shrink-0 md:flex-shrink min-w-[150px] md:min-w-0 md:w-full">
+        <FrameSizeInput />
+      </div>
+      <div class="flex-shrink-0 md:flex-shrink min-w-[150px] md:min-w-0 md:w-full">
+        <SpacingInput />
       </div>
     </div>
   </div>
@@ -51,10 +41,16 @@ import SpacingInput from '@/components/controls/SpacingInput.vue';
 /**
  * ConfigBar component
  * Contains all frame configuration controls
- * Organized in 2 rows:
- * - Row 1: OrientationToggle and AspectRatioSelector 
- *          (side by side on desktop with equal width, stacked on mobile)
- * - Row 2: ColorPicker, FrameSizeInput, SpacingInput 
- *          (responsive flex layout)
+ *
+ * Layout:
+ * - Desktop (≥768px): Vertical stack in left sidebar
+ * - Mobile (<768px): Horizontal scrollable row at bottom
+ *
+ * Controls included:
+ * - OrientationToggle: Switch between portrait/landscape
+ * - AspectRatioSelector: Select aspect ratio preset
+ * - ColorPicker: Choose frame color
+ * - FrameSizeInput: Adjust frame border size
+ * - SpacingInput: Adjust spacing between image and frame
  */
 </script>

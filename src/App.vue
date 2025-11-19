@@ -3,68 +3,78 @@
   Picture Frame Creator - Main application layout
 -->
 <template>
-  <div class="min-h-screen bg-gray-900">
-    <!-- Header -->
-    <AppHeader />
+  <div class="min-h-screen bg-gray-900 flex flex-col-reverse md:flex-row overflow-hidden">
+    <!-- Desktop: Left Sidebar with Controls | Mobile: Bottom Controls in Reverse Column -->
+    <aside
+      ref="asideRef"
+      class="md:w-80 flex flex-col md:border-r md:border-gray-700 md:h-screen"
+    >
+      <!-- Configuration Controls -->
+      <div class="md:flex-1 md:p-4 md:space-y-4 md:overflow-y-auto">
+        <ConfigBar />
+      </div>
 
-    <!-- Main Content -->
+      <!-- Action Buttons (Desktop: scrollable section, Mobile: second row) -->
+      <div class="md:border-t md:border-gray-700 md:p-4 md:space-y-3 md:overflow-y-auto">
+        <ActionBar
+          :stage="stage"
+          :preview-width="previewWidth"
+        />
+      </div>
+    </aside>
+
+    <!-- Canvas Area -->
     <main
       ref="mainContentRef"
-      class="container mx-auto px-4 py-8 max-w-7xl"
+      class="flex-1 flex items-center justify-center overflow-hidden"
     >
-      <!-- Configuration Bar -->
-      <ConfigBar class="mb-8" />
-
-      <!-- Canvas with Integrated Upload Zones -->
       <CanvasContainer
         ref="canvasContainerRef"
         :preview-width="previewWidth"
         @canvas-ready="handleCanvasReady"
       />
-
-      <!-- Action Bar -->
-      <ActionBar
-        :stage="stage"
-        :preview-width="previewWidth"
-        class="mt-6"
-      />
     </main>
-
-    <!-- Footer -->
-    <footer
-      class="mt-16 py-8 text-center text-sm text-gray-400 border-t border-gray-700"
-    >
-      <p>
-        Framed &copy; 2025
-        <span class="mx-2">•</span>
-        Built by <a
-          href="https://erost.net"
-          target="_blank"
-        >erost.net</a>
-      </p>
-    </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
-import AppHeader from '@/components/layout/AppHeader.vue';
+import { useFrameConfig } from '@/composables/useFrameConfig';
 import ConfigBar from '@/components/layout/ConfigBar.vue';
 import CanvasContainer from '@/components/layout/CanvasContainer.vue';
 import ActionBar from '@/components/layout/ActionBar.vue';
 
 /**
  * Root application component
- * Integrates all major components
+ * Integrates all major components with responsive, space-efficient layout
+ *
+ * Layout structure:
+ * - Desktop (≥768px): Horizontal flexbox with left sidebar (320px, full height)
+ *   and flex canvas area
+ *   - Left sidebar (scrollable sections):
+ *     - ConfigBar section: Configuration controls
+ *     - ActionBar section: Output settings + full-width action buttons
+ *   - Right area: Canvas taking maximum available space
+ *   - No header or footer for maximum space efficiency
+ *
+ * - Mobile (<768px): Vertical reverse flexbox (column-reverse)
+ *   - Canvas: Top area taking remaining space
+ *   - Controls: Bottom area (2 rows):
+ *     - Row 1 (ConfigBar): Horizontal scrollable configuration controls
+ *     - Row 2 (ActionBar): Action buttons sharing width equally
+ *   - Uses flex-col-reverse to position controls at bottom while maintaining proper document flow
  */
 
 const canvasContainerRef = ref(null);
 const mainContentRef = ref(null);
+const asideRef = ref(null);
 const stage = ref(null);
 const previewWidth = ref(PREVIEW_CONSTRAINTS.defaultWidth);
 let resizeObserver = null;
 let resizeTimeout = null;
+
+const { frameWidth, frameHeight } = useFrameConfig();
 
 /**
  * Handle canvas ready event
@@ -75,26 +85,59 @@ const handleCanvasReady = (konvaStage) => {
 };
 
 /**
- * Update preview width based on main content container size
- * Shared between ConfigBar and CanvasContainer for consistent sizing
+ * Update preview width based on window size and aside dimensions
+ * Ensures canvas fits within available space by scaling to fit both width and height
  */
 const updatePreviewWidth = () => {
-  if (mainContentRef.value) {
-    // Get container width
-    const containerWidth = mainContentRef.value.clientWidth;
+  if (frameWidth.value && frameHeight.value) {
+    // Use window dimensions for accurate viewport size
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
 
-    // Account for max-w-[1024px] constraint and padding
-    const maxWidth = 1024;
-    const effectiveWidth = Math.min(containerWidth, maxWidth);
+    // Start with full window dimensions
+    let availableWidth = windowWidth;
+    let availableHeight = windowHeight;
 
-    // Account for padding (px-4 = 16px on each side = 32px total)
-    // and CanvasContainer padding (p-6 = 24px on each side = 48px total)
-    const availableWidth = effectiveWidth - 32 - 48;
+    // Subtract aside dimensions
+    if (isDesktop && asideRef.value) {
+      // Desktop: aside is on the left, subtract its width
+      const asideWidth = asideRef.value.clientWidth;
+      availableWidth -= asideWidth;
+    } else if (!isDesktop && asideRef.value) {
+      // Mobile: aside is at the bottom, subtract its height
+      const asideHeight = asideRef.value.clientHeight;
+      availableHeight -= asideHeight;
+    }
+
+    // Account for padding: p-6 (24px) on desktop, p-4 (16px) on mobile
+    const paddingHorizontal = isDesktop ? 48 : 32; // left + right
+    const paddingVertical = isDesktop ? 48 : 32;   // top + bottom
+
+    availableWidth -= paddingHorizontal;
+    availableHeight -= paddingVertical;
+
+    // Calculate scale factors for both dimensions
+    const scaleByWidth = availableWidth / frameWidth.value;
+    const scaleByHeight = availableHeight / frameHeight.value;
+
+    // Use the smaller scale to ensure both dimensions fit
+    const scale = Math.min(scaleByWidth, scaleByHeight);
+
+    // Calculate final width based on scale
+    const scaledWidth = frameWidth.value * scale;
 
     // Cap at maximum width for canvas
-    previewWidth.value = Math.min(availableWidth, PREVIEW_CONSTRAINTS.defaultWidth);
+    previewWidth.value = Math.min(scaledWidth, PREVIEW_CONSTRAINTS.defaultWidth);
   }
 };
+
+/**
+ * Watch for frame dimension changes and recalculate preview width
+ */
+watch([frameWidth, frameHeight], () => {
+  updatePreviewWidth();
+});
 
 /**
  * Set up responsive sizing on mount
@@ -104,7 +147,7 @@ onMounted(() => {
   updatePreviewWidth();
 
   // Use ResizeObserver for efficient container size tracking
-  if (typeof ResizeObserver !== 'undefined' && mainContentRef.value) {
+  if (typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(() => {
       // Use requestAnimationFrame to batch updates and prevent ResizeObserver loop
       if (resizeTimeout) {
@@ -115,7 +158,16 @@ onMounted(() => {
         resizeTimeout = null;
       });
     });
-    resizeObserver.observe(mainContentRef.value);
+
+    // Observe main content area
+    if (mainContentRef.value) {
+      resizeObserver.observe(mainContentRef.value);
+    }
+
+    // Observe aside (mobile bottom bar height can change)
+    if (asideRef.value) {
+      resizeObserver.observe(asideRef.value);
+    }
   } else {
     // Fallback to window resize event
     window.addEventListener('resize', updatePreviewWidth);

@@ -1,21 +1,20 @@
 <!--
   ActionBar Component
-  Action buttons (Download and Reset) placed below the canvas
+  Action buttons and output settings
+  Desktop: Vertical stack at bottom of sidebar
+  Mobile: Second row at bottom
 -->
 <template>
   <div
-    class="w-full max-w-[1024px] mx-auto bg-gray-800 border
-           border-gray-700 rounded-lg shadow-sm px-6 py-4"
+    class="bg-gray-800 md:bg-transparent md:border-0 border-t border-gray-700
+           md:rounded-none md:shadow-none md:px-0 md:py-0 px-4 py-3"
     data-testid="action-bar"
   >
-    <div class="flex flex-col gap-6">
-      <!-- Row 1: Quality and file output controls -->
-      <div
-        class="flex flex-col lg:flex-row gap-6 lg:items-start"
-        data-testid="output-action-bar"
-      >
-        <!-- Filename and Format stay together on mobile and desktop -->
-        <div class="flex flex-1 gap-2 items-start">
+    <!-- Desktop: Vertical stack | Mobile: Horizontal row -->
+    <div class="flex md:flex-col gap-3 md:gap-3">
+      <!-- Output settings (hidden on mobile, shown on desktop) -->
+      <div class="hidden md:flex md:flex-col md:gap-3">
+        <div class="flex gap-2">
           <div class="flex-1">
             <FileNameInput />
           </div>
@@ -23,21 +22,23 @@
             <FormatSelector />
           </div>
         </div>
-        <div class="flex-1">
-          <QualityInput />
-        </div>
+        <QualityInput />
       </div>
 
-      <!-- Row 2: Buttons -->
+      <!-- Action Buttons (always visible) -->
       <div
-        class="flex flex-col lg:flex-row gap-4 lg:justify-end lg:items-start"
+        class="flex flex-1 md:flex-col gap-2 md:gap-2"
         data-testid="buttons-action-bar"
       >
-        <ResetButton />
-        <DownloadButton
-          :stage="stage"
-          :preview-width="previewWidth"
-        />
+        <div class="flex-1">
+          <ResetButton />
+        </div>
+        <div class="flex-1">
+          <DownloadButton
+            :stage="stage"
+            :preview-width="previewWidth"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -52,9 +53,15 @@ import FormatSelector from '@/components/controls/FormatSelector.vue';
 
 /**
  * ActionBar component
- * Contains action buttons (Download and Reset)
- * - Desktop: Buttons aligned right, side by side
- * - Mobile: Stacked vertically (Download on top), full width
+ * Contains action buttons and output settings
+ *
+ * Layout:
+ * - Desktop (≥768px): Vertical stack in scrollable section at bottom of sidebar
+ *   - Output settings (filename, format, quality) shown
+ *   - Reset and Download buttons stacked, full-width
+ * - Mobile (<768px): Second row at bottom
+ *   - Output settings hidden (to save space)
+ *   - Reset and Download buttons shown side-by-side, equal width
  */
 
 defineProps({

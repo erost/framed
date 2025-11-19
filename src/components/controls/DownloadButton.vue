@@ -5,7 +5,7 @@
 <template>
   <button
     class="
-      inline-flex items-center justify-center font-medium rounded-lg transition-colors
+      w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors
       focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-500 text-white hover:bg-blue-600
       focus:ring-blue-500 px-4 py-2 text-base
     "
@@ -41,6 +41,10 @@ import { useCanvasRenderer } from '@/composables/useCanvasRenderer';
  * DownloadButton component
  * Downloads the rendered canvas as an image file
  * Disabled when images are not uploaded
+ *
+ * Button takes full width of container:
+ * - Desktop: Full width of sidebar
+ * - Mobile: Equal share with Reset button
  */
 
 const props = defineProps({

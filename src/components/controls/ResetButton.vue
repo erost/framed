@@ -5,7 +5,7 @@
 <template>
   <button
     class="
-      inline-flex items-center justify-center font-medium rounded-lg transition-colors
+      w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors
       focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gray-700 text-gray-100
       hover:bg-gray-600 focus:ring-gray-500 px-4 py-2 text-base
     "
@@ -38,6 +38,10 @@ import { useImageState } from '@/composables/useImageState';
 /**
  * ResetButton component
  * Resets all configuration and clears images
+ *
+ * Button takes full width of container:
+ * - Desktop: Full width of sidebar
+ * - Mobile: Equal share with Download button
  */
 
 defineProps({
