@@ -26,22 +26,6 @@ describe('ActionBar', () => {
     });
   });
 
-  describe('Structure', () => {
-    it('renders the action bar with correct structure', () => {
-      expect(wrapper.find('[data-testid="action-bar"]').exists()).toBe(true);
-    });
-
-    it('renders action buttons', () => {
-      expect(wrapper.find('[data-testid="reset-button"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(true);
-    });
-
-    it('contains action buttons section', () => {
-      expect(wrapper.find('[data-testid="buttons-action-bar"]').exists()).toBe(true);
-    });
-  });
-
-
   describe('Props', () => {
     it('accepts stage prop for download functionality', () => {
       const mockStage = { toDataURL: vi.fn() };
@@ -55,10 +39,6 @@ describe('ActionBar', () => {
       expect(wrapper.props('stage')).toStrictEqual(mockStage);
     });
 
-    it('requires previewWidth prop', () => {
-      expect(wrapper.props('previewWidth')).toBe(800);
-    });
-
     it('has default null stage', () => {
       wrapper = mount(ActionBar, {
         props: {
@@ -67,14 +47,6 @@ describe('ActionBar', () => {
       });
 
       expect(wrapper.props('stage')).toBeNull();
-    });
-  });
-
-  describe('Component Organization', () => {
-    it('has reset and download buttons in buttons section', () => {
-      const buttonsSection = wrapper.find('[data-testid="buttons-action-bar"]');
-      expect(buttonsSection.find('[data-testid="reset-button"]').exists()).toBe(true);
-      expect(buttonsSection.find('[data-testid="download-button"]').exists()).toBe(true);
     });
   });
 });

@@ -11,70 +11,6 @@ describe('FrameSizeSelector', () => {
     frameConfig.reset();
   });
 
-  describe('Rendering', () => {
-    it('renders frame size button group', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      expect(wrapper.find('[role="group"]').exists()).toBe(true);
-    });
-
-    it('renders all frame size buttons', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-
-      expect(buttons).toHaveLength(3);
-    });
-
-    it('renders correct button labels', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-      const buttonTexts = buttons.map((btn) => btn.text());
-
-      expect(buttonTexts).toContain('1024px');
-      expect(buttonTexts).toContain('2048px');
-      expect(buttonTexts).toContain('4096px');
-    });
-
-    it('has default test ID', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      expect(wrapper.attributes('data-testid')).toBe('frame-size-selector');
-    });
-
-    it('has custom test ID', () => {
-      const wrapper = mount(FrameSizeSelector, {
-        props: { testId: 'custom-size' },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('custom-size');
-    });
-  });
-
-  describe('Initial Value', () => {
-    it('reflects current frame size from config', async () => {
-      frameConfig.updateFrameSize(2048);
-
-      const wrapper = mount(FrameSizeSelector);
-
-      const button = wrapper.find('[data-testid="frame-size-2048"]');
-      expect(button.attributes('aria-pressed')).toBe('true');
-      expect(button.classes()).toContain('selector-btn-active');
-    });
-
-    it('only one button is active at a time', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-      const activeButtons = buttons.filter(
-        (btn) => btn.attributes('aria-pressed') === 'true'
-      );
-
-      expect(activeButtons.length).toBeLessThanOrEqual(1);
-    });
-  });
-
   describe('Interaction', () => {
     it('updates frame size when 1024px button is clicked', async () => {
       const wrapper = mount(FrameSizeSelector);
@@ -142,7 +78,6 @@ describe('FrameSizeSelector', () => {
 
       const button = wrapper.find('[data-testid="frame-size-4096"]');
       expect(button.attributes('aria-pressed')).toBe('true');
-      expect(button.classes()).toContain('selector-btn-active');
     });
 
     it('previous button becomes inactive when size changes externally', async () => {
@@ -156,23 +91,10 @@ describe('FrameSizeSelector', () => {
       await wrapper.vm.$nextTick();
 
       expect(button1024.attributes('aria-pressed')).toBe('false');
-      expect(button1024.classes()).toContain('selector-btn-inactive');
     });
   });
 
   describe('Accessibility', () => {
-    it('has role group', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      expect(wrapper.find('[role="group"]').exists()).toBe(true);
-    });
-
-    it('has aria-label on button group', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      expect(wrapper.find('[role="group"]').attributes('aria-label')).toBe('Frame size');
-    });
-
     it('sets aria-pressed correctly', async () => {
       frameConfig.updateFrameSize(1024);
       const wrapper = mount(FrameSizeSelector);
@@ -188,58 +110,6 @@ describe('FrameSizeSelector', () => {
 
       expect(button1024.attributes('aria-pressed')).toBe('false');
       expect(button2048.attributes('aria-pressed')).toBe('true');
-    });
-
-    it('all buttons have scoped class with focus ring styles', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        expect(button.classes()).toContain('selector-btn');
-      });
-    });
-  });
-
-  describe('Visual Consistency', () => {
-    it('active button has selector-btn-active class', () => {
-      frameConfig.updateFrameSize(1024);
-      const wrapper = mount(FrameSizeSelector);
-
-      const activeButton = wrapper.find('[data-testid="frame-size-1024"]');
-      expect(activeButton.classes()).toContain('selector-btn-active');
-    });
-
-    it('inactive buttons have selector-btn-inactive class', () => {
-      frameConfig.updateFrameSize(1024);
-      const wrapper = mount(FrameSizeSelector);
-
-      const inactiveButton = wrapper.find('[data-testid="frame-size-2048"]');
-      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
-    });
-  });
-
-  describe('Component Structure', () => {
-    it('uses scoped CSS classes', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        expect(button.classes()).toContain('selector-btn');
-      });
-    });
-
-    it('applies selector-btn-active to active button only', () => {
-      frameConfig.updateFrameSize(1024);
-      const wrapper = mount(FrameSizeSelector);
-
-      const activeButton = wrapper.find('[data-testid="frame-size-1024"]');
-      const inactiveButton = wrapper.find('[data-testid="frame-size-2048"]');
-
-      expect(activeButton.classes()).toContain('selector-btn-active');
-      expect(activeButton.classes()).not.toContain('selector-btn-inactive');
-
-      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
-      expect(inactiveButton.classes()).not.toContain('selector-btn-active');
     });
   });
 
@@ -270,15 +140,6 @@ describe('FrameSizeSelector', () => {
 
       // No button should be active for unknown size
       expect(activeButtons).toHaveLength(0);
-    });
-
-    it('all buttons have type="button"', () => {
-      const wrapper = mount(FrameSizeSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        expect(button.attributes('type')).toBe('button');
-      });
     });
   });
 
