@@ -17,31 +17,34 @@
         data-testid="panel-toggle-checkbox"
       >
 
-      <label
-        for="settings-panel-toggle"
-        class="chevron-toggle md:hidden"
-        data-testid="panel-toggle-button"
-      >
-        <svg
-          class="chevron-icon w-4 h-4 transition-transform duration-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 15l7-7 7 7"
-          />
-        </svg>
-      </label>
-
-      <!-- Configuration Controls - Slide-up Panel (Mobile) / Sidebar (Desktop) -->
-      <div class="settings-panel md:flex-1 md:p-4 md:space-y-4 md:overflow-y-auto">
+      <!-- Settings Panel Wrapper (chevron + panel move together) -->
+      <div class="settings-panel-wrapper md:flex-1 md:p-4 md:space-y-4 md:overflow-y-auto">
         <!-- Mobile: Circular Chevron Toggle Button (centered on top border of panel) -->
-        <ConfigBar />
+        <label
+          for="settings-panel-toggle"
+          class="chevron-toggle md:hidden"
+          data-testid="panel-toggle-button"
+        >
+          <svg
+            class="chevron-icon w-4 h-4 transition-transform duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 15l7-7 7 7"
+            />
+          </svg>
+        </label>
+
+        <!-- Configuration Controls - Slide-up Panel (Mobile) / Sidebar (Desktop) -->
+        <div class="settings-panel">
+          <ConfigBar />
+        </div>
       </div>
 
       <!-- Action Buttons (Mobile) / Bottom Section (Desktop) -->
@@ -237,10 +240,22 @@ onUnmounted(() => {
     background-color: rgb(31 41 55); /* bg-gray-800 */
   }
 
-  /* Circular chevron toggle button - follows settings panel */
+  /* Settings panel wrapper - grows from 0 to 33vh */
+  .settings-panel-wrapper {
+    position: absolute;
+    bottom: 100%; /* Position above action section */
+    left: 0;
+    right: 0;
+    height: 0; /* Start collapsed */
+    overflow: visible; /* Allow chevron to show */
+    transition: height 0.3s ease-in-out;
+    z-index: 70;
+  }
+
+  /* Circular chevron toggle button - attached to wrapper bottom */
   .chevron-toggle {
     position: absolute;
-    bottom: calc(100% - 16px); /* Position on border of settings panel (hidden state) */
+    top: -16px;
     left: 50%;
     transform: translateX(-50%);
     width: 32px;
@@ -252,8 +267,8 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 80; /* Higher than action section */
-    transition: bottom 0.3s ease-in-out, background-color 0.2s, border-color 0.2s;
+    z-index: 80; /* Higher than wrapper */
+    transition: background-color 0.2s, border-color 0.2s;
   }
 
   .chevron-toggle:hover {
@@ -261,33 +276,31 @@ onUnmounted(() => {
     border-color: rgb(75 85 99); /* border-gray-600 */
   }
 
-  /* Settings panel starts hidden below viewport */
+  /* Settings panel content */
   .settings-panel {
-    position: absolute;
-    bottom: 100%; /* Position above action section */
-    left: 0;
-    right: 0;
-    height: 33vh;
-    transform: translateY(100%); /* Hidden below */
-    transition: transform 0.3s ease-in-out;
+    width: 100%;
+    height: 100%; /* Fixed height for content */
     background-color: rgb(31 41 55); /* bg-gray-800 */
     border-top: 1px solid rgb(55 65 81); /* border-gray-700 */
     overflow-y: auto;
-    padding: 1rem; /* p-4 */
-    z-index: 50;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    overflow: hidden;
   }
 
-  /* When checkbox is checked, slide panel up and move chevron with it */
-  #settings-panel-toggle:checked ~ .chevron-toggle {
-    bottom: calc(100% + 33vh - 16px); /* Move up by panel height */
+  /* When checkbox is checked, expand wrapper to show panel */
+  #settings-panel-toggle:checked ~ .settings-panel-wrapper {
+    height: 33vh;
   }
 
-  #settings-panel-toggle:checked ~ .settings-panel {
-    transform: translateY(0);
+  #settings-panel-toggle:checked ~ .settings-panel-wrapper > .settings-panel {
+    padding-bottom: 1rem;
+    overflow-y: auto;
   }
 
   /* Rotate chevron when panel is open */
-  #settings-panel-toggle:checked ~ .chevron-toggle .chevron-icon {
+  #settings-panel-toggle:checked ~ .settings-panel-wrapper .chevron-icon {
     transform: rotate(180deg);
   }
 }
