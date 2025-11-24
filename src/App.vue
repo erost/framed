@@ -4,18 +4,50 @@
 -->
 <template>
   <div class="min-h-screen bg-gray-900 flex flex-col-reverse md:flex-row overflow-hidden">
-    <!-- Desktop: Left Sidebar with Controls | Mobile: Bottom Controls in Reverse Column -->
+    <!-- Desktop: Left Sidebar with Controls | Mobile: Bottom Action Bar + CSS Slide-up Panel -->
     <aside
       ref="asideRef"
-      class="md:w-80 flex flex-col md:border-r md:border-gray-700 md:h-screen"
+      class="md:w-80 flex flex-col md:border-r md:border-gray-700 md:h-screen relative"
     >
-      <!-- Configuration Controls -->
-      <div class="md:flex-1 md:p-4 md:space-y-4 md:overflow-y-auto">
+      <!-- Hidden checkbox for CSS-only toggle (mobile only) -->
+      <input
+        id="settings-panel-toggle"
+        type="checkbox"
+        class="hidden"
+        data-testid="panel-toggle-checkbox"
+      >
+
+      <label
+        for="settings-panel-toggle"
+        class="chevron-toggle md:hidden"
+        data-testid="panel-toggle-button"
+      >
+        <svg
+          class="chevron-icon w-4 h-4 transition-transform duration-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </label>
+
+      <!-- Configuration Controls - Slide-up Panel (Mobile) / Sidebar (Desktop) -->
+      <div class="settings-panel md:flex-1 md:p-4 md:space-y-4 md:overflow-y-auto">
+        <!-- Mobile: Circular Chevron Toggle Button (centered on top border of panel) -->
         <ConfigBar />
       </div>
 
-      <!-- Action Buttons (Desktop: scrollable section, Mobile: second row) -->
-      <div class="md:border-t md:border-gray-700 md:p-4 md:space-y-3 md:overflow-y-auto">
+      <!-- Action Buttons (Mobile) / Bottom Section (Desktop) -->
+      <div
+        class="action-section md:border-t md:border-gray-700 md:p-4 md:space-y-3 md:overflow-y-auto"
+      >
         <ActionBar
           :stage="stage"
           :preview-width="previewWidth"
@@ -188,3 +220,75 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<style scoped>
+/* Mobile slide-up panel - CSS only with checkbox hack */
+@media (max-width: 767px) {
+  /* Aside container for proper stacking */
+  aside {
+    display: flex;
+    flex-direction: column-reverse; /* Action bar at bottom, panel slides from below */
+  }
+
+  /* Action section stays at bottom */
+  .action-section {
+    position: relative;
+    z-index: 60;
+    background-color: rgb(31 41 55); /* bg-gray-800 */
+  }
+
+  /* Circular chevron toggle button - follows settings panel */
+  .chevron-toggle {
+    position: absolute;
+    bottom: calc(100% - 16px); /* Position on border of settings panel (hidden state) */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background-color: rgb(31 41 55); /* bg-gray-800 */
+    border: 2px solid rgb(55 65 81); /* border-gray-700 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 80; /* Higher than action section */
+    transition: bottom 0.3s ease-in-out, background-color 0.2s, border-color 0.2s;
+  }
+
+  .chevron-toggle:hover {
+    background-color: rgb(55 65 81); /* bg-gray-700 */
+    border-color: rgb(75 85 99); /* border-gray-600 */
+  }
+
+  /* Settings panel starts hidden below viewport */
+  .settings-panel {
+    position: absolute;
+    bottom: 100%; /* Position above action section */
+    left: 0;
+    right: 0;
+    height: 33vh;
+    transform: translateY(100%); /* Hidden below */
+    transition: transform 0.3s ease-in-out;
+    background-color: rgb(31 41 55); /* bg-gray-800 */
+    border-top: 1px solid rgb(55 65 81); /* border-gray-700 */
+    overflow-y: auto;
+    padding: 1rem; /* p-4 */
+    z-index: 50;
+  }
+
+  /* When checkbox is checked, slide panel up and move chevron with it */
+  #settings-panel-toggle:checked ~ .chevron-toggle {
+    bottom: calc(100% + 33vh - 16px); /* Move up by panel height */
+  }
+
+  #settings-panel-toggle:checked ~ .settings-panel {
+    transform: translateY(0);
+  }
+
+  /* Rotate chevron when panel is open */
+  #settings-panel-toggle:checked ~ .chevron-toggle .chevron-icon {
+    transform: rotate(180deg);
+  }
+}
+</style>

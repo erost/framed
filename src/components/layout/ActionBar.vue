@@ -7,7 +7,7 @@
 <template>
   <div
     class="bg-gray-800 md:bg-transparent md:border-0 border-t border-gray-700
-           md:rounded-none md:shadow-none md:px-0 md:py-0 px-4 py-3"
+           md:rounded-none md:shadow-none md:px-0 md:py-0 px-3 py-4"
     data-testid="action-bar"
   >
     <!-- Desktop: Vertical stack | Mobile: Horizontal row -->

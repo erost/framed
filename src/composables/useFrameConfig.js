@@ -43,7 +43,9 @@ export function useFrameConfig() {
    * Toggle orientation between portrait and landscape
    */
   const toggleOrientation = () => {
-    orientation.value = orientation.value === ORIENTATIONS.PORTRAIT ? ORIENTATIONS.LANDSCAPE : ORIENTATIONS.PORTRAIT;
+    orientation.value = orientation.value === ORIENTATIONS.PORTRAIT
+      ? ORIENTATIONS.LANDSCAPE
+      : ORIENTATIONS.PORTRAIT;
   };
 
   /**

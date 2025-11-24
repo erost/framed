@@ -344,7 +344,9 @@ describe('FrameCanvas', () => {
         const initialOrientation = wrapper.vm.orientation;
 
         frameConfig.updateOrientation(
-          initialOrientation === ORIENTATIONS.PORTRAIT ? ORIENTATIONS.LANDSCAPE : ORIENTATIONS.PORTRAIT
+          initialOrientation === ORIENTATIONS.PORTRAIT
+            ? ORIENTATIONS.LANDSCAPE
+            : ORIENTATIONS.PORTRAIT
         );
         await nextTick();
 
