@@ -142,9 +142,9 @@ const updatePreviewWidth = () => {
       availableHeight -= asideHeight;
     }
 
-    // Account for padding: p-6 (24px) on desktop, p-4 (16px) on mobile
-    const paddingHorizontal = isDesktop ? 48 : 32; // left + right
-    const paddingVertical = isDesktop ? 48 : 32;   // top + bottom
+    // Account for FrameCanvas padding: p-4 (16px on all sides, both desktop and mobile)
+    const paddingHorizontal = 32; // left + right (16px × 2)
+    const paddingVertical = 32;   // top + bottom (16px × 2)
 
     availableWidth -= paddingHorizontal;
     availableHeight -= paddingVertical;
