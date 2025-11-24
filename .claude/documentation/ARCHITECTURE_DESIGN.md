@@ -36,33 +36,37 @@ Picture Frame Creator is a Vue.js-based web application that allows users to cre
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         App.vue                             │
-│  (Root Component - Layout Container)                        │
+│  (Root Component - Responsive Layout Container)             │
+│  Desktop: Sidebar + Canvas | Mobile: Canvas + Bottom Panel  │
 └────────┬───────────────────────────────┬────────────────────┘
          │                               │
-┌────────▼────────┐             ┌────────▼─────────┐
-│ AppHeader.vue   │             │CanvasContainer   │
-│ (Header)        │             │  FrameCanvas     │
-└─────────────────┘             │  (Rendering)     │
-                                └────────┬─────────┘
-┌─────────────────┐                      │
-│ ConfigBar.vue   │             ┌────────┴─────────┐
-│ (Row 1 & 2)     │             │                  │
-└────────┬────────┘         ┌───▼──────┐    ┌─────▼──────┐
-         │                  │  Konva   │    │   Image    │
-   ┌─────┴──────┐           │  Stage   │    │  Upload    │
-   │            │           └──────────┘    └────────────┘
-┌──▼───┐  ┌────▼────┐
-│Orient│  │  Ratio  │
-│Toggle│  │Selector │
-└──────┘  └─────────┘
+         │                       ┌───────▼──────────┐
+         │                       │ CanvasContainer  │
+         │                       │   FrameCanvas    │
+         │                       │   (Rendering)    │
+         │                       └────────┬─────────┘
+         │                                │
+┌────────▼────────┐              ┌───────┴─────────┐
+│ ConfigBar.vue   │              │                 │
+│ (Configuration) │          ┌───▼──────┐   ┌─────▼──────┐
+└────────┬────────┘          │  Konva   │   │   Image    │
+         │                   │  Stage   │   │  Upload    │
+   ┌─────┴───────┐           └──────────┘   └────────────┘
+   │             │
+   │  ConfigElement Wrapper (x7)
+   │             │
+┌──▼───┐  ┌────▼────┐  ┌────────┐  ┌─────────┐
+│Orient│  │  Ratio  │  │ Color  │  │  Frame  │
+│Toggle│  │Selector │  │ Picker │  │  Size   │
+└──────┘  └─────────┘  └────────┘  └─────────┘
 ┌──────┐  ┌────────┐  ┌────────┐
-│Color │  │ Frame  │  │Spacing │
-│Picker│  │  Size  │  │ Input  │
+│Border│  │ Format │  │Quality │
+│Slider│  │Selector│  │ Slider │
 └──────┘  └────────┘  └────────┘
 
 ┌─────────────────┐
 │ ActionBar.vue   │
-│ (Below Canvas)  │
+│ (Action Buttons)│
 └────────┬────────┘
          │
    ┌─────┴──────┐
@@ -114,30 +118,34 @@ User Interaction
 ```
 src/
 ├── main.js                      # Application entry point
-├── App.vue                      # Root component
+├── App.vue                      # Root component with responsive layout
 ├── assets/
 │   └── styles/
-│       └── main.css            # Tailwind imports, global styles
+│       └── main.css            # Tailwind imports, shared component styles
 ├── components/
 │   ├── layout/
-│   │   ├── AppHeader.vue       # Header
-│   │   ├── ConfigBar.vue       # Configuration controls bar (2 rows)
-│   │   ├── ActionBar.vue       # Action buttons bar (below canvas)
+│   │   ├── ConfigBar.vue       # Configuration controls container
+│   │   ├── ActionBar.vue       # Action buttons container
 │   │   └── CanvasContainer.vue # Canvas wrapper with upload zones
 │   ├── canvas/
 │   │   ├── FrameCanvas.vue     # Main Konva canvas component
 │   │   └── ImageUploadZone.vue # Image upload interface
-│   ├── controls/
-│   │   ├── AspectRatioSelector.vue  # Button group (3:2, 4:3, 5:4, 16:9)
-│   │   ├── ColorPicker.vue          # Color swatch + hex input
-│   │   ├── DownloadButton.vue       # Download canvas button
-│   │   ├── FrameSizeSelector.vue    # Button group (1024px, 2048px, 4096px, Native)
-│   │   ├── OrientationToggle.vue    # Portrait/Landscape toggle
-│   │   └── ResetButton.vue          # Reset configuration button
+│   ├── shared/
+│   │   └── ConfigElement.vue   # Configuration control wrapper
+│   └── controls/
+│       ├── AspectRatioSelector.vue  # Button group (3:2, 4:3, 5:4, 16:9)
+│       ├── BorderSlider.vue         # Border percentage slider (1-25%)
+│       ├── ColorPicker.vue          # HTML5 color picker
+│       ├── DownloadButton.vue       # Download canvas button
+│       ├── FormatSelector.vue       # Export format selector (PNG, JPEG, WebP)
+│       ├── FrameSizeSelector.vue    # Frame size selector (presets + native)
+│       ├── OrientationToggle.vue    # Portrait/Landscape toggle
+│       ├── QualitySlider.vue        # Export quality slider (1-100%)
+│       └── ResetButton.vue          # Reset configuration button
 ├── composables/
 │   ├── useFrameConfig.js       # Frame configuration state
 │   ├── useImageState.js        # Image upload and management
-│   ├── useCanvasRenderer.js    # Canvas rendering logic
+│   └── useCanvasRenderer.js    # Canvas rendering logic
 └── utils/
     ├── calculations.js         # Dimension calculations
     ├── validation.js           # Validation functions
@@ -151,25 +159,37 @@ src/
 ### 5.1 Component Responsibilities
 
 #### **App.vue**
-- Root application container
-- Provides main layout structure
-- Manages canvas stage reference and preview width
+- Root application container with responsive layout
+- **Desktop**: Horizontal layout with sidebar and canvas area
+- **Mobile**: Vertical reverse layout with canvas on top and bottom panel
+- **Mobile Panel**: CSS-only slide-up settings panel using checkbox hack
+  - Chevron button toggles panel visibility
+  - Panel slides over canvas without JavaScript
+  - Settings displayed vertically when expanded
+- Manages canvas stage reference and preview width calculation
 - Coordinates ConfigBar, CanvasContainer, and ActionBar
 
-#### **AppHeader.vue**
-- Application title ("Framed")
-
 #### **ConfigBar.vue**
-- Groups frame configuration controls in 2 rows:
-  - **Row 1**: OrientationToggle + AspectRatioSelector (side-by-side on desktop, stacked on mobile)
-  - **Row 2**: ColorPicker + FrameSizeSelector + BorderSlider (responsive flex layout)
+- Container for all frame configuration and export settings controls
+- Vertical stack layout for both desktop and mobile
+- Uses ConfigElement wrapper for consistent control presentation
+- Contains 7 configuration controls:
+  - Orientation, Aspect Ratio, Frame Color, Frame Size, Border Size, Export Format, Quality
 - No props required (uses composables directly)
 
 #### **ActionBar.vue**
-- Contains action buttons positioned below canvas
-- **Desktop**: Buttons aligned right, side-by-side
-- **Mobile**: Stacked vertically with Download on top (flex-col-reverse)
+- Container for action buttons (Reset and Download)
+- **Desktop**: Buttons aligned in sidebar bottom section
+- **Mobile**: Fixed at bottom of screen below canvas
 - Receives stage and previewWidth props for download functionality
+
+#### **ConfigElement.vue**
+- Shared wrapper component for consistent configuration control layout
+- Provides two slots:
+  - **label**: Configuration control label (e.g., "Orientation", "Border Size")
+  - **element**: The actual control component
+- Standardizes spacing, typography, and layout across all configuration controls
+- Used by all controls in ConfigBar for visual consistency
 
 #### **CanvasContainer.vue**
 - Canvas wrapper and orchestration
@@ -188,51 +208,49 @@ src/
 - Displays upload placeholder or preview
 - Validates image files on upload
 
-#### **OrientationToggle.vue**
-- Button group: Portrait and Landscape
-- Uses shared selector styles from main.css
-- Full-width responsive layout with equal button distribution
+#### **Control Components**
 
-#### **AspectRatioSelector.vue**
-- Button group: 3:2, 4:3, 5:4, 16:9 ratios
-- Uses shared selector styles from main.css
-- Always horizontal layout, buttons shrink/grow equally
+**OrientationToggle.vue**
+- Button group for Portrait and Landscape orientations
+- Uses shared selector button styles from main.css
 
-#### **ColorPicker.vue**
-- Native HTML5 color picker (full-width)
+**AspectRatioSelector.vue**
+- Button group for aspect ratio presets: 3:2, 4:3, 5:4, 16:9
+- Uses shared selector button styles from main.css
+
+**ColorPicker.vue**
+- Native HTML5 color picker for frame color selection
 - Auto-validation and formatting for hex colors
-- Simplified UI with no text input field
 
-#### **FrameSizeSelector.vue**
-- Button group: 1024px, 2048px, 4096px, Native
-- Uses shared selector styles from main.css
-- Native option uses -1 value to indicate original/native size
+**FrameSizeSelector.vue**
+- Button group for frame size presets: 1024px, 2048px, 4096px, Native
+- Uses shared selector button styles from main.css
+- Native option uses original uploaded image dimensions
 
-#### **BorderSlider.vue**
+**BorderSlider.vue**
 - Range slider for border percentage (1-25%)
-- Uses shared range slider styles from main.css with value label overlay
-- Border calculated as: `Math.round(frameSize * percentage / 100 / 2)`
-- Fixed 20px inner spacing between images (not configurable)
+- Uses shared range slider styles from main.css
+- Border calculated as percentage of frame size
+- Fixed inner spacing between images (not configurable)
 
-#### **DownloadButton.vue**
-- Triggers high-resolution canvas export
-- Disables when images not uploaded
-- Shows loading state during export
+**FormatSelector.vue**
+- Button group for export formats: PNG, JPEG, WebP
+- Uses shared selector button styles from main.css
+- Dynamically generates filenames at download time
 
-#### **ResetButton.vue**
-- Resets all configuration to defaults
-- Clears uploaded images
-
-#### **FormatSelector.vue**
-- Button group: PNG, JPEG, WebP
-- Uses shared selector styles from main.css
-- Dynamically generated filenames at download time
-
-#### **QualitySlider.vue**
+**QualitySlider.vue**
 - Range slider for export quality (1-100%)
-- Value displayed in positioned overlay label
 - Uses shared range slider styles from main.css
 - Affects compression for JPEG and WebP formats
+
+**DownloadButton.vue**
+- Triggers high-resolution canvas export
+- Disabled when images not uploaded
+- Shows loading state during export
+
+**ResetButton.vue**
+- Resets all configuration to defaults
+- Clears uploaded images
 
 ---
 
@@ -375,32 +393,43 @@ Removed, only dark UI
 
 ## 10. Testing Strategy
 
-### 10.1 Testing Coverage
+### 10.1 Testing Approach
 
-- **Unit Tests (70%)**: Pure functions, utilities, composables
-- **Component Tests (25%)**: Vue components in isolation
-- **Integration Tests (5%)**: Full user workflows
+The application follows a **behavior-driven testing** philosophy, focusing on user interactions, state changes, and business logic rather than implementation details.
 
 ### 10.2 Testing Tools
 
 - **Vitest**: Test framework with Vite integration
 - **@vue/test-utils**: Vue component testing utilities
 - **happy-dom**: Lightweight DOM implementation
+- **Coverage**: v8 provider targeting 60%+ coverage for src/ folder only
 
-### 10.3 Test Coverage
+### 10.3 Test Focus Areas
 
-| Category | Target | Current Status |
-|----------|--------|----------------|
-| Overall | 60%+ | ✅ Achieved |
-| Utils | 95%+ | ✅ Achieved |
-| Composables | 80%+ | ✅ Achieved |
-| Components | 70%+ | ✅ Achieved |
+**What We Test:**
+- User interactions and button clicks
+- State changes via composables
+- Business logic (disabled states, format updates, value calculations)
+- Edge cases and error handling
+- Integration between components
+- Accessibility attributes with user interactions
+- Event emissions with payloads
 
-**Total Tests**: 450+ tests passing
-- All components have dedicated test suites
-- Vitest with @vue/test-utils for component testing
-- Mock components used for integration tests to avoid dependency issues
-- Comprehensive coverage of utilities, composables, and components
+**What We Don't Test:**
+- CSS classes and styling
+- Layout implementation details (flex, padding, margins)
+- TestId attributes
+- Input attribute presence (min, max, step)
+- Basic DOM structure
+- Simple getters/setters without logic
+
+### 10.4 Coverage Strategy
+
+- **Unit Tests**: Pure functions, utilities, composables
+- **Component Tests**: Vue components focusing on behavior
+- **Integration Tests**: Component interaction workflows
+- All major components have dedicated test suites
+- Mock components used for integration tests to isolate dependencies
 
 ---
 
@@ -479,17 +508,16 @@ Key functions:
 - Less boilerplate code
 - Better integration with Vue lifecycle
 
-### 12.3 Color Picker: Native HTML5 + Text Input
+### 12.3 Color Picker: Native HTML5
 
-**Decision**: Use native `input type="color"` with hex text input
+**Decision**: Use native `input type="color"`
 
 **Rationale**:
 - No external dependencies
-- Native OS color picker UI for visual selection
-- Text input allows precise hex color entry
+- Native OS color picker UI
 - Better accessibility
 - Smaller bundle size
-- Dual input method improves UX
+- Direct color selection without additional UI complexity
 
 ### 12.4 Canvas Export: pixelRatio Scaling
 
@@ -512,28 +540,47 @@ Key functions:
 - Clearer visual feedback of current selection
 - Consistent styling with Tailwind utility classes
 
-### 12.6 Responsive Layout: Flexbox
+### 12.6 Responsive Layout: Flexbox with Mobile Slide-up Panel
 
-**Decision**: Use flexbox for responsive layout with mobile-first approach
+**Decision**: Use flexbox for responsive layout with CSS-only mobile panel
 
 **Rationale**:
-- ConfigBar Row 1 & 2: `flex-col` on mobile, `md:flex-row` on desktop
-- ActionBar: `flex-col-reverse` on mobile (Download on top), `sm:flex-row sm:justify-end` on desktop
-- Equal distribution with `flex-1` on child containers
-- Simpler than CSS Grid for this use case
+- **Desktop**: Horizontal layout with sidebar (`flex-row`)
+- **Mobile**: Vertical reverse layout with bottom panel (`flex-col-reverse`)
+- **Mobile Panel**: CSS checkbox hack for slide-up panel without JavaScript
+  - No state management overhead
+  - Pure CSS transitions and transforms
+  - Better performance (no JS event handlers)
+  - Simpler implementation
+- Flexbox simpler than CSS Grid for this use case
 - Better browser support and performance
 
-### 12.7 CSS Organization: Shared Selector Styles
+### 12.7 CSS Organization: Shared Component Styles
 
-**Decision**: Centralize common button group styles in main.css
+**Decision**: Centralize common component styles in main.css
 
 **Rationale**:
-- DRY principle - single source of truth for selector button styling
-- All selector components (OrientationToggle, AspectRatioSelector, FrameSizeSelector, FormatSelector) share identical styles
+- DRY principle - single source of truth for shared component styling
+- **Selector buttons**: All selector components share identical button group styles
+  - Classes: `.selector-group`, `.selector-btn`, `.selector-btn-active`, `.selector-btn-inactive`
+  - Used by: OrientationToggle, AspectRatioSelector, FrameSizeSelector, FormatSelector
+- **Range sliders**: Shared slider styling and value label positioning
+  - Used by: BorderSlider, QualitySlider
 - Better maintainability - style changes in one place
-- Reduced code duplication (~109 lines of CSS removed)
-- Consistent styling guaranteed across all selectors
-- Shared classes: `.selector-group`, `.selector-btn`, `.selector-btn-active`, `.selector-btn-inactive`
+- Reduced code duplication
+- Consistent styling guaranteed across all similar controls
+
+### 12.8 Component Wrapper Pattern: ConfigElement
+
+**Decision**: Create shared ConfigElement wrapper for all configuration controls
+
+**Rationale**:
+- Consistent label and element layout across all controls
+- Single source of truth for configuration control presentation
+- Reduces code duplication in ConfigBar
+- Easier to maintain and update styling
+- Slot-based design allows flexibility while maintaining consistency
+- Separates structure (ConfigElement) from functionality (control components)
 
 ---
 
@@ -616,13 +663,34 @@ Key functions:
 
 ---
 
-**Document Version**: 3.0
-**Last Updated**: 2025-10-10
+**Document Version**: 4.0
+**Last Updated**: 2025-01-24
 **Status**: Current
 
 ---
 
 ## Changelog
+
+### Version 4.0 (2025-01-24)
+- **Major UI Update**: Mobile slide-up settings panel with CSS-only implementation
+  - Documented CSS checkbox hack pattern for mobile panel
+  - Added mobile UX pattern documentation (chevron toggle, slide-up animation)
+  - Updated App.vue to reflect responsive layout changes
+- **New Component**: ConfigElement.vue wrapper for consistent control layout
+  - Added to project structure under `shared/` folder
+  - Documented component wrapper pattern (section 12.8)
+- **Component Updates**:
+  - ConfigBar: Now uses ConfigElement wrapper, single vertical stack layout
+  - Removed: FileNameInput, SpacingInput, FrameSizeInput, BaseInput components
+  - Renamed: QualityInput → QualitySlider
+- **Architecture Diagram**: Updated to reflect ConfigElement and mobile panel pattern
+- **Testing Strategy**: Rewritten to focus on behavior-driven testing approach
+  - Removed specific test counts and coverage percentages
+  - Added "What We Test" vs "What We Don't Test" guidelines
+  - Coverage now targets src/ folder only
+- **CSS Organization**: Documented shared range slider styles alongside selector styles
+- **Responsive Layout**: Updated section 12.6 to document mobile panel decision
+- **Technology Stack**: Updated Tailwind CSS version
 
 ### Version 3.0 (2025-10-10)
 - Updated architecture diagram to reflect ActionBar component separation
@@ -634,7 +702,6 @@ Key functions:
 - Updated constants to include FRAME_CONSTRAINTS
 - Added validation functions for frame size and spacing
 - Documented UI refactoring decisions (sections 12.5-12.7)
-- Updated test coverage with current statistics (350 tests)
 - Removed BaseSelect.vue from project structure (no longer used)
 
 ### Version 2.0 (2025-10-09)

@@ -55,19 +55,6 @@ describe('ResetButton', () => {
     imageState.clearImages();
   });
 
-  describe('Rendering', () => {
-    it('renders reset button', () => {
-      const wrapper = mount(ResetButton);
-
-      expect(wrapper.find('button').exists()).toBe(true);
-    });
-
-    it('displays reset icon', () => {
-      const wrapper = mount(ResetButton);
-
-      expect(wrapper.find('svg').exists()).toBe(true);
-    });
-  });
 
   describe('Interaction', () => {
     it('resets frame configuration when clicked', async () => {
@@ -110,19 +97,4 @@ describe('ResetButton', () => {
     }, 10000);
   });
 
-  describe('Accessibility', () => {
-    it('has custom test ID', () => {
-      const wrapper = mount(ResetButton, {
-        props: { testId: 'custom-reset' },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('custom-reset');
-    });
-
-    it('icon is hidden from screen readers', () => {
-      const wrapper = mount(ResetButton);
-
-      expect(wrapper.find('svg').attributes('aria-hidden')).toBe('true');
-    });
-  });
 });

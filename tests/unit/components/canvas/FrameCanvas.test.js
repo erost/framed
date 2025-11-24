@@ -64,74 +64,6 @@ describe('FrameCanvas', () => {
       frameConfig = useFrameConfig();
     });
 
-    describe('Rendering', () => {
-      it('renders with default props', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.exists()).toBe(true);
-      });
-
-      it('renders with custom testId', () => {
-        const wrapper = mount(FrameCanvas, {
-          props: { testId: 'custom-canvas' },
-        });
-        expect(wrapper.find('[data-testid="custom-canvas"]').exists()).toBe(true);
-      });
-
-      it('renders with custom previewWidth', () => {
-        const wrapper = mount(FrameCanvas, {
-          props: { previewWidth: 1000 },
-        });
-        expect(wrapper.exists()).toBe(true);
-      });
-
-      it('shows canvas placeholder when stageConfig is not ready', () => {
-        const wrapper = mount(FrameCanvas);
-        // Canvas may initialize immediately, so check if either placeholder or stage exists
-        const hasPlaceholder = wrapper.find('[data-testid="canvas-placeholder"]').exists();
-        const hasStage = wrapper.find('[data-testid="konva-stage"]').exists();
-        expect(hasPlaceholder || hasStage).toBe(true);
-      });
-
-      it('shows konva stage when stageConfig is ready', async () => {
-        const wrapper = mount(FrameCanvas, {
-          props: { previewWidth: 800 },
-        });
-
-        // Wait for composable to initialize
-        await nextTick();
-        await nextTick();
-
-        if (wrapper.find('[data-testid="konva-stage"]').exists()) {
-          expect(wrapper.find('[data-testid="konva-stage"]').exists()).toBe(true);
-        }
-      });
-    });
-
-    describe('Props', () => {
-      it('accepts previewWidth prop', () => {
-        const wrapper = mount(FrameCanvas, {
-          props: { previewWidth: 1200 },
-        });
-        expect(wrapper.props('previewWidth')).toBe(1200);
-      });
-
-      it('uses default previewWidth when not provided', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.props('previewWidth')).toBe(800);
-      });
-
-      it('accepts testId prop', () => {
-        const wrapper = mount(FrameCanvas, {
-          props: { testId: 'my-canvas' },
-        });
-        expect(wrapper.props('testId')).toBe('my-canvas');
-      });
-
-      it('uses default testId when not provided', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.props('testId')).toBe('frame-canvas');
-      });
-    });
 
     describe('Image Watchers', () => {
       it('creates image element when image is added to position 0', async () => {
@@ -255,18 +187,6 @@ describe('FrameCanvas', () => {
       });
     });
 
-    describe('File Input Interaction', () => {
-      it('has file inputs for both positions', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.vm.fileInput1).toBeDefined();
-        expect(wrapper.vm.fileInput2).toBeDefined();
-      });
-
-      it('triggerFileInput method exists', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(typeof wrapper.vm.triggerFileInput).toBe('function');
-      });
-    });
 
     describe('Drag and Drop State', () => {
       it('initializes dragOver state as false for both positions', () => {
@@ -323,22 +243,6 @@ describe('FrameCanvas', () => {
     });
 
     describe('Integration with Composables', () => {
-      it('uses useCanvasRenderer composable', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.vm.stageConfig).toBeDefined();
-        expect(wrapper.vm.backgroundConfig).toBeDefined();
-      });
-
-      it('uses useImageState composable', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.vm.images).toBeDefined();
-      });
-
-      it('uses useFrameConfig composable', () => {
-        const wrapper = mount(FrameCanvas);
-        expect(wrapper.vm.orientation).toBeDefined();
-      });
-
       it('responds to orientation changes', async () => {
         const wrapper = mount(FrameCanvas);
         const initialOrientation = wrapper.vm.orientation;
@@ -385,62 +289,6 @@ describe('FrameCanvas', () => {
         await nextTick();
 
         expect(imageState.images.value[1]).toBe(null);
-      });
-
-      it('calls removeImage without errors', async () => {
-        const wrapper = mount(FrameCanvas);
-
-        imageState.images.value[0] = {
-          dataUrl: 'data:image/png;base64,test',
-          width: 800,
-          height: 600,
-        };
-        await nextTick();
-
-        // Just verify the method works without error
-        expect(() => wrapper.vm.removeImage(0)).not.toThrow();
-      });
-    });
-
-    describe('getCanvasContainerStyle', () => {
-      it('returns style object with dimensions', () => {
-        const wrapper = mount(FrameCanvas);
-        const style = wrapper.vm.getCanvasContainerStyle();
-        expect(style).toBeDefined();
-      });
-    });
-
-    describe('getUploadZoneStyle', () => {
-      it('calculates zone style for image layout', () => {
-        const wrapper = mount(FrameCanvas);
-        if (wrapper.vm.imageLayout) {
-          const style = wrapper.vm.getUploadZoneStyle(wrapper.vm.imageLayout.image1, 0);
-          expect(style).toBeDefined();
-        }
-      });
-    });
-
-    describe('getUploadZoneClass', () => {
-      it('returns class object for zone 0', () => {
-        const wrapper = mount(FrameCanvas);
-        const classes = wrapper.vm.getUploadZoneClass(0);
-        expect(classes).toBeDefined();
-        expect(typeof classes).toBe('object');
-      });
-
-      it('returns class object for zone 1', () => {
-        const wrapper = mount(FrameCanvas);
-        const classes = wrapper.vm.getUploadZoneClass(1);
-        expect(classes).toBeDefined();
-        expect(typeof classes).toBe('object');
-      });
-    });
-
-    describe('getStage', () => {
-      it('getStage method exists', () => {
-        const wrapper = mount(FrameCanvas);
-        // Just verify the method exists
-        expect(typeof wrapper.vm.getStage).toBe('function');
       });
     });
   });

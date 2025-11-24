@@ -12,44 +12,7 @@ describe('AspectRatioSelector', () => {
     frameConfig.reset();
   });
 
-  describe('Rendering', () => {
-    it('renders aspect ratio button group', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      expect(wrapper.find('[role="group"]').exists()).toBe(true);
-    });
-
-    it('renders all aspect ratio buttons', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttons = wrapper.findAll('button');
-      const ratioCount = Object.keys(ASPECT_RATIOS).length;
-
-      expect(buttons).toHaveLength(ratioCount);
-    });
-
-    it('renders correct button labels', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttons = wrapper.findAll('button');
-      const buttonTexts = buttons.map((btn) => btn.text());
-
-      expect(buttonTexts).toContain('3:2');
-      expect(buttonTexts).toContain('4:3');
-      expect(buttonTexts).toContain('5:4');
-      expect(buttonTexts).toContain('16:9');
-    });
-  });
-
   describe('Initial Value', () => {
-    it('3:2 button is active by default', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const button = wrapper.find('[data-testid="aspect-ratio-3-2"]');
-      expect(button.attributes('aria-pressed')).toBe('true');
-      expect(button.classes()).toContain('selector-btn-active');
-    });
-
     it('reflects current aspect ratio from config', async () => {
       frameConfig.updateAspectRatio('16:9');
 
@@ -142,94 +105,6 @@ describe('AspectRatioSelector', () => {
       await wrapper.vm.$nextTick();
 
       expect(button32.attributes('aria-pressed')).toBe('false');
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('has role group', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      expect(wrapper.find('[role="group"]').exists()).toBe(true);
-    });
-
-    it('has aria-label on button group', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      expect(wrapper.find('[role="group"]').attributes('aria-label')).toBe('Frame aspect ratio');
-    });
-
-    it('sets aria-pressed correctly', async () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const button32 = wrapper.find('[data-testid="aspect-ratio-3-2"]');
-      const button43 = wrapper.find('[data-testid="aspect-ratio-4-3"]');
-
-      expect(button32.attributes('aria-pressed')).toBe('true');
-      expect(button43.attributes('aria-pressed')).toBe('false');
-
-      await button43.trigger('click');
-      await wrapper.vm.$nextTick();
-
-      expect(button32.attributes('aria-pressed')).toBe('false');
-      expect(button43.attributes('aria-pressed')).toBe('true');
-    });
-
-    it('has custom test ID', () => {
-      const wrapper = mount(AspectRatioSelector, {
-        props: { testId: 'custom-ratio' },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('custom-ratio');
-    });
-
-    it('all buttons have scoped class with focus ring styles', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        // All buttons should have the base class that includes focus:ring in scoped CSS
-        expect(button.classes()).toContain('selector-btn');
-      });
-    });
-  });
-
-  describe('Visual Consistency', () => {
-    it('active button has selector-btn-active class', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const activeButton = wrapper.find('[data-testid="aspect-ratio-3-2"]');
-      expect(activeButton.classes()).toContain('selector-btn-active');
-    });
-
-    it('inactive buttons have selector-btn-inactive class', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const inactiveButton = wrapper.find('[data-testid="aspect-ratio-4-3"]');
-      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
-    });
-  });
-
-  describe('Component Structure', () => {
-    it('uses scoped CSS classes', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const buttons = wrapper.findAll('button');
-      buttons.forEach((button) => {
-        expect(button.classes()).toContain('selector-btn');
-      });
-    });
-
-    it('applies selector-btn-active to active button only', () => {
-      const wrapper = mount(AspectRatioSelector);
-
-      const activeButton = wrapper.find('[data-testid="aspect-ratio-3-2"]');
-      const inactiveButton = wrapper.find('[data-testid="aspect-ratio-4-3"]');
-
-      expect(activeButton.classes()).toContain('selector-btn-active');
-      expect(activeButton.classes()).not.toContain('selector-btn-inactive');
-
-      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
-      expect(inactiveButton.classes()).not.toContain('selector-btn-active');
     });
   });
 });

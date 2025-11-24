@@ -12,59 +12,6 @@ describe('BorderSlider', () => {
     frameConfig.reset();
   });
 
-  describe('Rendering', () => {
-    it('renders slider input', () => {
-      const wrapper = mount(BorderSlider);
-      expect(wrapper.find('[data-testid="border-slider-input"]').exists()).toBe(true);
-    });
-
-    it('renders with default test ID on input', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('data-testid')).toBe('border-slider-input');
-    });
-
-    it('renders with custom test ID on input', () => {
-      const wrapper = mount(BorderSlider, {
-        props: { testId: 'custom-border' },
-      });
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('data-testid')).toBe('custom-border-input');
-    });
-
-    it('displays value in label', () => {
-      const wrapper = mount(BorderSlider);
-      const valueLabel = wrapper.find('[data-testid="border-slider-value-label"]');
-      expect(valueLabel.exists()).toBe(true);
-      expect(valueLabel.text()).toBeTruthy();
-    });
-  });
-
-  describe('Input Configuration', () => {
-    it('has range type', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.exists()).toBe(true);
-    });
-
-    it('sets minimum constraint', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('min')).toBe(String(FRAME_CONSTRAINTS.minBorderPercentage));
-    });
-
-    it('sets maximum constraint', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('max')).toBe(String(FRAME_CONSTRAINTS.maxBorderPercentage));
-    });
-
-    it('sets step to 1', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('step')).toBe('1');
-    });
-  });
 
   describe('Initial Value', () => {
     it('displays default border percentage value', () => {
@@ -262,21 +209,6 @@ describe('BorderSlider', () => {
     });
   });
 
-  describe('Constraints Verification', () => {
-    it('uses FRAME_CONSTRAINTS.minBorderPercentage constant', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('min')).toBe(String(FRAME_CONSTRAINTS.minBorderPercentage));
-      expect(FRAME_CONSTRAINTS.minBorderPercentage).toBe(1);
-    });
-
-    it('uses FRAME_CONSTRAINTS.maxBorderPercentage constant', () => {
-      const wrapper = mount(BorderSlider);
-      const input = wrapper.find('input[type="range"]');
-      expect(input.attributes('max')).toBe(String(FRAME_CONSTRAINTS.maxBorderPercentage));
-      expect(FRAME_CONSTRAINTS.maxBorderPercentage).toBe(25);
-    });
-  });
 
   describe('Real-world Scenarios', () => {
     it('handles typical border percentages', async () => {

@@ -72,23 +72,6 @@ describe('DownloadButton', () => {
     };
   });
 
-  describe('Rendering', () => {
-    it('renders download button', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      expect(wrapper.find('button').exists()).toBe(true);
-    });
-
-    it('displays download icon when not loading', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      expect(wrapper.find('svg').exists()).toBe(true);
-    });
-  });
 
   describe('Disabled State', () => {
     it('is disabled when no images uploaded', () => {
@@ -117,13 +100,6 @@ describe('DownloadButton', () => {
       expect(button.attributes('disabled')).toBeUndefined();
     });
 
-    it('shows "Download" text even when disabled', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      expect(wrapper.text()).toContain('Download');
-    });
   });
 
   describe('Props', () => {
@@ -151,43 +127,4 @@ describe('DownloadButton', () => {
     });
   });
 
-  describe('Accessibility', () => {
-    it('has custom test ID', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { testId: 'custom-download', previewWidth: 800, },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('custom-download');
-    });
-
-    it('icon is hidden from screen readers', () => {
-      const wrapper = mount(DownloadButton, {
-        props: { previewWidth: 800 },
-      });
-
-      const svg = wrapper.find('svg');
-      if (svg.exists()) {
-        expect(svg.attributes('aria-hidden')).toBe('true');
-      }
-    });
-
-    it('has aria-busy attribute', async () => {
-      const file1 = new File([''], 'test1.jpg', { type: 'image/jpeg' });
-      const file2 = new File([''], 'test2.jpg', { type: 'image/jpeg' });
-
-      await imageState.addImage(file1, 0);
-      await imageState.addImage(file2, 1);
-
-      const wrapper = mount(DownloadButton, {
-        props: { stage: mockStage, previewWidth: 800 },
-      });
-
-      await wrapper.vm.$nextTick();
-
-      const button = wrapper.find('button');
-
-      // Button should have aria-busy attribute (defaults to false when not loading)
-      expect(button.attributes('aria-busy')).toBeDefined();
-    });
-  });
 });

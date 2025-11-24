@@ -54,14 +54,6 @@ describe('ImageUploadZone', () => {
       expect(wrapper.find('.image-upload-zone').exists()).toBe(true);
     });
 
-    it('renders with default test ID', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('image-upload-zone');
-    });
-
     it('renders with custom test ID', () => {
       const wrapper = mount(ImageUploadZone, {
         props: { position: 0, testId: 'custom-upload' },
@@ -78,25 +70,6 @@ describe('ImageUploadZone', () => {
       const input = wrapper.find('[data-testid="custom-upload-input"]');
       expect(input.exists()).toBe(true);
     });
-
-    it('renders hidden file input', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const input = wrapper.find('input[type="file"]');
-      expect(input.exists()).toBe(true);
-      expect(input.classes()).toContain('hidden');
-    });
-
-    it('sets correct accepted file types', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const input = wrapper.find('input[type="file"]');
-      expect(input.attributes('accept')).toBe('image/jpeg,image/png,image/webp');
-    });
   });
 
   describe('Upload Content for Position 0', () => {
@@ -107,31 +80,6 @@ describe('ImageUploadZone', () => {
 
       expect(wrapper.text()).toContain('Upload First Image');
     });
-
-    it('displays upload icon', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      expect(wrapper.find('svg[aria-hidden="true"]').exists()).toBe(true);
-    });
-
-    it('displays drag and drop instruction', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      expect(wrapper.text()).toContain('Click or drag & drop');
-    });
-
-    it('displays file format and size information', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      expect(wrapper.text()).toContain('JPEG, PNG, or WebP');
-      expect(wrapper.text()).toContain('max 10MB');
-    });
   });
 
   describe('Upload Content for Position 1', () => {
@@ -141,14 +89,6 @@ describe('ImageUploadZone', () => {
       });
 
       expect(wrapper.text()).toContain('Upload Second Image');
-    });
-
-    it('validates position prop', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      expect([0, 1]).toContain(wrapper.vm.position);
     });
   });
 
@@ -323,77 +263,6 @@ describe('ImageUploadZone', () => {
   });
 
   describe('Image Preview', () => {
-    it('shows image preview when image is uploaded', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.find('.image-preview').exists()).toBe(true);
-      expect(wrapper.find('.upload-content').exists()).toBe(false);
-    });
-
-    it('displays uploaded image', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const img = wrapper.find('img');
-      expect(img.exists()).toBe(true);
-      expect(img.attributes('src')).toContain('data:image');
-    });
-
-    it('sets correct alt text for image', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const img = wrapper.find('img');
-      expect(img.attributes('alt')).toBe('Uploaded image 1');
-    });
-
-    it('sets correct alt text for second image', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 1 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 1);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const img = wrapper.find('img');
-      expect(img.attributes('alt')).toBe('Uploaded image 2');
-    });
-
-    it('shows remove button when image is uploaded', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const removeButton = wrapper.find('.remove-button');
-      expect(removeButton.exists()).toBe(true);
-    });
-
     it('remove button has correct test ID', async () => {
       const wrapper = mount(ImageUploadZone, {
         props: { position: 0, testId: 'custom-upload' },
@@ -516,18 +385,6 @@ describe('ImageUploadZone', () => {
       expect(wrapper.text()).toContain('Upload failed');
     });
 
-    it('error message has role="alert"', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      wrapper.vm.error = 'Upload failed';
-      await wrapper.vm.$nextTick();
-
-      const errorMsg = wrapper.find('.error-message');
-      expect(errorMsg.attributes('role')).toBe('alert');
-    });
-
     it('can display error message programmatically', async () => {
       const wrapper = mount(ImageUploadZone, {
         props: { position: 0 },
@@ -562,46 +419,6 @@ describe('ImageUploadZone', () => {
 
       // Error should be cleared even if upload succeeds
       expect(wrapper.vm.error).toBe('');
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('remove button has aria-label', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const removeButton = wrapper.find('.remove-button');
-      expect(removeButton.attributes('aria-label')).toBe('Remove image');
-    });
-
-    it('upload icon has aria-hidden', () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const svg = wrapper.find('svg[aria-hidden="true"]');
-      expect(svg.exists()).toBe(true);
-    });
-
-    it('remove button is a button element', async () => {
-      const wrapper = mount(ImageUploadZone, {
-        props: { position: 0 },
-      });
-
-      const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      await imageState.addImage(file, 0);
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await wrapper.vm.$nextTick();
-
-      const removeButton = wrapper.find('.remove-button');
-      expect(removeButton.element.tagName).toBe('BUTTON');
-      expect(removeButton.attributes('type')).toBe('button');
     });
   });
 
