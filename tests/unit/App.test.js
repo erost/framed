@@ -89,14 +89,14 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 1280px x 800px, Aside: 320px wide
-      // Available width: 1280 - 320 = 960, minus padding: 960 - 48 = 912
-      // Available height: 800, minus padding: 800 - 48 = 752
+      // Available width: 1280 - 320 = 960, minus padding: 960 - 32 = 928
+      // Available height: 800, minus padding: 800 - 32 = 768
       // Frame: 1000px x 750px
-      // Scale by width: 912 / 1000 = 0.912
-      // Scale by height: 752 / 750 = 1.0027
-      // Use min scale: 0.912
-      // Scaled width: 1000 * 0.912 = 912
-      // Preview width: min(912, 800) = 800
+      // Scale by width: 928 / 1000 = 0.928
+      // Scale by height: 768 / 750 = 1.024
+      // Use min scale: 0.928
+      // Scaled width: 1000 * 0.928 = 928
+      // Preview width: min(928, 800) = 800
       expect(wrapper.vm.previewWidth).toBe(800);
     });
 
@@ -115,14 +115,14 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 2000px x 1500px, Aside: 320px
-      // Available width: 2000 - 320 - 48 = 1632
-      // Available height: 1500 - 48 = 1452
+      // Available width: 2000 - 320 - 32 = 1648
+      // Available height: 1500 - 32 = 1468
       // Frame: 1000px x 750px
-      // Scale by width: 1632 / 1000 = 1.632
-      // Scale by height: 1452 / 750 = 1.936
-      // Use min scale: 1.632
-      // Scaled width: 1000 * 1.632 = 1632
-      // Preview width: min(1632, 800) = 800 (capped)
+      // Scale by width: 1648 / 1000 = 1.648
+      // Scale by height: 1468 / 750 = 1.957
+      // Use min scale: 1.648
+      // Scaled width: 1000 * 1.648 = 1648
+      // Preview width: min(1648, 800) = 800 (capped)
       expect(wrapper.vm.previewWidth).toBe(800);
     });
 
@@ -141,14 +141,14 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 820px x 600px, Aside: 320px
-      // Available width: 820 - 320 - 48 = 452
-      // Available height: 600 - 48 = 552
+      // Available width: 820 - 320 - 32 = 468
+      // Available height: 600 - 32 = 568
       // Frame: 1000px x 750px
-      // Scale by width: 452 / 1000 = 0.452
-      // Scale by height: 552 / 750 = 0.736
-      // Use min scale: 0.452
-      // Scaled width: 1000 * 0.452 = 452
-      expect(wrapper.vm.previewWidth).toBe(452);
+      // Scale by width: 468 / 1000 = 0.468
+      // Scale by height: 568 / 750 = 0.757
+      // Use min scale: 0.468
+      // Scaled width: 1000 * 0.468 = 468
+      expect(wrapper.vm.previewWidth).toBe(468);
     });
 
     it('caps at PREVIEW_CONSTRAINTS.defaultWidth', () => {
@@ -165,14 +165,14 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 1520px x 900px, Aside: 320px
-      // Available width: 1520 - 320 - 48 = 1152
-      // Available height: 900 - 48 = 852
+      // Available width: 1520 - 320 - 32 = 1168
+      // Available height: 900 - 32 = 868
       // Frame: 1000px x 750px
-      // Scale by width: 1152 / 1000 = 1.152
-      // Scale by height: 852 / 750 = 1.136
-      // Use min scale: 1.136
-      // Scaled width: 1000 * 1.136 = 1136
-      // Preview width: min(1136, 800) = 800 (capped)
+      // Scale by width: 1168 / 1000 = 1.168
+      // Scale by height: 868 / 750 = 1.157
+      // Use min scale: 1.157
+      // Scaled width: 1000 * 1.157 = 1157
+      // Preview width: min(1157, 800) = 800 (capped)
       expect(wrapper.vm.previewWidth).toBe(PREVIEW_CONSTRAINTS.defaultWidth);
     });
 
@@ -216,8 +216,8 @@ describe('App.vue - Window Resize', () => {
       // To get exactly 800px preview width:
       // Need scale of 0.8 (800 / 1000)
       // Available width needed: 1000 * 0.8 = 800
-      // Window width: 800 + 320 (aside) + 48 (padding) = 1168
-      window.innerWidth = 1168;
+      // Window width: 800 + 320 (aside) + 32 (padding) = 1152
+      window.innerWidth = 1152;
       window.innerHeight = 900;
 
       wrapper.vm.asideRef = {
@@ -426,14 +426,14 @@ describe('App.vue - Window Resize', () => {
 
         // Width should be updated (via requestAnimationFrame callback)
         // Desktop mode: Window: 920px x 800px, Aside: 320px
-        // Available width: 920 - 320 - 48 = 552
-        // Available height: 800 - 48 = 752
+        // Available width: 920 - 320 - 32 = 568
+        // Available height: 800 - 32 = 768
         // Frame: 1000px x 750px
-        // Scale by width: 552 / 1000 = 0.552
-        // Scale by height: 752 / 750 = 1.0027
-        // Use min scale: 0.552
-        // Scaled width: 1000 * 0.552 = 552
-        expect(wrapper.vm.previewWidth).toBe(552);
+        // Scale by width: 568 / 1000 = 0.568
+        // Scale by height: 768 / 750 = 1.024
+        // Use min scale: 0.568
+        // Scaled width: 1000 * 0.568 = 568
+        expect(wrapper.vm.previewWidth).toBe(568);
       }
     });
   });
@@ -453,13 +453,13 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 368px x 800px, Aside: 320px
-      // Available width: 368 - 320 - 48 = 0
-      // Available height: 800 - 48 = 752
-      // Scale by width: 0 / 1000 = 0
-      // Scale by height: 752 / 750 = 1.0027
-      // Use min scale: 0
-      // Scaled width: 1000 * 0 = 0
-      expect(wrapper.vm.previewWidth).toBe(0);
+      // Available width: 368 - 320 - 32 = 16
+      // Available height: 800 - 32 = 768
+      // Scale by width: 16 / 1000 = 0.016
+      // Scale by height: 768 / 750 = 1.024
+      // Use min scale: 0.016
+      // Scaled width: 1000 * 0.016 = 16
+      expect(wrapper.vm.previewWidth).toBe(16);
     });
 
     it('handles very large window dimensions', () => {
@@ -476,13 +476,13 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 10000px x 8000px, Aside: 320px
-      // Available width: 10000 - 320 - 48 = 9632
-      // Available height: 8000 - 48 = 7952
+      // Available width: 10000 - 320 - 32 = 9648
+      // Available height: 8000 - 32 = 7968
       // Frame: 1000px x 750px
-      // Scale by width: 9632 / 1000 = 9.632
-      // Scale by height: 7952 / 750 = 10.603
-      // Use min scale: 9.632
-      // Scaled width: 1000 * 9.632 = 9632
+      // Scale by width: 9648 / 1000 = 9.648
+      // Scale by height: 7968 / 750 = 10.624
+      // Use min scale: 9.648
+      // Scaled width: 1000 * 9.648 = 9648
       // Capped at 800
       expect(wrapper.vm.previewWidth).toBe(800);
     });
@@ -501,14 +501,14 @@ describe('App.vue - Window Resize', () => {
       wrapper.vm.updatePreviewWidth();
 
       // Desktop mode: Window: 620px x 600px, Aside: 320px
-      // Available width: 620 - 320 - 48 = 252
-      // Available height: 600 - 48 = 552
+      // Available width: 620 - 320 - 32 = 268
+      // Available height: 600 - 32 = 568
       // Frame: 1000px x 750px
-      // Scale by width: 252 / 1000 = 0.252
-      // Scale by height: 552 / 750 = 0.736
-      // Use min scale: 0.252
-      // Scaled width: 1000 * 0.252 = 252
-      expect(wrapper.vm.previewWidth).toBe(252);
+      // Scale by width: 268 / 1000 = 0.268
+      // Scale by height: 568 / 750 = 0.757
+      // Use min scale: 0.268
+      // Scaled width: 1000 * 0.268 = 268
+      expect(wrapper.vm.previewWidth).toBe(268);
     });
   });
 

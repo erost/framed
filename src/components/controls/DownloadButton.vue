@@ -65,14 +65,6 @@ const props = defineProps({
   },
 
   /**
-   * Download filename
-   */
-  filename: {
-    type: String,
-    default: 'framed-image',
-  },
-
-  /**
    * Test ID for testing
    */
   testId: {
@@ -107,8 +99,7 @@ const handleDownload = () => {
 
   try {
     downloadImage(
-      props.stage,
-      props.filename
+      props.stage
     );
   } catch (error) {
     console.error('Download failed:', error);
