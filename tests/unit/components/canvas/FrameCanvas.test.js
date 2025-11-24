@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils';
 import FrameCanvas from '@/components/canvas/FrameCanvas.vue';
 import { useImageState } from '@/composables/useImageState';
 import { useFrameConfig } from '@/composables/useFrameConfig';
+import { ORIENTATIONS } from '@/utils/constants';
 
 // Mock Image class for testing
 class MockImage {
@@ -343,7 +344,7 @@ describe('FrameCanvas', () => {
         const initialOrientation = wrapper.vm.orientation;
 
         frameConfig.updateOrientation(
-          initialOrientation === 'portrait' ? 'landscape' : 'portrait'
+          initialOrientation === ORIENTATIONS.PORTRAIT ? ORIENTATIONS.LANDSCAPE : ORIENTATIONS.PORTRAIT
         );
         await nextTick();
 

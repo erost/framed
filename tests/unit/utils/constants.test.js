@@ -9,6 +9,7 @@ import {
   DEFAULT_CONFIG,
   IMAGE_CONSTRAINTS,
   FRAME_CONSTRAINTS,
+  FRAME_SIZE_OPTIONS,
   PREVIEW_CONSTRAINTS,
 } from '@/utils/constants';
 
@@ -42,7 +43,7 @@ describe('constants.js', () => {
       expect(DEFAULT_CONFIG).toHaveProperty('aspectRatio');
       expect(DEFAULT_CONFIG).toHaveProperty('backgroundColor');
       expect(DEFAULT_CONFIG).toHaveProperty('frameSize');
-      expect(DEFAULT_CONFIG).toHaveProperty('spacing');
+      expect(DEFAULT_CONFIG).toHaveProperty('borderPercentage');
     });
 
     it('should have valid default values', () => {
@@ -50,22 +51,18 @@ describe('constants.js', () => {
       expect(DEFAULT_CONFIG.aspectRatio).toBe('3:2');
       expect(DEFAULT_CONFIG.backgroundColor).toBe('#FFFFFF');
       expect(DEFAULT_CONFIG.frameSize).toBe(2048);
-      expect(DEFAULT_CONFIG.spacing).toBe(20);
+      expect(DEFAULT_CONFIG.borderPercentage).toBe(2);
     });
   });
 
   describe('IMAGE_CONSTRAINTS', () => {
     it('should have all constraint properties', () => {
       expect(IMAGE_CONSTRAINTS).toHaveProperty('maxFileSize');
-      expect(IMAGE_CONSTRAINTS).toHaveProperty('minDimension');
       expect(IMAGE_CONSTRAINTS).toHaveProperty('supportedFormats');
-      expect(IMAGE_CONSTRAINTS).toHaveProperty('aspectRatioTolerance');
     });
 
     it('should have reasonable constraint values', () => {
       expect(IMAGE_CONSTRAINTS.maxFileSize).toBe(40 * 1024 * 1024);
-      expect(IMAGE_CONSTRAINTS.minDimension).toBe(800);
-      expect(IMAGE_CONSTRAINTS.aspectRatioTolerance).toBe(0.05);
     });
 
     it('should support common image formats', () => {
@@ -75,15 +72,43 @@ describe('constants.js', () => {
     });
   });
 
-  describe('FRAME_CONSTRAINTS', () => {
-    it('should have size constraints', () => {
-      expect(FRAME_CONSTRAINTS.minSize).toBe(800);
-      expect(FRAME_CONSTRAINTS.maxSize).toBe(10000);
+  describe('FRAME_SIZE_OPTIONS', () => {
+    it('should have all frame size options', () => {
+      expect(FRAME_SIZE_OPTIONS).toHaveLength(3);
     });
 
-    it('should have spacing constraints', () => {
-      expect(FRAME_CONSTRAINTS.minSpacing).toBe(0);
-      expect(FRAME_CONSTRAINTS.maxSpacing).toBe(500);
+    it('should contain 1024px option', () => {
+      const option = FRAME_SIZE_OPTIONS.find(opt => opt.value === 1024);
+      expect(option).toBeDefined();
+      expect(option.label).toBe('1024px');
+    });
+
+    it('should contain 2048px option', () => {
+      const option = FRAME_SIZE_OPTIONS.find(opt => opt.value === 2048);
+      expect(option).toBeDefined();
+      expect(option.label).toBe('2048px');
+    });
+
+    it('should contain 4096px option', () => {
+      const option = FRAME_SIZE_OPTIONS.find(opt => opt.value === 4096);
+      expect(option).toBeDefined();
+      expect(option.label).toBe('4096px');
+    });
+
+    it('should have label and value properties', () => {
+      FRAME_SIZE_OPTIONS.forEach(option => {
+        expect(option).toHaveProperty('label');
+        expect(option).toHaveProperty('value');
+        expect(typeof option.label).toBe('string');
+        expect(typeof option.value).toBe('number');
+      });
+    });
+  });
+
+  describe('FRAME_CONSTRAINTS', () => {
+    it('should have border percentage constraints', () => {
+      expect(FRAME_CONSTRAINTS.minBorderPercentage).toBe(1);
+      expect(FRAME_CONSTRAINTS.maxBorderPercentage).toBe(25);
     });
   });
 

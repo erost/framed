@@ -17,20 +17,6 @@ vi.mock('@/components/controls/DownloadButton.vue', () => ({
   },
 }));
 
-vi.mock('@/components/controls/QualityInput.vue', () => ({
-  default: {
-    name: 'QualityInput',
-    template: '<div data-testid="quality-input">Quality</div>',
-  },
-}));
-
-vi.mock('@/components/controls/FileNameInput.vue', () => ({
-  default: {
-    name: 'FileNameInput',
-    template: '<div data-testid="file-name-input">Filename</div>',
-  },
-}));
-
 describe('ActionBar', () => {
   let wrapper;
 
@@ -45,9 +31,7 @@ describe('ActionBar', () => {
       expect(wrapper.find('[data-testid="action-bar"]').exists()).toBe(true);
     });
 
-    it('renders all components (inputs and buttons)', () => {
-      expect(wrapper.find('[data-testid="quality-input"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="file-name-input"]').exists()).toBe(true);
+    it('renders action buttons', () => {
       expect(wrapper.find('[data-testid="reset-button"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(true);
     });
@@ -87,12 +71,6 @@ describe('ActionBar', () => {
   });
 
   describe('Component Organization', () => {
-    it('has output settings on desktop (hidden on mobile)', () => {
-      // Output settings (filename, format, quality) are in a hidden div on mobile
-      expect(wrapper.find('[data-testid="quality-input"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="file-name-input"]').exists()).toBe(true);
-    });
-
     it('has reset and download buttons in buttons section', () => {
       const buttonsSection = wrapper.find('[data-testid="buttons-action-bar"]');
       expect(buttonsSection.find('[data-testid="reset-button"]').exists()).toBe(true);

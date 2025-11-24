@@ -19,9 +19,10 @@ describe('useCanvasRenderer', () => {
       orientation: ref('portrait'),
       aspectRatio: ref('3:2'),
       backgroundColor: ref('#FFFFFF'),
+      frameSize: ref(4500),
       frameWidth: ref(3000),
       frameHeight: ref(4500), // Portrait 3:2 = 3000 * 1.5
-      spacing: ref(100),
+      borderPercentage: ref(2),
     };
 
     mockImageState = {
@@ -34,7 +35,6 @@ describe('useCanvasRenderer', () => {
 
     // Reset singleton state to defaults
     const renderer = useCanvasRenderer();
-    renderer.fileName.value = EXPORT_DEFAULT.defaultFileName;
     renderer.quality.value = EXPORT_DEFAULT.defaultQuality;
     renderer.format.value = EXPORT_DEFAULT.defaultFormat;
   });
@@ -392,48 +392,30 @@ describe('useCanvasRenderer', () => {
       expect(renderer.canExport.value).toBe(false);
     });
 
-    it('should be false when filename is invalid even if images are ready', () => {
+    it('should be true when both images are ready', () => {
       mockImageState.images.value[0] = { width: 1800, height: 1200 };
       mockImageState.images.value[1] = { width: 1800, height: 1200 };
 
       const renderer = useCanvasRenderer();
-
-      // Set invalid filename
-      renderer.fileName.value = 'invalid/filename';
-
-      expect(renderer.isReady.value).toBe(true);
-      expect(renderer.canExport.value).toBe(false);
-    });
-
-    it('should be true when images are ready and filename is valid', () => {
-      mockImageState.images.value[0] = { width: 1800, height: 1200 };
-      mockImageState.images.value[1] = { width: 1800, height: 1200 };
-
-      const renderer = useCanvasRenderer();
-
-      // Set valid filename
-      renderer.fileName.value = 'valid-filename';
 
       expect(renderer.isReady.value).toBe(true);
       expect(renderer.canExport.value).toBe(true);
     });
 
-    it('should update reactively when filename validity changes', () => {
+    it('should update reactively when images change', () => {
       mockImageState.images.value[0] = { width: 1800, height: 1200 };
       mockImageState.images.value[1] = { width: 1800, height: 1200 };
 
       const renderer = useCanvasRenderer();
 
-      // Start with valid filename
-      renderer.fileName.value = 'valid-filename';
       expect(renderer.canExport.value).toBe(true);
 
-      // Change to invalid filename
-      renderer.fileName.value = 'invalid/filename';
+      // Remove an image
+      mockImageState.images.value[0] = null;
       expect(renderer.canExport.value).toBe(false);
 
-      // Change back to valid
-      renderer.fileName.value = 'another_valid_filename';
+      // Add it back
+      mockImageState.images.value[0] = { width: 1800, height: 1200 };
       expect(renderer.canExport.value).toBe(true);
     });
   });
@@ -468,7 +450,18 @@ describe('useCanvasRenderer', () => {
       );
     });
 
-    it('should download PNG by default', () => {
+    it('should download PNG with generated filename', () => {
+      mockImageState.images.value[0] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'my-photo.jpg'
+      };
+      mockImageState.images.value[1] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'vacation.jpg'
+      };
+
       const renderer = useCanvasRenderer({ previewWidth: ref(800) });
 
       renderer.downloadImage(mockStage);
@@ -480,16 +473,27 @@ describe('useCanvasRenderer', () => {
         qualityPercentage: 0.85,
         pixelRatio: 3.75,
       });
-      expect(mockLink.download).toBe('framed.png');
+      // Filename should match pattern: framed-<img1>-<img2>-<uuid>.png
+      expect(mockLink.download).toMatch(/^framed-my-photo-vacation-[0-9a-f]{8}\.png$/);
       expect(mockLink.click).toHaveBeenCalled();
     });
 
     it('should download JPEG with custom format', () => {
+      mockImageState.images.value[0] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'photo1.jpg'
+      };
+      mockImageState.images.value[1] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'photo2.jpg'
+      };
+
       const renderer = useCanvasRenderer({ previewWidth: ref(800) });
 
-      // Set custom format and filename via singleton
+      // Set custom format via singleton
       renderer.format.value = 'image/jpeg';
-      renderer.fileName.value = 'custom';
 
       renderer.downloadImage(mockStage);
 
@@ -498,10 +502,61 @@ describe('useCanvasRenderer', () => {
         qualityPercentage: 0.85,
         pixelRatio: 3.75,
       });
-      expect(mockLink.download).toBe('custom.jpeg');
+      expect(mockLink.download).toMatch(/^framed-photo1-photo2-[0-9a-f]{8}\.jpeg$/);
+    });
+
+    it('should generate UUID when filenames are missing', () => {
+      mockImageState.images.value[0] = {
+        width: 1800,
+        height: 1200,
+        // No fileName property
+      };
+      mockImageState.images.value[1] = {
+        width: 1800,
+        height: 1200,
+        fileName: null
+      };
+
+      const renderer = useCanvasRenderer({ previewWidth: ref(800) });
+
+      renderer.downloadImage(mockStage);
+
+      // Filename should use UUIDs for both image parts
+      expect(mockLink.download).toMatch(/^framed-[0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{8}\.png$/);
+    });
+
+    it('should generate UUID when filenames contain only invalid chars', () => {
+      mockImageState.images.value[0] = {
+        width: 1800,
+        height: 1200,
+        fileName: '@#$%^&*.jpg'
+      };
+      mockImageState.images.value[1] = {
+        width: 1800,
+        height: 1200,
+        fileName: '!!!.jpg'
+      };
+
+      const renderer = useCanvasRenderer({ previewWidth: ref(800) });
+
+      renderer.downloadImage(mockStage);
+
+      // Filename should use UUIDs for both image parts (no valid chars)
+      expect(mockLink.download).toMatch(/^framed-[0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{8}\.png$/);
     });
 
     it('should use custom quality', () => {
+      mockImageState.images.value[0] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'photo1.jpg'
+      };
+      mockImageState.images.value[1] = {
+        width: 1800,
+        height: 1200,
+        fileName: 'photo2.jpg'
+      };
+
       const renderer = useCanvasRenderer({ previewWidth: ref(800) });
 
       // Set custom quality via singleton (80%)
@@ -609,7 +664,8 @@ describe('useCanvasRenderer', () => {
       // All elements should use preview-scaled coordinates
       expect(renderer.backgroundConfig.value.width).toBe(800);
       const scale = 800 / 3000;
-      expect(renderer.image1Config.value.x).toBeGreaterThanOrEqual(100 * scale); // Scaled coords
+      // Border is 2% of 4500 / 2 = 45px per side
+      expect(renderer.image1Config.value.x).toBeGreaterThanOrEqual(40 * scale); // Scaled coords
 
       // Simulate window resize
       previewWidth.value = 600;
@@ -622,7 +678,7 @@ describe('useCanvasRenderer', () => {
       // Element dimensions should update proportionally
       expect(renderer.backgroundConfig.value.width).toBe(600);
       const newScale = 600 / 3000;
-      expect(renderer.image1Config.value.x).toBeGreaterThanOrEqual(100 * newScale);
+      expect(renderer.image1Config.value.x).toBeGreaterThanOrEqual(40 * newScale);
     });
 
     it('should maintain aspect ratio during responsive scaling', () => {

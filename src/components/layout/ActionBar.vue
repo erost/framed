@@ -1,8 +1,8 @@
 <!--
   ActionBar Component
-  Action buttons and output settings
+  Action buttons for reset and download
   Desktop: Vertical stack at bottom of sidebar
-  Mobile: Second row at bottom
+  Mobile: Horizontal row at bottom
 -->
 <template>
   <div
@@ -11,34 +11,18 @@
     data-testid="action-bar"
   >
     <!-- Desktop: Vertical stack | Mobile: Horizontal row -->
-    <div class="flex md:flex-col gap-3 md:gap-3">
-      <!-- Output settings (hidden on mobile, shown on desktop) -->
-      <div class="hidden md:flex md:flex-col md:gap-3">
-        <div class="flex gap-2">
-          <div class="flex-1">
-            <FileNameInput />
-          </div>
-          <div class="w-14">
-            <FormatSelector />
-          </div>
-        </div>
-        <QualityInput />
+    <div
+      class="flex flex-1 md:flex-col gap-2 md:gap-2"
+      data-testid="buttons-action-bar"
+    >
+      <div class="flex-1">
+        <ResetButton />
       </div>
-
-      <!-- Action Buttons (always visible) -->
-      <div
-        class="flex flex-1 md:flex-col gap-2 md:gap-2"
-        data-testid="buttons-action-bar"
-      >
-        <div class="flex-1">
-          <ResetButton />
-        </div>
-        <div class="flex-1">
-          <DownloadButton
-            :stage="stage"
-            :preview-width="previewWidth"
-          />
-        </div>
+      <div class="flex-1">
+        <DownloadButton
+          :stage="stage"
+          :preview-width="previewWidth"
+        />
       </div>
     </div>
   </div>
@@ -47,20 +31,15 @@
 <script setup>
 import ResetButton from '@/components/controls/ResetButton.vue';
 import DownloadButton from '@/components/controls/DownloadButton.vue';
-import FileNameInput from '@/components/controls/FileNameInput.vue';
-import QualityInput from '@/components/controls/QualityInput.vue';
-import FormatSelector from '@/components/controls/FormatSelector.vue';
 
 /**
  * ActionBar component
- * Contains action buttons and output settings
+ * Contains action buttons for reset and download
  *
  * Layout:
- * - Desktop (≥768px): Vertical stack in scrollable section at bottom of sidebar
- *   - Output settings (filename, format, quality) shown
+ * - Desktop (≥768px): Vertical stack at bottom of sidebar
  *   - Reset and Download buttons stacked, full-width
- * - Mobile (<768px): Second row at bottom
- *   - Output settings hidden (to save space)
+ * - Mobile (<768px): Horizontal row at bottom
  *   - Reset and Download buttons shown side-by-side, equal width
  */
 

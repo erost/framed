@@ -11,11 +11,12 @@ import {
   getImageOrientation,
   calculateAspectRatio,
 } from '@/utils/calculations';
+import { ORIENTATIONS } from '@/utils/constants';
 
 describe('calculations.js', () => {
   describe('calculateImageLayout', () => {
     it('calculates vertical layout for portrait orientation', () => {
-      const layout = calculateImageLayout(3000, 4500, 'portrait', 100);
+      const layout = calculateImageLayout(3000, 4500, ORIENTATIONS.PORTRAIT, 100);
 
       expect(layout.image1).toBeDefined();
       expect(layout.image2).toBeDefined();
@@ -30,7 +31,7 @@ describe('calculations.js', () => {
     });
 
     it('calculates horizontal layout for landscape orientation', () => {
-      const layout = calculateImageLayout(4500, 3000, 'landscape', 100);
+      const layout = calculateImageLayout(4500, 3000, ORIENTATIONS.LANDSCAPE, 100);
 
       expect(layout.image1).toBeDefined();
       expect(layout.image2).toBeDefined();
@@ -45,8 +46,8 @@ describe('calculations.js', () => {
     });
 
     it('accounts for border size in layout', () => {
-      const layoutSmallBorder = calculateImageLayout(3000, 4500, 'portrait', 50);
-      const layoutLargeBorder = calculateImageLayout(3000, 4500, 'portrait', 200);
+      const layoutSmallBorder = calculateImageLayout(3000, 4500, ORIENTATIONS.PORTRAIT, 50);
+      const layoutLargeBorder = calculateImageLayout(3000, 4500, ORIENTATIONS.PORTRAIT, 200);
 
       // Larger border should result in smaller available space
       expect(layoutSmallBorder.image1.width).toBeGreaterThan(
@@ -57,13 +58,13 @@ describe('calculations.js', () => {
       );
     });
 
-    it('maintains proper padding between images', () => {
-      const spacing = 100;
-      const layout = calculateImageLayout(3000, 4500, 'portrait', spacing);
+    it('maintains fixed inner spacing between images', () => {
+      const borderSpacing = 100;
+      const layout = calculateImageLayout(3000, 4500, ORIENTATIONS.PORTRAIT, borderSpacing);
 
-      // Gap between images should equal the spacing parameter
+      // Gap between images should be fixed at 20px (INNER_SPACING)
       const gap = layout.image2.y - (layout.image1.y + layout.image1.height);
-      expect(gap).toBeCloseTo(spacing, 0);
+      expect(gap).toBeCloseTo(20, 0);
     });
   });
 
@@ -169,17 +170,17 @@ describe('calculations.js', () => {
   describe('getImageOrientation', () => {
     it('returns portrait for taller images', () => {
       const orientation = getImageOrientation(1200, 1600);
-      expect(orientation).toBe('portrait');
+      expect(orientation).toBe(ORIENTATIONS.PORTRAIT);
     });
 
     it('returns landscape for wider images', () => {
       const orientation = getImageOrientation(1600, 1200);
-      expect(orientation).toBe('landscape');
+      expect(orientation).toBe(ORIENTATIONS.LANDSCAPE);
     });
 
     it('returns landscape for square images', () => {
       const orientation = getImageOrientation(1200, 1200);
-      expect(orientation).toBe('landscape');
+      expect(orientation).toBe(ORIENTATIONS.LANDSCAPE);
     });
   });
 

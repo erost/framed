@@ -24,17 +24,31 @@ vi.mock('@/components/controls/ColorPicker.vue', () => ({
   },
 }));
 
-vi.mock('@/components/controls/FrameSizeInput.vue', () => ({
+vi.mock('@/components/controls/FrameSizeSelector.vue', () => ({
   default: {
-    name: 'FrameSizeInput',
-    template: '<div data-testid="frame-size-input">FrameSizeInput</div>',
+    name: 'FrameSizeSelector',
+    template: '<div data-testid="frame-size-selector">FrameSizeSelector</div>',
   },
 }));
 
-vi.mock('@/components/controls/SpacingInput.vue', () => ({
+vi.mock('@/components/controls/BorderSlider.vue', () => ({
   default: {
-    name: 'SpacingInput',
-    template: '<div data-testid="spacing-input">SpacingInput</div>',
+    name: 'BorderSlider',
+    template: '<div data-testid="border-slider">BorderSlider</div>',
+  },
+}));
+
+vi.mock('@/components/controls/FormatSelector.vue', () => ({
+  default: {
+    name: 'FormatSelector',
+    template: '<div data-testid="format-selector">FormatSelector</div>',
+  },
+}));
+
+vi.mock('@/components/controls/QualitySlider.vue', () => ({
+  default: {
+    name: 'QualitySlider',
+    template: '<div data-testid="quality-slider">QualitySlider</div>',
   },
 }));
 
@@ -63,16 +77,18 @@ describe('ConfigBar', () => {
       expect(wrapper.find('[data-testid="aspect-ratio-selector"]').exists()).toBe(true);
     });
 
-    it('renders all 5 configuration controls', () => {
+    it('renders all 7 configuration controls', () => {
       const controls = wrapper.findAll('[data-testid]');
-      // Should have 5 controls + 1 config-bar container = 6 testids
-      expect(controls.length).toBeGreaterThanOrEqual(5);
+      // Should have 7 controls + 1 config-bar container = 8 testids
+      expect(controls.length).toBeGreaterThanOrEqual(7);
     });
 
-    it('renders color picker, frame size, and spacing controls', () => {
+    it('renders color picker, frame size, border, format, and quality controls', () => {
       expect(wrapper.find('[data-testid="color-picker"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="frame-size-input"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="spacing-input"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="frame-size-selector"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="border-slider"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="format-selector"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="quality-slider"]').exists()).toBe(true);
     });
   });
 
@@ -82,8 +98,10 @@ describe('ConfigBar', () => {
       expect(wrapper.find('[data-testid="orientation-toggle"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="aspect-ratio-selector"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="color-picker"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="frame-size-input"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="spacing-input"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="frame-size-selector"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="border-slider"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="format-selector"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="quality-slider"]').exists()).toBe(true);
     });
   });
 
@@ -94,8 +112,10 @@ describe('ConfigBar', () => {
       expect(allTestIds).toContain('orientation-toggle');
       expect(allTestIds).toContain('aspect-ratio-selector');
       expect(allTestIds).toContain('color-picker');
-      expect(allTestIds).toContain('frame-size-input');
-      expect(allTestIds).toContain('spacing-input');
+      expect(allTestIds).toContain('frame-size-selector');
+      expect(allTestIds).toContain('border-slider');
+      expect(allTestIds).toContain('format-selector');
+      expect(allTestIds).toContain('quality-slider');
     });
   });
 });

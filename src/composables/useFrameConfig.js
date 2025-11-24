@@ -5,7 +5,7 @@
  */
 
 import { ref, computed } from 'vue';
-import { DEFAULT_CONFIG } from '@/utils/constants.js';
+import { DEFAULT_CONFIG, ORIENTATIONS } from '@/utils/constants.js';
 import { calculateFrameDimensions } from '@/utils/calculations.js';
 
 // Singleton state
@@ -13,7 +13,7 @@ const orientation = ref(DEFAULT_CONFIG.orientation);
 const aspectRatio = ref(DEFAULT_CONFIG.aspectRatio);
 const backgroundColor = ref(DEFAULT_CONFIG.backgroundColor);
 const frameSize = ref(DEFAULT_CONFIG.frameSize); // Size of longest side
-const spacing = ref(DEFAULT_CONFIG.spacing);
+const borderPercentage = ref(DEFAULT_CONFIG.borderPercentage); // Border as percentage (1-25)
 
 // Computed dimensions based on frameSize (longest side)
 const frameDimensions = computed(() => {
@@ -34,7 +34,7 @@ export function useFrameConfig() {
    * @param {string} value - New orientation ('portrait' or 'landscape')
    */
   const updateOrientation = (value) => {
-    if (value === 'portrait' || value === 'landscape') {
+    if (value === ORIENTATIONS.PORTRAIT || value === ORIENTATIONS.LANDSCAPE) {
       orientation.value = value;
     }
   };
@@ -43,7 +43,7 @@ export function useFrameConfig() {
    * Toggle orientation between portrait and landscape
    */
   const toggleOrientation = () => {
-    orientation.value = orientation.value === 'portrait' ? 'landscape' : 'portrait';
+    orientation.value = orientation.value === ORIENTATIONS.PORTRAIT ? ORIENTATIONS.LANDSCAPE : ORIENTATIONS.PORTRAIT;
   };
 
   /**
@@ -71,11 +71,11 @@ export function useFrameConfig() {
   };
 
   /**
-   * Update spacing between elements
-   * @param {number} value - New spacing in pixels
+   * Update border percentage
+   * @param {number} value - New border percentage (1-25)
    */
-  const updateSpacing = (value) => {
-    spacing.value = Number(value);
+  const updateBorderPercentage = (value) => {
+    borderPercentage.value = Number(value);
   };
 
   /**
@@ -86,7 +86,7 @@ export function useFrameConfig() {
     aspectRatio.value = DEFAULT_CONFIG.aspectRatio;
     backgroundColor.value = DEFAULT_CONFIG.backgroundColor;
     frameSize.value = DEFAULT_CONFIG.frameSize;
-    spacing.value = DEFAULT_CONFIG.spacing;
+    borderPercentage.value = DEFAULT_CONFIG.borderPercentage;
   };
 
   // Return public API
@@ -98,7 +98,7 @@ export function useFrameConfig() {
     frameSize,
     frameWidth, // Computed based on frameSize
     frameHeight, // Computed based on frameSize
-    spacing,
+    borderPercentage,
 
     // Methods
     updateOrientation,
@@ -106,7 +106,7 @@ export function useFrameConfig() {
     updateAspectRatio,
     updateBackgroundColor,
     updateFrameSize,
-    updateSpacing,
+    updateBorderPercentage,
     reset,
   };
 }

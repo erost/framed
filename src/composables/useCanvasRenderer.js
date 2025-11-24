@@ -7,6 +7,7 @@
 import { ref, computed } from 'vue';
 import {
   calculateImageLayout,
+  calculateBorderSpacing,
   calculatePreviewScale,
   calculateScaledDimensions,
   calculateCenterOffset,
@@ -14,9 +15,8 @@ import {
 import { useFrameConfig } from '@/composables/useFrameConfig';
 import { useImageState } from '@/composables/useImageState';
 import { EXPORT_DEFAULT, IMAGE_FORMATS, PREVIEW_CONSTRAINTS } from '@/utils/constants';
-import { validateFileName } from '@/utils/validation';
+import { extractValidFilenameChars, generateUuidV1Short } from '@/utils/validation';
 
-const fileName = ref(EXPORT_DEFAULT.defaultFileName);
 const quality = ref(EXPORT_DEFAULT.defaultQuality);
 const format = ref(EXPORT_DEFAULT.defaultFormat);
 
@@ -85,11 +85,16 @@ export function useCanvasRenderer(options = {}) {
    * @type {import('vue').ComputedRef<Object>}
    */
   const imageLayout = computed(() => {
+    const borderSpacing = calculateBorderSpacing(
+      frameConfig.frameSize.value,
+      frameConfig.borderPercentage.value
+    );
+
     return calculateImageLayout(
       frameConfig.frameWidth.value,
       frameConfig.frameHeight.value,
       frameConfig.orientation.value,
-      frameConfig.spacing.value
+      borderSpacing
     );
   });
 
@@ -183,20 +188,40 @@ export function useCanvasRenderer(options = {}) {
   });
 
   /**
-   * @param {string} desiredFilename - Input filename
-   * @param {string} format - Image format ('png' or 'jpeg')
-   * @returns {string} the filename with extension based on format
+   * Generate filename based on product name, image names, and UUID
+   * Format: <product_name>-<first_image>-<second_image>-<uuid>.<ext>
+   * @param {string} mimeType - Image format mime type ('image/png' or 'image/jpeg')
+   * @returns {string} Generated filename with extension
    */
-  const composeFileName = (desiredFileName, format) => {
-    return desiredFileName + '.' + format.split('/')[1];
+  const generateFileName = (mimeType) => {
+    const productName = 'framed';
+    const extension = mimeType.split('/')[1];
+
+    // Get image filenames
+    const image1 = imageState.images.value[0];
+    const image2 = imageState.images.value[1];
+
+    // Extract valid characters from filenames (1-10 chars)
+    const image1Part = image1?.fileName
+      ? extractValidFilenameChars(image1.fileName)
+      : '';
+    const image2Part = image2?.fileName
+      ? extractValidFilenameChars(image2.fileName)
+      : '';
+
+    // Use UUID if no valid characters found
+    const part1 = image1Part || generateUuidV1Short();
+    const part2 = image2Part || generateUuidV1Short();
+
+    // Generate UUID for end of filename
+    const uuid = generateUuidV1Short();
+
+    return `${productName}-${part1}-${part2}-${uuid}.${extension}`;
   };
 
   /**
    * Download canvas as image
    * @param {Object} stage - Konva stage instance
-   * @param {string} filename - Download filename
-   * @param {string} format - Image format ('png' or 'jpeg')
-   * @param {number} quality - Image quality (0-1) for JPEG
    * @returns {void}
    */
   const downloadImage = (stage) => {
@@ -209,7 +234,7 @@ export function useCanvasRenderer(options = {}) {
     const currentFrameWidth = frameConfig.frameWidth.value;
     const pixelRatio = currentFrameWidth / currentStageWidth;
     const qualityPercentage = quality.value / 100;
-    const downloadFileName = composeFileName(fileName.value, format.value);
+    const downloadFileName = generateFileName(format.value);
 
     try {
       const mimeType = format.value;
@@ -240,19 +265,11 @@ export function useCanvasRenderer(options = {}) {
   });
 
   /**
-   * Check if filename is valid
-   * @type {import('vue').ComputedRef<boolean>}
-   */
-  const isFileNameValid = computed(() => {
-    return validateFileName(fileName.value).valid;
-  });
-
-  /**
    * Check if canvas is ready for export
    * @type {import('vue').ComputedRef<boolean>}
    */
   const canExport = computed(() => {
-    return isReady.value && isFileNameValid.value;
+    return isReady.value;
   });
 
   // Return public API
@@ -273,7 +290,6 @@ export function useCanvasRenderer(options = {}) {
     canExport,
 
     // Export configuration refs
-    fileName,
     quality,
     format,
 

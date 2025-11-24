@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useFrameConfig } from '@/composables/useFrameConfig.js';
-import { DEFAULT_CONFIG, ASPECT_RATIOS } from '@/utils/constants.js';
+import { DEFAULT_CONFIG, ASPECT_RATIOS, ORIENTATIONS } from '@/utils/constants.js';
 
 describe('useFrameConfig', () => {
   let frameConfig;
@@ -12,7 +12,7 @@ describe('useFrameConfig', () => {
   // Helper to calculate expected dimensions
   const calcDimensions = (frameSize, aspectRatio, orientation) => {
     const ratio = ASPECT_RATIOS[aspectRatio];
-    if (orientation === 'portrait') {
+    if (orientation === ORIENTATIONS.PORTRAIT) {
       return {
         width: frameSize / ratio,
         height: frameSize,
@@ -50,8 +50,8 @@ describe('useFrameConfig', () => {
       expect(frameConfig.frameSize.value).toBe(DEFAULT_CONFIG.frameSize);
     });
 
-    it('should initialize with default spacing', () => {
-      expect(frameConfig.spacing.value).toBe(DEFAULT_CONFIG.spacing);
+    it('should initialize with default border percentage', () => {
+      expect(frameConfig.borderPercentage.value).toBe(DEFAULT_CONFIG.borderPercentage);
     });
 
     it('should calculate dimensions based on frameSize, aspect ratio, and orientation', () => {
@@ -67,14 +67,14 @@ describe('useFrameConfig', () => {
 
   describe('updateOrientation', () => {
     it('should update orientation to portrait', () => {
-      frameConfig.orientation.value = 'landscape';
-      frameConfig.updateOrientation('portrait');
-      expect(frameConfig.orientation.value).toBe('portrait');
+      frameConfig.orientation.value = ORIENTATIONS.LANDSCAPE;
+      frameConfig.updateOrientation(ORIENTATIONS.PORTRAIT);
+      expect(frameConfig.orientation.value).toBe(ORIENTATIONS.PORTRAIT);
     });
 
     it('should update orientation to landscape', () => {
-      frameConfig.updateOrientation('landscape');
-      expect(frameConfig.orientation.value).toBe('landscape');
+      frameConfig.updateOrientation(ORIENTATIONS.LANDSCAPE);
+      expect(frameConfig.orientation.value).toBe(ORIENTATIONS.LANDSCAPE);
     });
 
     it('should update frame dimensions when orientation changes', () => {
@@ -82,17 +82,17 @@ describe('useFrameConfig', () => {
       const portraitExpected = calcDimensions(
         DEFAULT_CONFIG.frameSize,
         DEFAULT_CONFIG.aspectRatio,
-        'portrait'
+        ORIENTATIONS.PORTRAIT
       );
       expect(frameConfig.frameWidth.value).toBeCloseTo(portraitExpected.width, 1);
       expect(frameConfig.frameHeight.value).toBe(portraitExpected.height);
 
       // Change to landscape
-      frameConfig.updateOrientation('landscape');
+      frameConfig.updateOrientation(ORIENTATIONS.LANDSCAPE);
       const landscapeExpected = calcDimensions(
         DEFAULT_CONFIG.frameSize,
         DEFAULT_CONFIG.aspectRatio,
-        'landscape'
+        ORIENTATIONS.LANDSCAPE
       );
       expect(frameConfig.frameWidth.value).toBe(landscapeExpected.width);
       expect(frameConfig.frameHeight.value).toBeCloseTo(landscapeExpected.height, 1);
@@ -107,20 +107,20 @@ describe('useFrameConfig', () => {
 
   describe('toggleOrientation', () => {
     it('should toggle from portrait to landscape', () => {
-      frameConfig.orientation.value = 'portrait';
+      frameConfig.orientation.value = ORIENTATIONS.PORTRAIT;
       frameConfig.toggleOrientation();
-      expect(frameConfig.orientation.value).toBe('landscape');
+      expect(frameConfig.orientation.value).toBe(ORIENTATIONS.LANDSCAPE);
     });
 
     it('should toggle from landscape to portrait', () => {
-      frameConfig.orientation.value = 'landscape';
+      frameConfig.orientation.value = ORIENTATIONS.LANDSCAPE;
       frameConfig.toggleOrientation();
-      expect(frameConfig.orientation.value).toBe('portrait');
+      expect(frameConfig.orientation.value).toBe(ORIENTATIONS.PORTRAIT);
     });
 
     it('should update frame height when toggling orientation', () => {
       // Start with portrait
-      frameConfig.orientation.value = 'portrait';
+      frameConfig.orientation.value = ORIENTATIONS.PORTRAIT;
       const portraitHeight = frameConfig.frameHeight.value;
 
       // Toggle to landscape
@@ -219,31 +219,31 @@ describe('useFrameConfig', () => {
     });
   });
 
-  describe('updateSpacing', () => {
-    it('should update spacing to new value', () => {
-      frameConfig.updateSpacing(150);
-      expect(frameConfig.spacing.value).toBe(150);
+  describe('updateBorderPercentage', () => {
+    it('should update border percentage to new value', () => {
+      frameConfig.updateBorderPercentage(10);
+      expect(frameConfig.borderPercentage.value).toBe(10);
     });
 
     it('should convert string to number', () => {
-      frameConfig.updateSpacing('200');
-      expect(frameConfig.spacing.value).toBe(200);
+      frameConfig.updateBorderPercentage('15');
+      expect(frameConfig.borderPercentage.value).toBe(15);
     });
 
-    it('should allow spacing of 0', () => {
-      frameConfig.updateSpacing(0);
-      expect(frameConfig.spacing.value).toBe(0);
+    it('should allow border percentage of 1', () => {
+      frameConfig.updateBorderPercentage(1);
+      expect(frameConfig.borderPercentage.value).toBe(1);
     });
   });
 
   describe('reset', () => {
     it('should reset all values to defaults', () => {
       // Change all values
-      frameConfig.updateOrientation('landscape');
+      frameConfig.updateOrientation(ORIENTATIONS.LANDSCAPE);
       frameConfig.updateAspectRatio('16:9');
       frameConfig.updateBackgroundColor('#000000');
       frameConfig.updateFrameSize(5000);
-      frameConfig.updateSpacing(200);
+      frameConfig.updateBorderPercentage(10);
 
       // Reset
       frameConfig.reset();
@@ -255,7 +255,7 @@ describe('useFrameConfig', () => {
         DEFAULT_CONFIG.backgroundColor
       );
       expect(frameConfig.frameSize.value).toBe(DEFAULT_CONFIG.frameSize);
-      expect(frameConfig.spacing.value).toBe(DEFAULT_CONFIG.spacing);
+      expect(frameConfig.borderPercentage.value).toBe(DEFAULT_CONFIG.borderPercentage);
     });
 
     it('should reset computed frame dimensions', () => {
@@ -286,25 +286,25 @@ describe('useFrameConfig', () => {
   describe('Reactivity', () => {
     it('should react to multiple state changes', () => {
       // Change orientation to landscape
-      frameConfig.updateOrientation('landscape');
+      frameConfig.updateOrientation(ORIENTATIONS.LANDSCAPE);
       // Change aspect ratio to 16:9
       frameConfig.updateAspectRatio('16:9');
 
       // Calculate expected dimensions with current frameSize (DEFAULT_CONFIG.frameSize)
-      const expected = calcDimensions(DEFAULT_CONFIG.frameSize, '16:9', 'landscape');
+      const expected = calcDimensions(DEFAULT_CONFIG.frameSize, '16:9', ORIENTATIONS.LANDSCAPE);
       expect(frameConfig.frameWidth.value).toBe(expected.width);
       expect(frameConfig.frameHeight.value).toBeCloseTo(expected.height, 1);
     });
 
     it('should maintain reactivity after reset', () => {
       frameConfig.reset();
-      frameConfig.updateOrientation('landscape');
+      frameConfig.updateOrientation(ORIENTATIONS.LANDSCAPE);
 
       // Should still be reactive (landscape 3:2 with default frameSize)
       const expected = calcDimensions(
         DEFAULT_CONFIG.frameSize,
         DEFAULT_CONFIG.aspectRatio,
-        'landscape'
+        ORIENTATIONS.LANDSCAPE
       );
       expect(frameConfig.frameWidth.value).toBe(expected.width);
       expect(frameConfig.frameHeight.value).toBeCloseTo(expected.height, 1);
@@ -328,14 +328,14 @@ describe('useFrameConfig', () => {
       expect(frameConfig.frameHeight.value).toBe(800);
     });
 
-    it('should handle zero spacing', () => {
-      frameConfig.updateSpacing(0);
-      expect(frameConfig.spacing.value).toBe(0);
+    it('should handle minimum border percentage', () => {
+      frameConfig.updateBorderPercentage(1);
+      expect(frameConfig.borderPercentage.value).toBe(1);
     });
 
-    it('should handle large spacing', () => {
-      frameConfig.updateSpacing(500);
-      expect(frameConfig.spacing.value).toBe(500);
+    it('should handle maximum border percentage', () => {
+      frameConfig.updateBorderPercentage(25);
+      expect(frameConfig.borderPercentage.value).toBe(25);
     });
   });
 });

@@ -5,8 +5,7 @@
 <template>
   <div :data-testid="testId">
     <div
-      class="flex w-full rounded-lg border border-gray-600
-             p-1 bg-gray-800"
+      class="selector-group"
       role="group"
       aria-label="Frame aspect ratio"
     >
@@ -15,10 +14,10 @@
         :key="ratio"
         type="button"
         :class="[
-          'ratio-btn',
+          'selector-btn',
           {
-            'btn-active': aspectRatio === ratio,
-            'btn-inactive': aspectRatio !== ratio
+            'selector-btn-active': aspectRatio === ratio,
+            'selector-btn-inactive': aspectRatio !== ratio
           }
         ]"
         :aria-pressed="aspectRatio === ratio"
@@ -69,33 +68,3 @@ const handleSelect = (ratio) => {
   updateAspectRatio(ratio);
 };
 </script>
-
-<style scoped>
-@import "tailwindcss" reference;
-
-/**
- * Base button styles for aspect ratio selector buttons
- * Contains all common styling applied to all ratio buttons
- */
-.ratio-btn {
-  @apply flex flex-1 items-center justify-center px-3 py-2 text-sm font-medium rounded-md;
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap;
-  @apply transition-colors;
-}
-
-/**
- * Active button state
- * Applied to the currently selected aspect ratio
- */
-.btn-active {
-  @apply bg-gray-700 text-blue-400 shadow-sm;
-}
-
-/**
- * Inactive button state
- * Applied to non-selected aspect ratios
- */
-.btn-inactive {
-  @apply text-gray-300 hover:text-gray-100 hover:bg-gray-700 cursor-pointer;
-}
-</style>

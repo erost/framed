@@ -2,7 +2,20 @@
  * Calculation utilities for frame dimensions and image layouts
  */
 
-import { ASPECT_RATIOS } from './constants.js';
+import { ASPECT_RATIOS, ORIENTATIONS } from './constants.js';
+
+/**
+ * Calculate border spacing from percentage of frame size
+ * Border percentage applies to both sides, so divide by 2
+ * Example: frameSize=2048, borderPercentage=2 -> Math.round(2048 * 0.02 / 2) = 20px per side
+ *
+ * @param {number} frameSize - Size of the longest side in pixels
+ * @param {number} borderPercentage - Border percentage (1-25)
+ * @returns {number} Border spacing in pixels (per side)
+ */
+export function calculateBorderSpacing(frameSize, borderPercentage) {
+  return Math.round((frameSize * borderPercentage) / 100 / 2);
+}
 
 /**
  * Calculate frame dimensions based on size (longest side), aspect ratio, and orientation
@@ -24,7 +37,7 @@ export function calculateFrameDimensions(size, aspectRatio, orientation) {
     throw new Error(`Invalid aspect ratio: ${aspectRatio}`);
   }
 
-  if (orientation === 'portrait') {
+  if (orientation === ORIENTATIONS.PORTRAIT) {
     // Portrait: height is the longest side (size parameter)
     // Width = height / ratio
     // For 4:3 portrait with size=1080: width = 1080 / (4/3) = 810
@@ -32,7 +45,7 @@ export function calculateFrameDimensions(size, aspectRatio, orientation) {
       width: size / ratio,
       height: size,
     };
-  } else if (orientation === 'landscape') {
+  } else if (orientation === ORIENTATIONS.LANDSCAPE) {
     // Landscape: width is the longest side (size parameter)
     // Height = width / ratio
     // For 4:3 landscape with size=1080: height = 1080 / (4/3) = 810
@@ -47,63 +60,66 @@ export function calculateFrameDimensions(size, aspectRatio, orientation) {
 
 /**
  * Calculate dimensions and positions for two images in a frame
- * Uses uniform spacing between all elements (edges and images)
+ * Border spacing applies to frame edges, fixed inner spacing between images
  *
  * Spacing concept:
- * - Portrait: [spacing][image1][spacing][image2][spacing] (vertical)
- * - Landscape: [spacing][image1][spacing][image2][spacing] (horizontal)
+ * - Portrait: [border][image1][inner][image2][border] (vertical)
+ * - Landscape: [border][image1][inner][image2][border] (horizontal)
+ * - Inner spacing is always 20px (fixed distance between images)
  *
  * @param {number} frameWidth - Frame width in pixels
  * @param {number} frameHeight - Frame height in pixels
  * @param {string} orientation - Frame orientation ('portrait' or 'landscape')
- * @param {number} spacing - Uniform spacing between elements
+ * @param {number} borderSpacing - Border spacing in pixels (edge distance)
  * @returns {Object} Layout object with image1 and image2 positions/dimensions
  */
-export function calculateImageLayout(frameWidth, frameHeight, orientation, spacing) {
-  if (orientation === 'portrait') {
-    // Stack vertically: [spacing][image1][spacing][image2][spacing]
-    // Available height for images: frameHeight - 3*spacing (top, middle, bottom)
-    const availableHeight = frameHeight - 3 * spacing;
+export function calculateImageLayout(frameWidth, frameHeight, orientation, borderSpacing) {
+  const INNER_SPACING = 20; // Fixed spacing between images
+
+  if (orientation === ORIENTATIONS.PORTRAIT) {
+    // Stack vertically: [border][image1][inner][image2][border]
+    // Available height for images: frameHeight - 2*border - inner
+    const availableHeight = frameHeight - 2 * borderSpacing - INNER_SPACING;
     const imageHeight = availableHeight / 2;
 
-    // Full width minus spacing on both sides
-    const availableWidth = frameWidth - 2 * spacing;
+    // Full width minus border on both sides
+    const availableWidth = frameWidth - 2 * borderSpacing;
     const imageWidth = availableWidth;
 
     return {
       image1: {
-        x: spacing,
-        y: spacing,
+        x: borderSpacing,
+        y: borderSpacing,
         width: imageWidth,
         height: imageHeight,
       },
       image2: {
-        x: spacing,
-        y: spacing + imageHeight + spacing,
+        x: borderSpacing,
+        y: borderSpacing + imageHeight + INNER_SPACING,
         width: imageWidth,
         height: imageHeight,
       },
     };
   } else {
-    // Stack horizontally: [spacing][image1][spacing][image2][spacing]
-    // Available width for images: frameWidth - 3*spacing (left, middle, right)
-    const availableWidth = frameWidth - 3 * spacing;
+    // Stack horizontally: [border][image1][inner][image2][border]
+    // Available width for images: frameWidth - 2*border - inner
+    const availableWidth = frameWidth - 2 * borderSpacing - INNER_SPACING;
     const imageWidth = availableWidth / 2;
 
-    // Full height minus spacing on both sides
-    const availableHeight = frameHeight - 2 * spacing;
+    // Full height minus border on both sides
+    const availableHeight = frameHeight - 2 * borderSpacing;
     const imageHeight = availableHeight;
 
     return {
       image1: {
-        x: spacing,
-        y: spacing,
+        x: borderSpacing,
+        y: borderSpacing,
         width: imageWidth,
         height: imageHeight,
       },
       image2: {
-        x: spacing + imageWidth + spacing,
-        y: spacing,
+        x: borderSpacing + imageWidth + INNER_SPACING,
+        y: borderSpacing,
         width: imageWidth,
         height: imageHeight,
       },
@@ -198,7 +214,7 @@ export function calculatePreviewScale(frameWidth, containerWidth) {
  * @returns {string} 'portrait' or 'landscape'
  */
 export function getImageOrientation(width, height) {
-  return height > width ? 'portrait' : 'landscape';
+  return height > width ? ORIENTATIONS.PORTRAIT : ORIENTATIONS.LANDSCAPE;
 }
 
 /**
