@@ -6,63 +6,77 @@
 -->
 <template>
   <div
-    class="bg-gray-800 md:bg-transparent md:border-0 border-t border-gray-700
-           md:rounded-none md:shadow-none md:px-0 md:py-0 px-4 py-3"
+    class="bg-gray-800 md:bg-transparent md:border-0 border-gray-700
+           md:rounded-none md:shadow-none md:px-0 md:py-0 px-4 py-0"
     data-testid="config-bar"
   >
-    <!-- Mobile: Horizontal scrollable row -->
-    <div class="flex md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-x-visible">
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+    <!-- Desktop & Mobile Panel: Vertical stack -->
+    <div class="flex flex-col gap-3 md:gap-4">
+      <div class="w-full">
         <ConfigElement test-id="config-orientation">
-          <template #label>Orientation</template>
+          <template #label>
+            Orientation
+          </template>
           <template #element>
             <OrientationToggle />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-aspect-ratio">
-          <template #label>Aspect Ratio</template>
+          <template #label>
+            Aspect Ratio
+          </template>
           <template #element>
             <AspectRatioSelector />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-frame-color">
-          <template #label>Frame Color</template>
+          <template #label>
+            Frame Color
+          </template>
           <template #element>
             <ColorPicker />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-frame-size">
-          <template #label>Frame Size</template>
+          <template #label>
+            Frame Size
+          </template>
           <template #element>
             <FrameSizeSelector />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-border-size">
-          <template #label>Border Size</template>
+          <template #label>
+            Border Size
+          </template>
           <template #element>
             <BorderSlider />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-export-format">
-          <template #label>Export Format</template>
+          <template #label>
+            Export Format
+          </template>
           <template #element>
             <FormatSelector />
           </template>
         </ConfigElement>
       </div>
-      <div class="flex-shrink-0 md:flex-shrink min-w-[200px] md:min-w-0 md:w-full">
+      <div class="w-full">
         <ConfigElement test-id="config-quality">
-          <template #label>Quality</template>
+          <template #label>
+            Quality
+          </template>
           <template #element>
             <QualitySlider />
           </template>

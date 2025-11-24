@@ -511,4 +511,45 @@ describe('App.vue - Window Resize', () => {
       expect(wrapper.vm.previewWidth).toBe(252);
     });
   });
+
+  describe('Mobile Slide-up Panel', () => {
+    it('renders hidden checkbox for panel toggle', () => {
+      const wrapper = mount(App);
+      const checkbox = wrapper.find('#settings-panel-toggle');
+      expect(checkbox.exists()).toBe(true);
+      expect(checkbox.attributes('type')).toBe('checkbox');
+    });
+
+    it('renders chevron toggle button', () => {
+      const wrapper = mount(App);
+      const toggleButton = wrapper.find('[data-testid="panel-toggle-button"]');
+      expect(toggleButton.exists()).toBe(true);
+    });
+
+    it('chevron button is a label for the checkbox', () => {
+      const wrapper = mount(App);
+      const toggleButton = wrapper.find('[data-testid="panel-toggle-button"]');
+      expect(toggleButton.element.tagName).toBe('LABEL');
+      expect(toggleButton.attributes('for')).toBe('settings-panel-toggle');
+    });
+
+    it('renders settings panel with correct class', () => {
+      const wrapper = mount(App);
+      const panel = wrapper.find('.settings-panel');
+      expect(panel.exists()).toBe(true);
+    });
+
+    it('panel contains ConfigBar component', () => {
+      const wrapper = mount(App);
+      const panel = wrapper.find('.settings-panel');
+      expect(panel.html()).toContain('data-testid="config-bar"');
+    });
+
+    it('chevron icon has transition class', () => {
+      const wrapper = mount(App);
+      const chevronIcon = wrapper.find('.chevron-icon');
+      expect(chevronIcon.exists()).toBe(true);
+      expect(chevronIcon.classes()).toContain('transition-transform');
+    });
+  });
 });
