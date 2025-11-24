@@ -2,7 +2,7 @@
  * Validation utilities for images and configuration
  */
 
-import { IMAGE_CONSTRAINTS, FILE_NAME_VALIDATOR } from './constants.js';
+import { IMAGE_CONSTRAINTS } from './constants.js';
 
 /**
  * Validate image file before upload
@@ -35,89 +35,47 @@ export function validateFile(file) {
 }
 
 /**
- * Validate image dimensions meet minimum requirements
- * @param {number} width - Image width in pixels
- * @param {number} height - Image height in pixels
- * @returns {Object} Validation result {valid: boolean, error?: string}
+ * Extract valid filename characters from a filename
+ * @param {string} filename - Original filename with extension
+ * @returns {string} Valid characters (1-10 chars), or empty string if none
  */
-export function validateImageDimensions(width, height) {
-  const minDim = IMAGE_CONSTRAINTS.minDimension;
-  const shortestSide = Math.min(width, height);
+export function extractValidFilenameChars(filename) {
+  if (!filename) return '';
 
-  if (shortestSide < minDim) {
-    return {
-      valid: false,
-      error:
-        `Image must be at least ${minDim}px on the shortest side. ` + `Current: ${shortestSide}px`,
-    };
-  }
+  // Remove extension
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
 
-  return { valid: true };
+  // Extract only valid characters (alphanumeric, spaces, underscore, dash, comma)
+  const validChars = nameWithoutExt.replace(/[^\w,\s-]/g, '');
+
+  // Return first 10 characters, min 1, max 10
+  return validChars.slice(0, 10);
 }
+
+// Counter for ensuring uniqueness when generating UUIDs in rapid succession
+let uuidCounter = 0;
 
 /**
- * Validate frame size (longest side) is within acceptable range
- * @param {number} size - Frame size in pixels
- * @param {number} minSize - Minimum allowed size
- * @param {number} maxSize - Maximum allowed size
- * @returns {Object} Validation result {valid: boolean, error?: string, clamped?: number}
+ * Generate UUID v1 (time-based)
+ * Returns first 8 characters of UUID v1
+ * @returns {string} First 8 characters of UUID v1
  */
-export function validateFrameSize(size, minSize = 800, maxSize = 10000) {
-  if (size < minSize) {
-    return {
-      valid: false,
-      error: `Frame size must be at least ${minSize}px`,
-      clamped: minSize,
-    };
-  }
+export function generateUuidV1Short() {
+  // UUID v1 format: time_low-time_mid-time_hi_and_version-clock_seq-node
+  const timestamp = Date.now();
+  const timeHex = timestamp.toString(16).padStart(12, '0');
 
-  if (size > maxSize) {
-    return {
-      valid: false,
-      error: `Frame size must not exceed ${maxSize}px`,
-      clamped: maxSize,
-    };
-  }
+  // Increment counter for uniqueness in rapid succession
+  uuidCounter = (uuidCounter + 1) % 0xffff;
 
-  return { valid: true };
-}
+  // Add random component and counter for uniqueness
+  const random = Math.floor(Math.random() * 0xffff)
+    .toString(16)
+    .padStart(4, '0');
+  const counter = uuidCounter.toString(16).padStart(4, '0');
 
-/**
- * Validate spacing is within acceptable range
- * @param {number} size - Spacing size in pixels
- * @param {number} minSize - Minimum allowed size
- * @param {number} maxSize - Maximum allowed size
- * @returns {Object} Validation result {valid: boolean, error?: string, clamped?: number}
- */
-export function validateSpacing(size, minSize = 0, maxSize = 500) {
-  if (size < minSize) {
-    return {
-      valid: false,
-      error: `Spacing must be at least ${minSize}px`,
-      clamped: minSize,
-    };
-  }
+  // Construct UUID v1-like identifier (simplified version)
+  const uuid = `${timeHex.slice(-6)}${counter}${random}`;
 
-  if (size > maxSize) {
-    return {
-      valid: false,
-      error: `Spacing must not exceed ${maxSize}px`,
-      clamped: maxSize,
-    };
-  }
-
-  return { valid: true };
-}
-
-export function validateFileName(value) {
-  const validator = FILE_NAME_VALIDATOR;
-
-  if (!validator.test(value)) {
-    return {
-      valid: false,
-      error: 'Invalid filename. Only alphanumeric, spaces, underscope, and dashes are allowed',
-    };
-  }
-
-  return { valid: true };
+  return uuid.slice(0, 8);
 }

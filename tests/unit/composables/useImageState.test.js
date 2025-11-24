@@ -160,28 +160,6 @@ describe('useImageState', () => {
       );
     });
 
-    it('should reject image with dimensions too small', async () => {
-      // Mock small image
-      global.Image = class SmallImage {
-        constructor() {
-          this.width = 500;
-          this.height = 300;
-        }
-        set src(value) {
-          setTimeout(() => this.onload && this.onload(), 0);
-        }
-      };
-
-      const file = new MockFile([], 'small.jpg', { type: 'image/jpeg' });
-
-      await expect(imageState.addImage(file, 0)).rejects.toThrow(
-        'Image must be at least'
-      );
-
-      // Restore original mock
-      global.Image = MockImage;
-    });
-
     it('should handle portrait orientation correctly', async () => {
       // Mock portrait image
       global.Image = class PortraitImage {

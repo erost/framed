@@ -32,7 +32,7 @@ export const DEFAULT_CONFIG = {
   aspectRatio: '3:2',
   backgroundColor: '#FFFFFF',
   frameSize: 2048, // Size of the longest side (height for portrait, width for landscape)
-  spacing: 20,
+  borderPercentage: 2, // Border as percentage of frame size (1-25)
 };
 
 /**
@@ -41,20 +41,26 @@ export const DEFAULT_CONFIG = {
  */
 export const IMAGE_CONSTRAINTS = {
   maxFileSize: 40 * 1024 * 1024, // 40MB
-  minDimension: 800,
   supportedFormats: ['image/jpeg', 'image/png', 'image/webp'],
-  aspectRatioTolerance: 0.05, // 5%
 };
+
+/**
+ * Frame size options for export
+ * @constant {Array.<Object>}
+ */
+export const FRAME_SIZE_OPTIONS = [
+  { label: '1024px', value: 1024 },
+  { label: '2048px', value: 2048 },
+  { label: '4096px', value: 4096 }
+];
 
 /**
  * Frame dimension constraints
  * @constant {Object}
  */
 export const FRAME_CONSTRAINTS = {
-  minSize: 800,
-  maxSize: 10000,
-  minSpacing: 0,
-  maxSpacing: 500,
+  minBorderPercentage: 1,
+  maxBorderPercentage: 25,
 };
 
 /**
@@ -70,8 +76,9 @@ export const PREVIEW_CONSTRAINTS = {
  * @constant {Array.<Object>}
  */
 export const IMAGE_FORMATS = [
-  { mimeType: 'image/png', extension: 'png' },
-  { mimeType: 'image/jpeg', extension: 'jpeg' },
+  { mimeType: 'image/png', extension: 'png', label: 'PNG' },
+  { mimeType: 'image/jpeg', extension: 'jpeg', label: 'JPEG' },
+  { mimeType: 'image/webp', extension: 'webp', label: 'WebP' },
 ];
 
 export const EXPORT_DEFAULT = {
@@ -79,5 +86,3 @@ export const EXPORT_DEFAULT = {
   defaultFileName: 'framed',
   defaultFormat: IMAGE_FORMATS[0].mimeType,
 };
-
-export const FILE_NAME_VALIDATOR = /^[\w,\s-]+$/;

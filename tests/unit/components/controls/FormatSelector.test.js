@@ -15,50 +15,78 @@ describe('FormatSelector', () => {
   });
 
   describe('Structure', () => {
-    it('renders the format selector', () => {
+    it('renders the format selector container', () => {
       expect(wrapper.find('[data-testid="format-selector"]').exists()).toBe(true);
     });
 
-    it('is a select element', () => {
-      expect(wrapper.find('[data-testid="format-selector"]').element.tagName).toBe('SELECT');
+    it('renders button group with role', () => {
+      const group = wrapper.find('[role="group"]');
+      expect(group.exists()).toBe(true);
+      expect(group.attributes('aria-label')).toBe('Export format');
+    });
+
+    it('renders all format buttons', () => {
+      const buttons = wrapper.findAll('button');
+      expect(buttons).toHaveLength(IMAGE_FORMATS.length);
     });
   });
 
-  describe('Format Options', () => {
+  describe('Format Buttons', () => {
     it('displays all available formats from IMAGE_FORMATS', () => {
-      const options = wrapper.findAll('option');
-      expect(options).toHaveLength(IMAGE_FORMATS.length);
-    });
-
-    it('displays format extensions not mime types', () => {
-      const options = wrapper.findAll('option');
-      options.forEach((option, index) => {
-        const format = IMAGE_FORMATS[index];
-        expect(option.text()).toBe(`.${format.extension}`);
+      IMAGE_FORMATS.forEach((format) => {
+        const button = wrapper.find(`[data-testid="format-${format.extension}"]`);
+        expect(button.exists()).toBe(true);
       });
     });
 
-    it('uses mime type as option value', () => {
-      const options = wrapper.findAll('option');
-      options.forEach((option, index) => {
+    it('displays format labels', () => {
+      const buttons = wrapper.findAll('button');
+      buttons.forEach((button, index) => {
         const format = IMAGE_FORMATS[index];
-        expect(option.element.value).toBe(format.mimeType);
+        expect(button.text()).toBe(format.label);
       });
+    });
+
+    it('marks selected format button as active', () => {
+      const activeButton = wrapper.find('[data-testid="format-png"]');
+      expect(activeButton.classes()).toContain('selector-btn-active');
+      expect(activeButton.attributes('aria-pressed')).toBe('true');
+    });
+
+    it('marks non-selected format buttons as inactive', () => {
+      const inactiveButton = wrapper.find('[data-testid="format-jpeg"]');
+      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
+      expect(inactiveButton.attributes('aria-pressed')).toBe('false');
     });
   });
 
   describe('Behavior', () => {
-    it('binds to format value from composable', () => {
-      const select = wrapper.find('[data-testid="format-selector"]');
-      expect(select.element.value).toBe(IMAGE_FORMATS[0].mimeType);
+    it('updates format when button is clicked', async () => {
+      const jpegButton = wrapper.find('[data-testid="format-jpeg"]');
+      await jpegButton.trigger('click');
+
+      expect(canvasRenderer.format.value).toBe('image/jpeg');
     });
 
-    it('updates format when selection changes', async () => {
-      const select = wrapper.find('[data-testid="format-selector"]');
-      const newFormat = IMAGE_FORMATS[1].mimeType;
-      await select.setValue(newFormat);
+    it('updates active state when format changes', async () => {
+      const webpButton = wrapper.find('[data-testid="format-webp"]');
+      await webpButton.trigger('click');
 
-      expect(canvasRenderer.format.value).toBe(newFormat);
+      await wrapper.vm.$nextTick();
+
+      expect(webpButton.classes()).toContain('selector-btn-active');
+      expect(webpButton.attributes('aria-pressed')).toBe('true');
+
+      const pngButton = wrapper.find('[data-testid="format-png"]');
+      expect(pngButton.classes()).toContain('selector-btn-inactive');
+      expect(pngButton.attributes('aria-pressed')).toBe('false');
+    });
+
+    it('calls updateFormat with correct mime type', async () => {
+      const webpButton = wrapper.find('[data-testid="format-webp"]');
+      await webpButton.trigger('click');
+
+      expect(canvasRenderer.format.value).toBe('image/webp');
     });
   });
 

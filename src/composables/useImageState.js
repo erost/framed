@@ -4,7 +4,7 @@
  */
 
 import { ref } from 'vue';
-import { validateFile, validateImageDimensions } from '@/utils/validation.js';
+import { validateFile } from '@/utils/validation.js';
 import { getImageOrientation, calculateAspectRatio } from '@/utils/calculations.js';
 
 /**
@@ -25,15 +25,9 @@ function loadImageMetadata(file) {
         const orientation = getImageOrientation(width, height);
         const aspectRatio = calculateAspectRatio(width, height);
 
-        // Validate dimensions
-        const dimensionValidation = validateImageDimensions(width, height);
-        if (!dimensionValidation.valid) {
-          reject(new Error(dimensionValidation.error));
-          return;
-        }
-
         resolve({
           file,
+          fileName: file.name,
           dataUrl: e.target.result,
           width,
           height,

@@ -36,4 +36,89 @@
     @apply bg-gray-50 dark:bg-gray-700;
     @apply border-b border-gray-200 dark:border-gray-600;
   }
+
+  /**
+   * Shared button group selector styles
+   * Used by: OrientationToggle, AspectRatioSelector, FrameSizeSelector, FormatSelector
+   */
+
+  /* Container for button group */
+  .selector-group {
+    @apply flex w-full rounded-lg border border-gray-600 p-1 bg-gray-800;
+  }
+
+  /* Base button styles for selector buttons */
+  .selector-btn {
+    @apply flex flex-1 items-center justify-center px-3 py-2 text-sm font-medium rounded-md;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap;
+    @apply transition-colors;
+  }
+
+  /* Active button state (currently selected option) */
+  .selector-btn-active {
+    @apply bg-gray-700 text-blue-400 shadow-sm;
+  }
+
+  /* Inactive button state (non-selected options) */
+  .selector-btn-inactive {
+    @apply text-gray-300 hover:text-gray-100 hover:bg-gray-700 cursor-pointer;
+  }
+
+  /**
+   * Shared range slider styles
+   * Used by: QualitySlider, BorderSlider
+   */
+
+  /* Range input with value label in thumb */
+  .range-input-with-value {
+    @apply w-full appearance-none cursor-pointer bg-transparent;
+    @apply focus:outline-none;
+    height: 32px; /* Increased height to accommodate squared thumb */
+  }
+
+  .range-input-with-value::-webkit-slider-thumb {
+    @apply appearance-none rounded cursor-pointer opacity-0;
+    width: 32px;
+    height: 32px;
+  }
+
+  .range-input-with-value::-moz-range-thumb {
+    @apply rounded border-0 cursor-pointer opacity-0;
+    width: 32px;
+    height: 32px;
+  }
+
+  .range-input-with-value::-webkit-slider-runnable-track {
+    @apply w-full h-2 rounded-lg;
+    @apply bg-gray-200 dark:bg-gray-600;
+  }
+
+  .range-input-with-value::-moz-range-track {
+    @apply w-full h-2 rounded-lg;
+    @apply bg-gray-200 dark:bg-gray-600;
+  }
+
+  /* Value label that appears as thumb */
+  .range-value-label {
+    @apply absolute pointer-events-none;
+    @apply flex items-center justify-center;
+    @apply bg-blue-600 dark:bg-blue-500 text-white;
+    @apply rounded font-medium text-xs;
+    @apply transition-colors;
+    width: 32px;
+    height: 32px;
+    top: 0px;
+  }
+
+  .range-input-with-value:hover + .range-value-label {
+    @apply bg-blue-700 dark:bg-blue-600;
+  }
+
+  .range-input-with-value:focus + .range-value-label {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  .range-input-with-value:disabled + .range-value-label {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }

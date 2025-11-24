@@ -5,9 +5,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   validateFile,
-  validateImageDimensions,
-  validateFrameSize,
-  validateSpacing,
+  extractValidFilenameChars,
+  generateUuidV1Short,
 } from '@/utils/validation';
 
 describe('validation.js', () => {
@@ -70,112 +69,92 @@ describe('validation.js', () => {
     });
   });
 
-  describe('validateImageDimensions', () => {
-    it('validates dimensions above minimum', () => {
-      const result = validateImageDimensions(1920, 1080);
-      expect(result.valid).toBe(true);
-      expect(result.error).toBeUndefined();
+  describe('extractValidFilenameChars', () => {
+    it('extracts alphanumeric characters from filename', () => {
+      const result = extractValidFilenameChars('my-photo-2024.jpg');
+      expect(result).toBe('my-photo-2');
     });
 
-    it('validates dimensions at minimum (landscape)', () => {
-      const result = validateImageDimensions(1200, 800);
-      expect(result.valid).toBe(true);
+    it('removes file extension', () => {
+      const result = extractValidFilenameChars('image.png');
+      expect(result).toBe('image');
     });
 
-    it('validates dimensions at minimum (portrait)', () => {
-      const result = validateImageDimensions(800, 1200);
-      expect(result.valid).toBe(true);
+    it('limits to 10 characters', () => {
+      const result = extractValidFilenameChars('verylongfilename.jpg');
+      expect(result).toBe('verylongfi');
     });
 
-    it('rejects dimensions below minimum (width)', () => {
-      const result = validateImageDimensions(600, 1200);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('at least 800px');
+    it('preserves spaces, underscores, dashes, and commas', () => {
+      const result = extractValidFilenameChars('photo_01, test-name.jpg');
+      expect(result).toBe('photo_01, ');
     });
 
-    it('rejects dimensions below minimum (height)', () => {
-      const result = validateImageDimensions(1200, 600);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('at least 800px');
+    it('removes invalid special characters', () => {
+      const result = extractValidFilenameChars('photo@#$%test.jpg');
+      expect(result).toBe('phototest');
     });
 
-    it('error message includes actual dimension', () => {
-      const result = validateImageDimensions(1200, 600);
-      expect(result.error).toContain('600px');
-    });
-  });
-
-  describe('validateFrameSize', () => {
-    it('validates size within range', () => {
-      const result = validateFrameSize(3000);
-      expect(result.valid).toBe(true);
+    it('handles filename without extension', () => {
+      const result = extractValidFilenameChars('myimage');
+      expect(result).toBe('myimage');
     });
 
-    it('validates minimum size', () => {
-      const result = validateFrameSize(800);
-      expect(result.valid).toBe(true);
+    it('returns empty string for null or undefined', () => {
+      expect(extractValidFilenameChars(null)).toBe('');
+      expect(extractValidFilenameChars(undefined)).toBe('');
+      expect(extractValidFilenameChars('')).toBe('');
     });
 
-    it('validates maximum size', () => {
-      const result = validateFrameSize(10000);
-      expect(result.valid).toBe(true);
+    it('returns empty string when only invalid characters', () => {
+      const result = extractValidFilenameChars('@#$%^&*.jpg');
+      expect(result).toBe('');
     });
 
-    it('rejects size below minimum', () => {
-      const result = validateFrameSize(700);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('at least 800px');
+    it('handles multiple extensions correctly', () => {
+      const result = extractValidFilenameChars('archive.tar.gz');
+      expect(result).toBe('archivetar');
     });
 
-    it('rejects size above maximum', () => {
-      const result = validateFrameSize(10001);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('not exceed 10000px');
-    });
-
-    it('accepts custom min and max values', () => {
-      const result = validateFrameSize(1500, 1000, 2000);
-      expect(result.valid).toBe(true);
-    });
-
-    it('validates against custom minimum', () => {
-      const result = validateFrameSize(900, 1000, 2000);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('1000px');
+    it('handles short filenames (min 1 char)', () => {
+      const result = extractValidFilenameChars('a.jpg');
+      expect(result).toBe('a');
     });
   });
 
-  describe('validateSpacing', () => {
-    it('validates spacing within range', () => {
-      const result = validateSpacing(100);
-      expect(result.valid).toBe(true);
+  describe('generateUuidV1Short', () => {
+    it('generates 8-character string', () => {
+      const uuid = generateUuidV1Short();
+      expect(uuid).toHaveLength(8);
     });
 
-    it('validates minimum spacing', () => {
-      const result = validateSpacing(0);
-      expect(result.valid).toBe(true);
+    it('generates hexadecimal characters only', () => {
+      const uuid = generateUuidV1Short();
+      expect(uuid).toMatch(/^[0-9a-f]{8}$/);
     });
 
-    it('validates maximum spacing', () => {
-      const result = validateSpacing(500);
-      expect(result.valid).toBe(true);
+    it('generates unique values on consecutive calls', async () => {
+      const uuid1 = generateUuidV1Short();
+      // Wait 1ms to ensure different timestamp component
+      await new Promise(resolve => setTimeout(resolve, 1));
+      const uuid2 = generateUuidV1Short();
+      expect(uuid1).not.toBe(uuid2);
     });
 
-    it('rejects negative spacing', () => {
-      const result = validateSpacing(-10);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('at least 0px');
+    it('generates different values in a loop', async () => {
+      const uuids = new Set();
+      for (let i = 0; i < 10; i++) {
+        uuids.add(generateUuidV1Short());
+        // Small delay to ensure uniqueness
+        await new Promise(resolve => setTimeout(resolve, 2));
+      }
+      // Should generate at least 8 unique values (allowing for occasional collisions)
+      expect(uuids.size).toBeGreaterThanOrEqual(8);
     });
 
-    it('rejects spacing above maximum', () => {
-      const result = validateSpacing(501);
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('not exceed 500px');
-    });
-
-    it('accepts custom min and max values', () => {
-      const result = validateSpacing(75, 50, 100);
-      expect(result.valid).toBe(true);
+    it('returns string type', () => {
+      const uuid = generateUuidV1Short();
+      expect(typeof uuid).toBe('string');
     });
   });
 });

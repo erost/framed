@@ -34,14 +34,11 @@ describe('OrientationToggle', () => {
       expect(svgs).toHaveLength(2);
     });
 
-    it('has full-width flex layout', () => {
+    it('uses selector-group class for layout', () => {
       const wrapper = mount(OrientationToggle);
 
       const buttonGroup = wrapper.find('[role="group"]');
-      expect(buttonGroup.classes()).toContain('flex');
-      expect(buttonGroup.classes()).toContain('w-full');
-      expect(buttonGroup.classes()).not.toContain('inline-flex');
-      expect(buttonGroup.classes()).not.toContain('flex-col');
+      expect(buttonGroup.classes()).toContain('selector-group');
     });
 
     it('buttons use scoped CSS class with flex-1', () => {
@@ -51,8 +48,8 @@ describe('OrientationToggle', () => {
       const landscapeBtn = wrapper.find('[data-testid="orientation-landscape"]');
 
       // Buttons should have the base class that includes flex-1 in scoped CSS
-      expect(portraitBtn.classes()).toContain('orientation-btn');
-      expect(landscapeBtn.classes()).toContain('orientation-btn');
+      expect(portraitBtn.classes()).toContain('selector-btn');
+      expect(landscapeBtn.classes()).toContain('selector-btn');
     });
   });
 
@@ -62,7 +59,7 @@ describe('OrientationToggle', () => {
 
       const portraitBtn = wrapper.find('[data-testid="orientation-portrait"]');
       expect(portraitBtn.attributes('aria-pressed')).toBe('true');
-      expect(portraitBtn.classes()).toContain('btn-active');
+      expect(portraitBtn.classes()).toContain('selector-btn-active');
     });
 
     it('landscape button is inactive by default', () => {
@@ -70,7 +67,7 @@ describe('OrientationToggle', () => {
 
       const landscapeBtn = wrapper.find('[data-testid="orientation-landscape"]');
       expect(landscapeBtn.attributes('aria-pressed')).toBe('false');
-      expect(landscapeBtn.classes()).toContain('btn-inactive');
+      expect(landscapeBtn.classes()).toContain('selector-btn-inactive');
     });
 
     it('switches active state when button is clicked', async () => {
@@ -170,22 +167,22 @@ describe('OrientationToggle', () => {
       const landscapeBtn = wrapper.find('[data-testid="orientation-landscape"]');
 
       // Check that custom class names are applied
-      expect(portraitBtn.classes()).toContain('orientation-btn');
-      expect(landscapeBtn.classes()).toContain('orientation-btn');
+      expect(portraitBtn.classes()).toContain('selector-btn');
+      expect(landscapeBtn.classes()).toContain('selector-btn');
     });
 
-    it('applies btn-active to active button', () => {
+    it('applies selector-btn-active to active button', () => {
       const wrapper = mount(OrientationToggle);
 
       const portraitBtn = wrapper.find('[data-testid="orientation-portrait"]');
       const landscapeBtn = wrapper.find('[data-testid="orientation-landscape"]');
 
       // Portrait is active by default
-      expect(portraitBtn.classes()).toContain('btn-active');
-      expect(landscapeBtn.classes()).toContain('btn-inactive');
+      expect(portraitBtn.classes()).toContain('selector-btn-active');
+      expect(landscapeBtn.classes()).toContain('selector-btn-inactive');
     });
 
-    it('applies btn-inactive to inactive button', async () => {
+    it('applies selector-btn-inactive to inactive button', async () => {
       const wrapper = mount(OrientationToggle);
 
       // Switch to landscape so portrait becomes inactive
@@ -195,8 +192,8 @@ describe('OrientationToggle', () => {
       const portraitBtn = wrapper.find('[data-testid="orientation-portrait"]');
       const landscapeBtn = wrapper.find('[data-testid="orientation-landscape"]');
 
-      expect(landscapeBtn.classes()).toContain('btn-active');
-      expect(portraitBtn.classes()).toContain('btn-inactive');
+      expect(landscapeBtn.classes()).toContain('selector-btn-active');
+      expect(portraitBtn.classes()).toContain('selector-btn-inactive');
     });
   });
 });

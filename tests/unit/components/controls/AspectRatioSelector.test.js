@@ -47,7 +47,7 @@ describe('AspectRatioSelector', () => {
 
       const button = wrapper.find('[data-testid="aspect-ratio-3-2"]');
       expect(button.attributes('aria-pressed')).toBe('true');
-      expect(button.classes()).toContain('btn-active');
+      expect(button.classes()).toContain('selector-btn-active');
     });
 
     it('reflects current aspect ratio from config', async () => {
@@ -188,24 +188,24 @@ describe('AspectRatioSelector', () => {
       const buttons = wrapper.findAll('button');
       buttons.forEach((button) => {
         // All buttons should have the base class that includes focus:ring in scoped CSS
-        expect(button.classes()).toContain('ratio-btn');
+        expect(button.classes()).toContain('selector-btn');
       });
     });
   });
 
   describe('Visual Consistency', () => {
-    it('active button has btn-active class', () => {
+    it('active button has selector-btn-active class', () => {
       const wrapper = mount(AspectRatioSelector);
 
       const activeButton = wrapper.find('[data-testid="aspect-ratio-3-2"]');
-      expect(activeButton.classes()).toContain('btn-active');
+      expect(activeButton.classes()).toContain('selector-btn-active');
     });
 
-    it('inactive buttons have btn-inactive class', () => {
+    it('inactive buttons have selector-btn-inactive class', () => {
       const wrapper = mount(AspectRatioSelector);
 
       const inactiveButton = wrapper.find('[data-testid="aspect-ratio-4-3"]');
-      expect(inactiveButton.classes()).toContain('btn-inactive');
+      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
     });
   });
 
@@ -215,21 +215,21 @@ describe('AspectRatioSelector', () => {
 
       const buttons = wrapper.findAll('button');
       buttons.forEach((button) => {
-        expect(button.classes()).toContain('ratio-btn');
+        expect(button.classes()).toContain('selector-btn');
       });
     });
 
-    it('applies btn-active to active button only', () => {
+    it('applies selector-btn-active to active button only', () => {
       const wrapper = mount(AspectRatioSelector);
 
       const activeButton = wrapper.find('[data-testid="aspect-ratio-3-2"]');
       const inactiveButton = wrapper.find('[data-testid="aspect-ratio-4-3"]');
 
-      expect(activeButton.classes()).toContain('btn-active');
-      expect(activeButton.classes()).not.toContain('btn-inactive');
+      expect(activeButton.classes()).toContain('selector-btn-active');
+      expect(activeButton.classes()).not.toContain('selector-btn-inactive');
 
-      expect(inactiveButton.classes()).toContain('btn-inactive');
-      expect(inactiveButton.classes()).not.toContain('btn-active');
+      expect(inactiveButton.classes()).toContain('selector-btn-inactive');
+      expect(inactiveButton.classes()).not.toContain('selector-btn-active');
     });
   });
 });

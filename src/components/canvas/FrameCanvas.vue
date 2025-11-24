@@ -87,7 +87,7 @@
                 />
               </svg>
               <p class="text-sm font-medium text-gray-300">
-                {{ orientation === 'portrait' ? 'Top' : 'Left' }} Image
+                {{ orientation === ORIENTATIONS.PORTRAIT ? 'Top' : 'Left' }} Image
               </p>
               <p class="text-xs text-gray-400 mt-1">
                 Click or drop
@@ -158,7 +158,7 @@
                 />
               </svg>
               <p class="text-sm font-medium text-gray-300">
-                {{ orientation === 'portrait' ? 'Bottom' : 'Right' }} Image
+                {{ orientation === ORIENTATIONS.PORTRAIT ? 'Bottom' : 'Right' }} Image
               </p>
               <p class="text-xs text-gray-400 mt-1">
                 Click or drop
@@ -228,7 +228,7 @@ import { ref, computed, onMounted, watch, toRef } from 'vue';
 import { useCanvasRenderer } from '@/composables/useCanvasRenderer';
 import { useImageState } from '@/composables/useImageState';
 import { useFrameConfig } from '@/composables/useFrameConfig';
-import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
+import { PREVIEW_CONSTRAINTS, ORIENTATIONS } from '@/utils/constants';
 
 /**
  * FrameCanvas component

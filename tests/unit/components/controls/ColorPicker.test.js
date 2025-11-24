@@ -12,18 +12,6 @@ describe('ColorPicker', () => {
   });
 
   describe('Rendering', () => {
-    it('renders color picker with label', () => {
-      const wrapper = mount(ColorPicker);
-
-      expect(wrapper.text()).toBeTruthy();
-    });
-
-    it('renders color input field', () => {
-      const wrapper = mount(ColorPicker);
-
-      expect(wrapper.find('[data-testid="color-input"]').exists()).toBe(true);
-    });
-
     it('renders native color picker input', () => {
       const wrapper = mount(ColorPicker);
 
@@ -32,25 +20,22 @@ describe('ColorPicker', () => {
       expect(colorInput.attributes('type')).toBe('color');
     });
 
-    it('has proper label association', () => {
+    it('has id attribute', () => {
       const wrapper = mount(ColorPicker);
-
-      const label = wrapper.find('label');
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
 
-      expect(label.attributes('for')).toBe('background-color');
       expect(colorInput.attributes('id')).toBe('background-color');
+    });
+
+    it('color input is full width', () => {
+      const wrapper = mount(ColorPicker);
+
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.classes()).toContain('color-picker-input');
     });
   });
 
   describe('Initial Value', () => {
-    it('displays default background color in text input', () => {
-      const wrapper = mount(ColorPicker);
-
-      const input = wrapper.find('[data-testid="color-input"]');
-      expect(input.element.value).toBe('#FFFFFF');
-    });
-
     it('displays default background color in color picker', () => {
       const wrapper = mount(ColorPicker);
 
@@ -64,15 +49,12 @@ describe('ColorPicker', () => {
       const wrapper = mount(ColorPicker);
       await wrapper.vm.$nextTick();
 
-      const input = wrapper.find('[data-testid="color-input"]');
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-
-      expect(input.element.value).toBe('#FF0000');
       expect(colorInput.element.value).toBe('#ff0000');
     });
   });
 
-  describe('Native Color Picker Interaction', () => {
+  describe('Color Picker Interaction', () => {
     it('updates background color when color picker changes', async () => {
       const wrapper = mount(ColorPicker);
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
@@ -83,146 +65,74 @@ describe('ColorPicker', () => {
       expect(frameConfig.backgroundColor.value).toBe('#00FF00');
     });
 
-    it('updates text input when color picker changes', async () => {
+    it('converts color to uppercase', async () => {
       const wrapper = mount(ColorPicker);
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-      const textInput = wrapper.find('[data-testid="color-input"]');
 
-      await colorInput.setValue('#00FF00');
+      await colorInput.setValue('#00ff00');
       await colorInput.trigger('change');
-
-      expect(textInput.element.value).toBe('#00FF00');
-    });
-  });
-
-  describe('Manual Input', () => {
-    it('auto-prepends # to color input', async () => {
-      const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      await input.setValue('FF0000');
-
-      expect(input.element.value).toBe('#FF0000');
-    });
-
-    it('accepts valid hex color on blur', async () => {
-      const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      await input.setValue('#00FF00');
-      await input.trigger('blur');
 
       expect(frameConfig.backgroundColor.value).toBe('#00FF00');
     });
 
-    it('accepts 3-digit hex color', async () => {
+    it('handles black color', async () => {
       const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      await input.setValue('#F00');
-      await input.trigger('blur');
-
-      expect(frameConfig.backgroundColor.value).toBe('#F00');
-    });
-
-    it('rejects invalid hex color on blur', async () => {
-      const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      const originalColor = frameConfig.backgroundColor.value;
-
-      await input.setValue('invalid');
-      await input.trigger('blur');
-
-      expect(input.element.value).toBe(originalColor);
-      expect(frameConfig.backgroundColor.value).toBe(originalColor);
-    });
-
-    it('rejects hex color with invalid characters', async () => {
-      const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      const originalColor = frameConfig.backgroundColor.value;
-
-      await input.setValue('#GGGGGG');
-      await input.trigger('blur');
-
-      expect(input.element.value).toBe(originalColor);
-    });
-
-    it('handles empty input', async () => {
-      const wrapper = mount(ColorPicker);
-      const input = wrapper.find('[data-testid="color-input"]');
-
-      const originalColor = frameConfig.backgroundColor.value;
-
-      await input.setValue('');
-      await input.trigger('blur');
-
-      expect(input.element.value).toBe(originalColor);
-    });
-
-    it('updates color picker when valid text input is entered', async () => {
-      const wrapper = mount(ColorPicker);
-      const textInput = wrapper.find('[data-testid="color-input"]');
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
 
-      await textInput.setValue('#0000FF');
-      await textInput.trigger('blur');
+      await colorInput.setValue('#000000');
+      await colorInput.trigger('change');
 
-      expect(colorInput.element.value).toBe('#0000ff');
+      expect(frameConfig.backgroundColor.value).toBe('#000000');
+    });
+
+    it('handles white color', async () => {
+      const wrapper = mount(ColorPicker);
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+
+      await colorInput.setValue('#ffffff');
+      await colorInput.trigger('change');
+
+      expect(frameConfig.backgroundColor.value).toBe('#FFFFFF');
     });
   });
 
   describe('Reactivity', () => {
-    it('updates inputs when background color changes externally', async () => {
+    it('updates input when background color changes externally', async () => {
       const wrapper = mount(ColorPicker);
 
       frameConfig.updateBackgroundColor('#0000FF');
       await wrapper.vm.$nextTick();
 
-      const textInput = wrapper.find('[data-testid="color-input"]');
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.element.value).toBe('#0000ff');
+    });
+
+    it('updates to different colors', async () => {
+      const wrapper = mount(ColorPicker);
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
 
-      expect(textInput.element.value).toBe('#0000FF');
-      expect(colorInput.element.value).toBe('#0000ff');
+      const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00'];
+
+      for (const color of colors) {
+        frameConfig.updateBackgroundColor(color);
+        await wrapper.vm.$nextTick();
+        expect(colorInput.element.value).toBe(color.toLowerCase());
+      }
     });
   });
 
   describe('Accessibility', () => {
-    it('has custom test ID', () => {
-      const wrapper = mount(ColorPicker, {
-        props: { testId: 'custom-picker' },
-      });
-
-      expect(wrapper.attributes('data-testid')).toBe('custom-picker');
-    });
-
-    it('has placeholder text', () => {
+    it('input has default test ID', () => {
       const wrapper = mount(ColorPicker);
-
-      const input = wrapper.find('[data-testid="color-input"]');
-      expect(input.attributes('placeholder')).toBe('#FFFFFF');
-    });
-
-    it('has max length for hex color', () => {
-      const wrapper = mount(ColorPicker);
-
-      const input = wrapper.find('[data-testid="color-input"]');
-      expect(input.attributes('maxlength')).toBe('7');
+      const colorInput = wrapper.find('input[type="color"]');
+      expect(colorInput.attributes('data-testid')).toBe('color-picker-input');
     });
 
     it('color picker uses scoped class', () => {
       const wrapper = mount(ColorPicker);
 
       const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-      expect(colorInput.classes()).toContain('color-picker-swatch');
-    });
-
-    it('has hint text for color format', () => {
-      const wrapper = mount(ColorPicker);
-
-      expect(wrapper.text()).toBeTruthy();
+      expect(colorInput.classes()).toContain('color-picker-input');
     });
   });
 
@@ -230,19 +140,52 @@ describe('ColorPicker', () => {
     it('uses scoped CSS classes', () => {
       const wrapper = mount(ColorPicker);
 
-      const colorSwatch = wrapper.find('[data-testid="color-picker-input"]');
-      const textInput = wrapper.find('[data-testid="color-input"]');
-
-      expect(colorSwatch.classes()).toContain('color-picker-swatch');
-      expect(textInput.classes()).toContain('color-text-input');
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.classes()).toContain('color-picker-input');
     });
 
-    it('color swatch uses scoped class for sizing', () => {
+    it('input has proper type attribute', () => {
       const wrapper = mount(ColorPicker);
-      const colorSwatch = wrapper.find('[data-testid="color-picker-input"]');
 
-      // Size is defined in scoped CSS via .color-picker-swatch
-      expect(colorSwatch.classes()).toContain('color-picker-swatch');
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.attributes('type')).toBe('color');
+    });
+
+    it('input uses v-model binding', () => {
+      const wrapper = mount(ColorPicker);
+
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.element.value).toBe(frameConfig.backgroundColor.value.toLowerCase());
+    });
+  });
+
+  describe('Integration', () => {
+    it('works with frame configuration composable', async () => {
+      const wrapper = mount(ColorPicker);
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+
+      // Initial state
+      const initialColor = frameConfig.backgroundColor.value;
+
+      // Change color
+      await colorInput.setValue('#123456');
+      await colorInput.trigger('change');
+
+      // Verify config updated
+      expect(frameConfig.backgroundColor.value).toBe('#123456');
+      expect(frameConfig.backgroundColor.value).not.toBe(initialColor);
+    });
+
+    it('responds to external config changes', async () => {
+      const wrapper = mount(ColorPicker);
+
+      // Change externally
+      frameConfig.updateBackgroundColor('#ABCDEF');
+      await wrapper.vm.$nextTick();
+
+      // Verify UI updated
+      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      expect(colorInput.element.value).toBe('#abcdef');
     });
   });
 });

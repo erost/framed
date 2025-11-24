@@ -131,12 +131,9 @@ src/
 │   │   ├── AspectRatioSelector.vue  # Button group (3:2, 4:3, 5:4, 16:9)
 │   │   ├── ColorPicker.vue          # Color swatch + hex input
 │   │   ├── DownloadButton.vue       # Download canvas button
-│   │   ├── FrameSizeInput.vue       # Frame size input (uses BaseInput)
+│   │   ├── FrameSizeSelector.vue    # Button group (1024px, 2048px, 4096px, Native)
 │   │   ├── OrientationToggle.vue    # Portrait/Landscape toggle
-│   │   ├── ResetButton.vue          # Reset configuration button
-│   │   └── SpacingInput.vue         # Spacing input (uses BaseInput)
-│   └── shared/
-│       └── BaseInput.vue       # Reusable input component
+│   │   └── ResetButton.vue          # Reset configuration button
 ├── composables/
 │   ├── useFrameConfig.js       # Frame configuration state
 │   ├── useImageState.js        # Image upload and management
@@ -165,7 +162,7 @@ src/
 #### **ConfigBar.vue**
 - Groups frame configuration controls in 2 rows:
   - **Row 1**: OrientationToggle + AspectRatioSelector (side-by-side on desktop, stacked on mobile)
-  - **Row 2**: ColorPicker + FrameSizeInput + SpacingInput (responsive flex layout)
+  - **Row 2**: ColorPicker + FrameSizeSelector + BorderSlider (responsive flex layout)
 - No props required (uses composables directly)
 
 #### **ActionBar.vue**
@@ -193,30 +190,29 @@ src/
 
 #### **OrientationToggle.vue**
 - Button group: Portrait and Landscape
-- Uses scoped CSS for styling (.orientation-btn, .btn-active, .btn-inactive)
+- Uses shared selector styles from main.css
 - Full-width responsive layout with equal button distribution
 
 #### **AspectRatioSelector.vue**
 - Button group: 3:2, 4:3, 5:4, 16:9 ratios
-- Uses scoped CSS matching OrientationToggle style
+- Uses shared selector styles from main.css
 - Always horizontal layout, buttons shrink/grow equally
 
 #### **ColorPicker.vue**
-- Color swatch (40px square) + hex text input
-- Uses scoped CSS (.color-picker-swatch, .color-text-input)
-- Height matches BaseInput components
+- Native HTML5 color picker (full-width)
 - Auto-validation and formatting for hex colors
-- Hint text: "(hex format)"
+- Simplified UI with no text input field
 
-#### **FrameSizeInput.vue**
-- Uses BaseInput component
-- Number input with "px" unit display
-- Validation for min/max frame size
+#### **FrameSizeSelector.vue**
+- Button group: 1024px, 2048px, 4096px, Native
+- Uses shared selector styles from main.css
+- Native option uses -1 value to indicate original/native size
 
-#### **SpacingInput.vue**
-- Uses BaseInput component
-- Number input with "px" unit display
-- Validation for min/max spacing
+#### **BorderSlider.vue**
+- Range slider for border percentage (1-25%)
+- Uses shared range slider styles from main.css with value label overlay
+- Border calculated as: `Math.round(frameSize * percentage / 100 / 2)`
+- Fixed 20px inner spacing between images (not configurable)
 
 #### **DownloadButton.vue**
 - Triggers high-resolution canvas export
@@ -227,10 +223,16 @@ src/
 - Resets all configuration to defaults
 - Clears uploaded images
 
-#### **BaseInput.vue**
-- Shared input component with label, hint, and error display
-- Supports unit display (e.g., "px")
-- Consistent styling across all form inputs
+#### **FormatSelector.vue**
+- Button group: PNG, JPEG, WebP
+- Uses shared selector styles from main.css
+- Dynamically generated filenames at download time
+
+#### **QualitySlider.vue**
+- Range slider for export quality (1-100%)
+- Value displayed in positioned overlay label
+- Uses shared range slider styles from main.css
+- Affects compression for JPEG and WebP formats
 
 ---
 
@@ -247,9 +249,9 @@ The application uses Vue 3 Composition API composables for state management, pro
 {
   orientation: 'portrait' | 'landscape',
   aspectRatio: '3:2' | '4:3' | '5:4' | '16:9',
-  backgroundColor: string,      // Hex color
-  frameSize: number,             // pixels (default 3000)
-  spacing: number,               // pixels (default 150)
+  backgroundColor: string,       // Hex color
+  frameSize: number,             // pixels (default 2048)
+  borderPercentage: number,      // 1-25% (default 2)
   frameWidth: computed,          // Based on orientation and aspect ratio
   frameHeight: computed,         // Based on orientation and aspect ratio
 }
@@ -262,12 +264,30 @@ The application uses Vue 3 Composition API composables for state management, pro
     {
       id: string,
       file: File,
+      fileName: string,
       dataUrl: string,
       width: number,
       height: number,
+      orientation: string,
+      aspectRatio: number,
     },
     // ... second image
   ]
+}
+```
+
+#### **Canvas Renderer** (`useCanvasRenderer.js`)
+```javascript
+{
+  quality: number,               // 1-100% (default 85)
+  format: string,                // 'image/png' | 'image/jpeg' | 'image/webp'
+  stageConfig: computed,
+  backgroundConfig: computed,
+  image1Config: computed,
+  image2Config: computed,
+  previewScale: computed,
+  isReady: computed,
+  canExport: computed,
 }
 ```
 
@@ -376,10 +396,11 @@ Removed, only dark UI
 | Composables | 80%+ | ✅ Achieved |
 | Components | 70%+ | ✅ Achieved |
 
-**Total Tests**: 350 tests passing
+**Total Tests**: 450+ tests passing
 - All components have dedicated test suites
 - Vitest with @vue/test-utils for component testing
 - Mock components used for integration tests to avoid dependency issues
+- Comprehensive coverage of utilities, composables, and components
 
 ---
 
@@ -402,18 +423,14 @@ export const ORIENTATIONS = {
 
 export const IMAGE_CONSTRAINTS = {
   maxFileSize: 40 * 1024 * 1024, // 40MB
-  minDimension: 800,
   supportedFormats: ['image/jpeg', 'image/png', 'image/webp'],
-  aspectRatioTolerance: 0.05,
 };
 
 export const FRAME_CONSTRAINTS = {
-  minSize: 2000,
-  maxSize: 6000,
-  defaultSize: 3000,
-  minSpacing: 50,
-  maxSpacing: 500,
-  defaultSpacing: 150,
+  minSize: 800,
+  maxSize: 10000,
+  minBorderPercentage: 1,
+  maxBorderPercentage: 25,
 };
 ```
 
@@ -421,7 +438,8 @@ export const FRAME_CONSTRAINTS = {
 
 Key functions:
 - `calculateFrameDimensions()`: Calculate frame width/height based on orientation and aspect ratio
-- `calculateImageLayout()`: Calculate positions for two images
+- `calculateBorderSpacing()`: Calculate border spacing from percentage
+- `calculateImageLayout()`: Calculate positions for two images with border and fixed 20px inner spacing
 - `calculatePreviewScale()`: Calculate scale ratio for responsive preview
 - `calculateScaledDimensions()`: Fit image within container maintaining aspect ratio
 - `calculateCenterOffset()`: Center image within slot
@@ -429,10 +447,12 @@ Key functions:
 ### 11.3 Validation (`utils/validation.js`)
 
 Key functions:
-- `validateImageFile()`: Validate file type and size
+- `validateFile()`: Validate file type and size
+- `validateImageDimensions()`: Validate image meets minimum dimensions
 - `validateFrameSize()`: Validate frame size within constraints
 - `validateSpacing()`: Validate spacing within constraints
-- `isValidHexColor()`: Validate hex color codes
+- `extractValidFilenameChars()`: Extract valid characters from filename (1-10 chars)
+- `generateUuidV1Short()`: Generate 8-character time-based UUID
 
 ---
 
@@ -503,16 +523,17 @@ Key functions:
 - Simpler than CSS Grid for this use case
 - Better browser support and performance
 
-### 12.7 CSS Organization: Scoped CSS with Tailwind @apply
+### 12.7 CSS Organization: Shared Selector Styles
 
-**Decision**: Move repetitive Tailwind classes to scoped CSS using `@apply`
+**Decision**: Centralize common button group styles in main.css
 
 **Rationale**:
-- Reduces template clutter
-- Easier to maintain consistent styling
-- Better separation of concerns (structure vs. styling)
-- Improves readability of component templates
-- Allows for semantic class names (.btn-active, .ratio-btn, etc.)
+- DRY principle - single source of truth for selector button styling
+- All selector components (OrientationToggle, AspectRatioSelector, FrameSizeSelector, FormatSelector) share identical styles
+- Better maintainability - style changes in one place
+- Reduced code duplication (~109 lines of CSS removed)
+- Consistent styling guaranteed across all selectors
+- Shared classes: `.selector-group`, `.selector-btn`, `.selector-btn-active`, `.selector-btn-inactive`
 
 ---
 
