@@ -33,22 +33,22 @@
         </ConfigElement>
       </div>
       <div class="w-full">
-        <ConfigElement test-id="config-frame-color">
-          <template #label>
-            Frame Color
-          </template>
-          <template #element>
-            <ColorPicker />
-          </template>
-        </ConfigElement>
-      </div>
-      <div class="w-full">
         <ConfigElement test-id="config-frame-size">
           <template #label>
             Frame Size
           </template>
           <template #element>
             <FrameSizeSelector />
+          </template>
+        </ConfigElement>
+      </div>
+      <div class="w-full">
+        <ConfigElement test-id="config-frame-color">
+          <template #label>
+            Frame Color
+          </template>
+          <template #element>
+            <ColorPicker />
           </template>
         </ConfigElement>
       </div>

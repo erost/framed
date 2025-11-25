@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import ColorPicker from '@/components/controls/ColorPicker.vue';
 import { useFrameConfig } from '@/composables/useFrameConfig';
+import { COLOR_PRESETS } from '@/utils/constants';
 
 describe('ColorPicker', () => {
   let frameConfig;
@@ -11,22 +12,57 @@ describe('ColorPicker', () => {
     frameConfig.reset();
   });
 
-  describe('Initial Value', () => {
-    it('displays custom background color from config', async () => {
-      frameConfig.updateBackgroundColor('#FF0000');
-
+  describe('Rendering', () => {
+    it('renders button group with role', () => {
       const wrapper = mount(ColorPicker);
-      await wrapper.vm.$nextTick();
-
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-      expect(colorInput.element.value).toBe('#ff0000');
+      const group = wrapper.find('[role="group"]');
+      expect(group.exists()).toBe(true);
+      expect(group.attributes('aria-label')).toBe('Frame background color');
     });
   });
 
-  describe('Color Picker Interaction', () => {
-    it('updates background color when color picker changes', async () => {
+  describe('Preset Colors', () => {
+    it('selects white preset when clicked', async () => {
       const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      const whiteButton = wrapper.find('[data-testid="color-white"]');
+
+      await whiteButton.trigger('click');
+
+      expect(frameConfig.backgroundColor.value).toBe(COLOR_PRESETS.WHITE);
+    });
+
+    it('selects black preset when clicked', async () => {
+      const wrapper = mount(ColorPicker);
+      const blackButton = wrapper.find('[data-testid="color-black"]');
+
+      await blackButton.trigger('click');
+
+      expect(frameConfig.backgroundColor.value).toBe(COLOR_PRESETS.BLACK);
+    });
+
+    it('marks white button as active when white is selected', async () => {
+      const wrapper = mount(ColorPicker);
+
+      // White is default, should be active
+      const whiteButton = wrapper.find('[data-testid="color-white"]');
+      expect(whiteButton.attributes('aria-pressed')).toBe('true');
+    });
+
+    it('marks black button as active when black is selected', async () => {
+      const wrapper = mount(ColorPicker);
+      const blackButton = wrapper.find('[data-testid="color-black"]');
+
+      await blackButton.trigger('click');
+      await wrapper.vm.$nextTick();
+
+      expect(blackButton.attributes('aria-pressed')).toBe('true');
+    });
+  });
+
+  describe('Custom Color', () => {
+    it('updates background color when custom color changes', async () => {
+      const wrapper = mount(ColorPicker);
+      const colorInput = wrapper.find('[data-testid="color-custom"]');
 
       await colorInput.setValue('#00FF00');
       await colorInput.trigger('change');
@@ -34,9 +70,9 @@ describe('ColorPicker', () => {
       expect(frameConfig.backgroundColor.value).toBe('#00FF00');
     });
 
-    it('converts color to uppercase', async () => {
+    it('converts custom color to uppercase', async () => {
       const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      const colorInput = wrapper.find('[data-testid="color-custom"]');
 
       await colorInput.setValue('#00ff00');
       await colorInput.trigger('change');
@@ -44,79 +80,62 @@ describe('ColorPicker', () => {
       expect(frameConfig.backgroundColor.value).toBe('#00FF00');
     });
 
-    it('handles black color', async () => {
+    it('marks custom button as active when custom color is selected', async () => {
       const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      const customInput = wrapper.find('[data-testid="color-custom"]');
 
-      await colorInput.setValue('#000000');
-      await colorInput.trigger('change');
+      await customInput.setValue('#FF5733');
+      await customInput.trigger('change');
+      await wrapper.vm.$nextTick();
 
-      expect(frameConfig.backgroundColor.value).toBe('#000000');
-    });
-
-    it('handles white color', async () => {
-      const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-
-      await colorInput.setValue('#ffffff');
-      await colorInput.trigger('change');
-
-      expect(frameConfig.backgroundColor.value).toBe('#FFFFFF');
+      expect(customInput.attributes('aria-pressed')).toBe('true');
     });
   });
 
   describe('Reactivity', () => {
-    it('updates input when background color changes externally', async () => {
+    it('updates button state when background color changes externally', async () => {
+      const wrapper = mount(ColorPicker);
+
+      frameConfig.updateBackgroundColor(COLOR_PRESETS.BLACK);
+      await wrapper.vm.$nextTick();
+
+      const blackButton = wrapper.find('[data-testid="color-black"]');
+      expect(blackButton.attributes('aria-pressed')).toBe('true');
+    });
+
+    it('syncs custom color input when external color changes', async () => {
       const wrapper = mount(ColorPicker);
 
       frameConfig.updateBackgroundColor('#0000FF');
       await wrapper.vm.$nextTick();
 
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
+      const colorInput = wrapper.find('[data-testid="color-custom"]');
       expect(colorInput.element.value).toBe('#0000ff');
-    });
-
-    it('updates to different colors', async () => {
-      const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-
-      const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00'];
-
-      for (const color of colors) {
-        frameConfig.updateBackgroundColor(color);
-        await wrapper.vm.$nextTick();
-        expect(colorInput.element.value).toBe(color.toLowerCase());
-      }
     });
   });
 
   describe('Integration', () => {
-    it('works with frame configuration composable', async () => {
+    it('switches between preset and custom colors', async () => {
       const wrapper = mount(ColorPicker);
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
 
-      // Initial state
-      const initialColor = frameConfig.backgroundColor.value;
+      // Start with white (default)
+      expect(frameConfig.backgroundColor.value).toBe(COLOR_PRESETS.WHITE);
 
-      // Change color
-      await colorInput.setValue('#123456');
+      // Switch to black
+      const blackButton = wrapper.find('[data-testid="color-black"]');
+      await blackButton.trigger('click');
+      expect(frameConfig.backgroundColor.value).toBe(COLOR_PRESETS.BLACK);
+
+      // Switch to custom color
+      const colorInput = wrapper.find('[data-testid="color-custom"]');
+      await colorInput.setValue('#FF5733');
       await colorInput.trigger('change');
+      expect(frameConfig.backgroundColor.value).toBe('#FF5733');
 
-      // Verify config updated
-      expect(frameConfig.backgroundColor.value).toBe('#123456');
-      expect(frameConfig.backgroundColor.value).not.toBe(initialColor);
-    });
-
-    it('responds to external config changes', async () => {
-      const wrapper = mount(ColorPicker);
-
-      // Change externally
-      frameConfig.updateBackgroundColor('#ABCDEF');
-      await wrapper.vm.$nextTick();
-
-      // Verify UI updated
-      const colorInput = wrapper.find('[data-testid="color-picker-input"]');
-      expect(colorInput.element.value).toBe('#abcdef');
+      // Switch back to white
+      const whiteButton = wrapper.find('[data-testid="color-white"]');
+      await whiteButton.trigger('click');
+      expect(frameConfig.backgroundColor.value).toBe(COLOR_PRESETS.WHITE);
     });
   });
 });

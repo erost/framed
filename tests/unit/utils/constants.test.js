@@ -6,6 +6,8 @@ import { describe, it, expect } from 'vitest';
 import {
   ASPECT_RATIOS,
   ORIENTATIONS,
+  COLOR_PRESETS,
+  COLOR_MODES,
   DEFAULT_CONFIG,
   IMAGE_CONSTRAINTS,
   FRAME_CONSTRAINTS,
@@ -34,6 +36,14 @@ describe('constants.js', () => {
     it('should contain portrait and landscape', () => {
       expect(ORIENTATIONS.PORTRAIT).toBe('portrait');
       expect(ORIENTATIONS.LANDSCAPE).toBe('landscape');
+    });
+  });
+
+  describe('COLOR_PRESETS', () => {
+    it('should contain white, black, and gray presets', () => {
+      expect(COLOR_PRESETS.WHITE).toBe('#FFFFFF');
+      expect(COLOR_PRESETS.BLACK).toBe('#000000');
+      expect(COLOR_PRESETS.GRAY).toBe('#808080');
     });
   });
 
