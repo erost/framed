@@ -6,6 +6,7 @@ import { createApp } from 'vue';
 import VueKonva from 'vue-konva';
 import App from './App.vue';
 import './assets/styles/main.css';
+import { logError } from './utils/logger';
 
 const app = createApp(App);
 app.use(VueKonva);
@@ -19,7 +20,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .catch((error) => {
-        console.error('Service Worker registration failed:', error);
+        logError('Service Worker registration failed:', error);
       });
   });
 }

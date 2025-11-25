@@ -62,7 +62,6 @@
         @click="handleSelectCustom"
       >
         <input
-          ref="colorInput"
           v-model="customColor"
           type="color"
           class="custom-color-input color-swatch"
@@ -101,7 +100,6 @@ const { backgroundColor, updateBackgroundColor } = useFrameConfig();
 const selectedMode = ref(COLOR_MODES.WHITE); // Default to white since that's the default background color
 // Custom color state for the color input (defaults to gray)
 const customColor = ref(COLOR_PRESETS.GRAY);
-const colorInput = ref(null);
 
 /**
  * Check if white preset is active

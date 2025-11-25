@@ -36,6 +36,7 @@
 <script setup>
 import { ref, computed, toRef } from 'vue';
 import { useCanvasRenderer } from '@/composables/useCanvasRenderer';
+import { logError } from '@/utils/logger';
 
 /**
  * DownloadButton component
@@ -102,7 +103,7 @@ const handleDownload = () => {
       props.stage
     );
   } catch (error) {
-    console.error('Download failed:', error);
+    logError('Download failed:', error);
   } finally {
     loading.value = false;
   }
