@@ -24,13 +24,33 @@ export const ORIENTATIONS = {
 };
 
 /**
+ * Background color preset options
+ * @constant {Object}
+ */
+export const COLOR_PRESETS = {
+  WHITE: '#FFFFFF',
+  BLACK: '#000000',
+  GRAY: '#808080',
+};
+
+/**
+ * Color picker mode values
+ * @constant {Object}
+ */
+export const COLOR_MODES = {
+  WHITE: 'white',
+  BLACK: 'black',
+  CUSTOM: 'custom',
+};
+
+/**
  * Default frame configuration
  * @constant {Object}
  */
 export const DEFAULT_CONFIG = {
   orientation: 'portrait',
   aspectRatio: '3:2',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: COLOR_PRESETS.WHITE,
   frameSize: 2048, // Size of the longest side (height for portrait, width for landscape)
   borderPercentage: 2, // Border as percentage of frame size (1-25)
 };
