@@ -121,4 +121,27 @@
   .range-input-with-value:disabled + .range-value-label {
     @apply opacity-50 cursor-not-allowed;
   }
+
+  /**
+   * Shared action button styles
+   * Used by: DownloadButton, ResetButton
+   */
+
+  /* Base action button styles (common layout and interaction) */
+  .action-btn {
+    @apply w-full inline-flex items-center justify-center;
+    @apply font-medium rounded-lg transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply px-4 py-2 text-base cursor-pointer;
+  }
+
+  /* Primary action button variant (blue) */
+  .action-btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500;
+  }
+
+  /* Secondary action button variant (gray) */
+  .action-btn-secondary {
+    @apply bg-gray-700 text-gray-100 hover:bg-gray-600 focus:ring-gray-500;
+  }
 }

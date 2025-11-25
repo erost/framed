@@ -4,13 +4,9 @@
 -->
 <template>
   <button
-    class="
-      w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors
-      focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-500 text-white hover:bg-blue-600
-      focus:ring-blue-500 px-4 py-2 text-base
-    "
-    :class="{'opacity-50 cursor-not-allowed': disabled || loading}"
-    :disabled="disabled || loading"
+    class="action-btn action-btn-primary"
+    :class="{'opacity-50 cursor-not-allowed': !canExport || loading}"
+    :disabled="!canExport || loading"
     :aria-busy="loading"
     :data-testid="testId"
     @click="handleDownload"
@@ -34,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, computed, toRef } from 'vue';
+import { ref, toRef } from 'vue';
 import { useCanvasRenderer } from '@/composables/useCanvasRenderer';
 import { logError } from '@/utils/logger';
 
@@ -79,14 +75,6 @@ const { canExport, downloadImage } = useCanvasRenderer({
 });
 
 const loading = ref(false);
-
-/**
- * Check if download button should be disabled
- * Disabled when images are not uploaded or during download
- */
-const disabled = computed(() => {
-  return !canExport.value;
-});
 
 /**
  * Handle download action
