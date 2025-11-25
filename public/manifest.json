@@ -66,18 +66,39 @@
   "categories": ["photography", "photo"],
   "screenshots": [
     {
-      "src": "/screenshots/framed-wide.png",
-      "sizes": "2328x1164",
+      "src": "/screenshots/desktop-1280x800-landscape.png",
+      "sizes": "1280x800",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Framed desktop"
+      "label": "Desktop version, landscape frame"
     },
     {
-      "src": "/screenshots/framed-portrait.png",
-      "sizes": "625x1056",
+      "src": "/screenshots/desktop-1280x800-portrait.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop version, portrait frame"
+    },
+    {
+      "src": "/screenshots/mobile-402x764-portrait.png",
+      "sizes": "402x764",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Framed mobile"
+      "label": "Mobile version, portrait frame"
+    },
+    {
+      "src": "/screenshots/mobile-402x764-portrait-settings.png",
+      "sizes": "402x764",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile version, open settings"
+    },
+    {
+      "src": "/screenshots/mobile-402x764-landscape.png",
+      "sizes": "402x764",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile version, landscape frame"
     }
   ]
 }
