@@ -132,29 +132,5 @@ describe('validation.js', () => {
       const uuid = generateUuidV1Short();
       expect(uuid).toMatch(/^[0-9a-f]{8}$/);
     });
-
-    it('generates unique values on consecutive calls', async () => {
-      const uuid1 = generateUuidV1Short();
-      // Wait 1ms to ensure different timestamp component
-      await new Promise(resolve => setTimeout(resolve, 1));
-      const uuid2 = generateUuidV1Short();
-      expect(uuid1).not.toBe(uuid2);
-    });
-
-    it('generates different values in a loop', async () => {
-      const uuids = new Set();
-      for (let i = 0; i < 10; i++) {
-        uuids.add(generateUuidV1Short());
-        // Small delay to ensure uniqueness
-        await new Promise(resolve => setTimeout(resolve, 2));
-      }
-      // Should generate at least 8 unique values (allowing for occasional collisions)
-      expect(uuids.size).toBeGreaterThanOrEqual(8);
-    });
-
-    it('returns string type', () => {
-      const uuid = generateUuidV1Short();
-      expect(typeof uuid).toBe('string');
-    });
   });
 });

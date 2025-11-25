@@ -4,7 +4,6 @@
 -->
 <template>
   <div
-    ref="containerRef"
     class="w-full h-full flex items-center justify-center"
     data-testid="canvas-container"
   >
@@ -37,7 +36,6 @@ defineProps({
 
 const emit = defineEmits(['canvasReady']);
 
-const containerRef = ref(null);
 const canvasRef = ref(null);
 
 /**

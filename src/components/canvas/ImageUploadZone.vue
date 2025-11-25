@@ -46,7 +46,7 @@
         Click or drag & drop
       </p>
       <p class="text-xs text-gray-400 mt-2">
-        JPEG, PNG, or WebP (max 10MB)
+        JPEG, PNG, or WebP (max {{ maxFileSizeMB }}MB)
       </p>
     </div>
 
@@ -95,6 +95,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useImageState } from '@/composables/useImageState';
+import { IMAGE_CONSTRAINTS } from '@/utils/constants';
 
 /**
  * ImageUploadZone component
@@ -142,6 +143,13 @@ const zoneClasses = computed(() => ({
   'border-green-400': image.value && !error.value,
   'border-red-400': error.value,
 }));
+
+/**
+ * Get file size in MB for display
+ */
+const maxFileSizeMB = computed(() => {
+  return Math.round(IMAGE_CONSTRAINTS.maxFileSize / (1024 * 1024));
+});
 
 /**
  * Handle click to trigger file input

@@ -10,7 +10,7 @@
       aria-label="Frame size"
     >
       <button
-        v-for="option in frameSizeOptions"
+        v-for="option in FRAME_SIZE_OPTIONS"
         :key="option.value"
         type="button"
         :class="[
@@ -50,11 +50,6 @@ defineProps({
 });
 
 const { frameSize, updateFrameSize } = useFrameConfig();
-
-/**
- * Frame size options imported from constants
- */
-const frameSizeOptions = FRAME_SIZE_OPTIONS;
 
 /**
  * Check if an option is currently active

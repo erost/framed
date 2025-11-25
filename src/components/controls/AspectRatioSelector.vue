@@ -31,7 +31,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { useFrameConfig } from '@/composables/useFrameConfig';
 import { ASPECT_RATIOS } from '@/utils/constants';
 
@@ -56,9 +55,7 @@ const { aspectRatio, updateAspectRatio } = useFrameConfig();
  * Get aspect ratio options from constants
  * Returns array of ratio strings (e.g., ['3:2', '4:3', '5:4', '16:9'])
  */
-const aspectRatioOptions = computed(() => {
-  return Object.keys(ASPECT_RATIOS);
-});
+const aspectRatioOptions = Object.keys(ASPECT_RATIOS);
 
 /**
  * Handle aspect ratio selection

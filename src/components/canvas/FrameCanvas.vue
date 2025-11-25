@@ -229,6 +229,7 @@ import { useCanvasRenderer } from '@/composables/useCanvasRenderer';
 import { useImageState } from '@/composables/useImageState';
 import { useFrameConfig } from '@/composables/useFrameConfig';
 import { PREVIEW_CONSTRAINTS, ORIENTATIONS } from '@/utils/constants';
+import { logError } from '@/utils/logger';
 
 /**
  * FrameCanvas component
@@ -277,27 +278,43 @@ const { images, addImage, removeImage: removeImageFromState } = useImageState();
 const { orientation } = useFrameConfig();
 
 /**
+ * Create an image element from a data URL
+ * @param {string} dataUrl - The data URL to load
+ * @returns {Promise<HTMLImageElement>} Promise that resolves with the loaded image
+ */
+const createImageElement = (dataUrl) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = dataUrl;
+  });
+};
+
+/**
  * Load image elements from dataUrls
  */
-watch(() => images.value[0], (newImage) => {
+watch(() => images.value[0], async (newImage) => {
   if (newImage && newImage.dataUrl) {
-    const img = new Image();
-    img.onload = () => {
-      image1Element.value = img;
-    };
-    img.src = newImage.dataUrl;
+    try {
+      image1Element.value = await createImageElement(newImage.dataUrl);
+    } catch (error) {
+      logError('Failed to load image 1:', error);
+      image1Element.value = null;
+    }
   } else {
     image1Element.value = null;
   }
 }, { immediate: true });
 
-watch(() => images.value[1], (newImage) => {
+watch(() => images.value[1], async (newImage) => {
   if (newImage && newImage.dataUrl) {
-    const img = new Image();
-    img.onload = () => {
-      image2Element.value = img;
-    };
-    img.src = newImage.dataUrl;
+    try {
+      image2Element.value = await createImageElement(newImage.dataUrl);
+    } catch (error) {
+      logError('Failed to load image 2:', error);
+      image2Element.value = null;
+    }
   } else {
     image2Element.value = null;
   }
@@ -406,7 +423,7 @@ const processFile = async (file, position) => {
   try {
     await addImage(file, position);
   } catch (error) {
-    console.error('Image upload error:', error);
+    logError('Image upload error:', error);
   }
 };
 

@@ -23,7 +23,7 @@
           (borderPercentage - FRAME_CONSTRAINTS.minBorderPercentage)
           / (FRAME_CONSTRAINTS.maxBorderPercentage - FRAME_CONSTRAINTS.minBorderPercentage)
           * 100
-        }% - 16px)`
+        }% ${LABEL_OFFSET})`
       }"
       :data-testid="`${testId}-value-label`"
     >
@@ -51,6 +51,12 @@ defineProps({
     default: 'border-slider',
   },
 });
+
+/**
+ * Offset for positioning the range value label
+ * This centers the label above the slider thumb
+ */
+const LABEL_OFFSET = '-16px';
 
 const { borderPercentage, updateBorderPercentage } = useFrameConfig();
 

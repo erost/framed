@@ -1,6 +1,6 @@
 <!--
   QualitySlider Component
-  Desidered output quality
+  Desired output quality
 -->
 <template>
   <div class="relative">
