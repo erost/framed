@@ -97,7 +97,7 @@ defineProps({
 const { backgroundColor, updateBackgroundColor } = useFrameConfig();
 
 // Track which mode is selected using COLOR_MODES constants
-const selectedMode = ref(COLOR_MODES.WHITE); // Default to white since that's the default background color
+const selectedMode = ref(COLOR_MODES.WHITE);
 // Custom color state for the color input (defaults to gray)
 const customColor = ref(COLOR_PRESETS.GRAY);
 
