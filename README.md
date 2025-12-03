@@ -4,14 +4,17 @@
 I had a problem: when posting multiple photo taken with my camera(s) on social media and using borders to keep a constant aspect ratio, certain pictures had more borders than content.
 
 This is fine.
+
 ![Ise Grand Shrine Geku, portrait picture](docs/IMG_0721.png)
 
 This is not.
+
 ![Ise Grand Shrine Geku, landscape picture](docs/IMG_0717.png)
 
 What if I could make better use of all that empty space?
 
 For example:
+
 ![Ise Grand Shrine Geku, collection of pictures](docs/framed-DSCF2060-DSCF2030-2c8d0000.png)
 
 This is why I created **framed**: a simple, free application that allows me (and you) to put two (not three, nor more) pictures together.
