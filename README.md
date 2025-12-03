@@ -1,35 +1,47 @@
 # Framed
 
-A Vue.js application for creating beautiful layouts of two pictures with customizable backgrounds, borders, and orientations.
+## Why
+I had a problem: when posting multiple photo taken with my camera(s) on social media and using borders to keep a constant aspect ratio, certain pictures had more borders than content.
+
+This is fine.
+![Ise Grand Shrine Geku, portrait picture](docs/IMG_0721.png)
+
+This is not.
+![Ise Grand Shrine Geku, landscape picture](docs/IMG_0717.png)
+
+What if I could make better use of all that empty space?
+
+For example:
+![Ise Grand Shrine Geku, collection of pictures](docs/framed-DSCF2060-DSCF2030-2c8d0000.png)
+
+This is why I created **framed**: a simple, free application that allows me (and you) to put two (not three, nor more) pictures together.
 
 ## Features
 
 - Select frame orientation (portrait or landscape)
 - Multiple aspect ratios (3:2, 4:3, 5:4, 16:9)
 - Custom frame color selection
-- Configurable frame width and outer border size
+- Configurable border size
 - Drag-and-drop image upload
 - High-resolution image export
 - PWA support - installable on mobile and desktop devices
 
 ## Tech Stack
 
-- **Framework**: Vue 3
+- **Framework**: VueJS
 - **Canvas**: Konva.js with vue-konva
 - **Styling**: Tailwind CSS
-- **Build Tool**: Vite 5
+- **Build Tool**: Vite
 - **Testing**: Vitest with @vue/test-utils
 - **Linting**: ESLint
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 24+ and npm
-
-### Installation
+### Setup
 
 ```bash
+# Setup environment
+mise install
 # Install dependencies
 npm ci
 ```
