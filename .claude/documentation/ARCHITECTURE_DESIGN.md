@@ -437,31 +437,7 @@ The application follows a **behavior-driven testing** philosophy, focusing on us
 
 ### 11.1 Constants (`utils/constants.js`)
 
-```javascript
-export const ASPECT_RATIOS = {
-  '3:2': 1.5,
-  '4:3': 1.333,
-  '5:4': 1.25,
-  '16:9': 1.778,
-};
-
-export const ORIENTATIONS = {
-  PORTRAIT: 'portrait',
-  LANDSCAPE: 'landscape',
-};
-
-export const IMAGE_CONSTRAINTS = {
-  maxFileSize: 40 * 1024 * 1024, // 40MB
-  supportedFormats: ['image/jpeg', 'image/png', 'image/webp'],
-};
-
-export const FRAME_CONSTRAINTS = {
-  minSize: 800,
-  maxSize: 10000,
-  minBorderPercentage: 1,
-  maxBorderPercentage: 25,
-};
-```
+Constains all static values
 
 ### 11.2 Calculations (`utils/calculations.js`)
 

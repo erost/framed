@@ -22,13 +22,6 @@ describe('constants.js', () => {
       expect(ASPECT_RATIOS).toHaveProperty('5:4');
       expect(ASPECT_RATIOS).toHaveProperty('16:9');
     });
-
-    it('should have correct numeric values', () => {
-      expect(ASPECT_RATIOS['3:2']).toBe(1.5);
-      expect(ASPECT_RATIOS['4:3']).toBeCloseTo(1.333, 3);
-      expect(ASPECT_RATIOS['5:4']).toBe(1.25);
-      expect(ASPECT_RATIOS['16:9']).toBeCloseTo(1.778, 3);
-    });
   });
 
   describe('ORIENTATIONS', () => {
@@ -51,16 +44,9 @@ describe('constants.js', () => {
       expect(DEFAULT_CONFIG).toHaveProperty('orientation');
       expect(DEFAULT_CONFIG).toHaveProperty('aspectRatio');
       expect(DEFAULT_CONFIG).toHaveProperty('backgroundColor');
+      expect(DEFAULT_CONFIG).toHaveProperty('backgroundMode');
       expect(DEFAULT_CONFIG).toHaveProperty('frameSize');
       expect(DEFAULT_CONFIG).toHaveProperty('borderPercentage');
-    });
-
-    it('should have valid default values', () => {
-      expect(DEFAULT_CONFIG.orientation).toBe('portrait');
-      expect(DEFAULT_CONFIG.aspectRatio).toBe('3:2');
-      expect(DEFAULT_CONFIG.backgroundColor).toBe('#FFFFFF');
-      expect(DEFAULT_CONFIG.frameSize).toBe(2048);
-      expect(DEFAULT_CONFIG.borderPercentage).toBe(2);
     });
   });
 

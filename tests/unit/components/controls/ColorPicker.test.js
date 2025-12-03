@@ -92,28 +92,6 @@ describe('ColorPicker', () => {
     });
   });
 
-  describe('Reactivity', () => {
-    it('updates button state when background color changes externally', async () => {
-      const wrapper = mount(ColorPicker);
-
-      frameConfig.updateBackgroundColor(COLOR_PRESETS.BLACK);
-      await wrapper.vm.$nextTick();
-
-      const blackButton = wrapper.find('[data-testid="color-black"]');
-      expect(blackButton.attributes('aria-pressed')).toBe('true');
-    });
-
-    it('syncs custom color input when external color changes', async () => {
-      const wrapper = mount(ColorPicker);
-
-      frameConfig.updateBackgroundColor('#0000FF');
-      await wrapper.vm.$nextTick();
-
-      const colorInput = wrapper.find('[data-testid="color-custom"]');
-      expect(colorInput.element.value).toBe('#0000ff');
-    });
-  });
-
   describe('Integration', () => {
     it('switches between preset and custom colors', async () => {
       const wrapper = mount(ColorPicker);

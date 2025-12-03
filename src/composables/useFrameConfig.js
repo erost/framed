@@ -5,12 +5,13 @@
  */
 
 import { ref, computed } from 'vue';
-import { DEFAULT_CONFIG, ORIENTATIONS } from '@/utils/constants.js';
+import { COLOR_MODES, DEFAULT_CONFIG, ORIENTATIONS } from '@/utils/constants.js';
 import { calculateFrameDimensions } from '@/utils/calculations.js';
 
 // Singleton state
 const orientation = ref(DEFAULT_CONFIG.orientation);
 const aspectRatio = ref(DEFAULT_CONFIG.aspectRatio);
+const backgroundMode = ref(COLOR_MODES.WHITE);
 const backgroundColor = ref(DEFAULT_CONFIG.backgroundColor);
 const frameSize = ref(DEFAULT_CONFIG.frameSize); // Size of longest side
 const borderPercentage = ref(DEFAULT_CONFIG.borderPercentage); // Border as percentage (1-25)
@@ -65,6 +66,14 @@ export function useFrameConfig() {
   };
 
   /**
+   * Update background mode
+   * @param {string} value - New background mode (white, black, custom)
+   */
+  const updateBackgroundMode = (value) => {
+    backgroundMode.value = value;
+  };
+
+  /**
    * Update frame size (longest side)
    * @param {number} value - New frame size in pixels
    */
@@ -87,6 +96,7 @@ export function useFrameConfig() {
     orientation.value = DEFAULT_CONFIG.orientation;
     aspectRatio.value = DEFAULT_CONFIG.aspectRatio;
     backgroundColor.value = DEFAULT_CONFIG.backgroundColor;
+    backgroundMode.value = DEFAULT_CONFIG.backgroundMode;
     frameSize.value = DEFAULT_CONFIG.frameSize;
     borderPercentage.value = DEFAULT_CONFIG.borderPercentage;
   };
@@ -97,6 +107,7 @@ export function useFrameConfig() {
     orientation,
     aspectRatio,
     backgroundColor,
+    backgroundMode,
     frameSize,
     frameWidth, // Computed based on frameSize
     frameHeight, // Computed based on frameSize
@@ -107,6 +118,7 @@ export function useFrameConfig() {
     toggleOrientation,
     updateAspectRatio,
     updateBackgroundColor,
+    updateBackgroundMode,
     updateFrameSize,
     updateBorderPercentage,
     reset,

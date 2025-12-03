@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
 import App from '@/App.vue';
-import { PREVIEW_CONSTRAINTS } from '@/utils/constants';
+import { COLOR_MODES, COLOR_PRESETS, PREVIEW_CONSTRAINTS } from '@/utils/constants';
 
 // Mock useFrameConfig composable
 vi.mock('@/composables/useFrameConfig', () => ({
@@ -13,8 +13,8 @@ vi.mock('@/composables/useFrameConfig', () => ({
     aspectRatio: ref('4:3'),
     frameSize: ref(1000),
     borderPercentage: ref(2),
-    frameColor: ref('#ffffff'),
-    backgroundColor: ref('#000000'),
+    backgroundMode: ref(COLOR_MODES.BLACK),
+    backgroundColor: ref(COLOR_PRESETS.BLACK),
     updateBackgroundColor: vi.fn(),
     updateAspectRatio: vi.fn(),
     updateFrameSize: vi.fn(),

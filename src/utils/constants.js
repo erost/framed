@@ -44,18 +44,6 @@ export const COLOR_MODES = {
 };
 
 /**
- * Default frame configuration
- * @constant {Object}
- */
-export const DEFAULT_CONFIG = {
-  orientation: 'portrait',
-  aspectRatio: '3:2',
-  backgroundColor: COLOR_PRESETS.WHITE,
-  frameSize: 2048, // Size of the longest side (height for portrait, width for landscape)
-  borderPercentage: 2, // Border as percentage of frame size (1-25)
-};
-
-/**
  * Image file constraints
  * @constant {Object}
  */
@@ -100,6 +88,19 @@ export const IMAGE_FORMATS = [
   { mimeType: 'image/jpeg', extension: 'jpeg', label: 'JPEG' },
   { mimeType: 'image/webp', extension: 'webp', label: 'WebP' },
 ];
+
+/**
+ * Default frame configuration
+ * @constant {Object}
+ */
+export const DEFAULT_CONFIG = {
+  orientation: ORIENTATIONS.PORTRAIT,
+  aspectRatio: Object.keys(ASPECT_RATIOS)[0],
+  backgroundColor: COLOR_PRESETS.WHITE,
+  backgroundMode: COLOR_MODES.WHITE,
+  frameSize: FRAME_SIZE_OPTIONS[1].value,
+  borderPercentage: 2,
+};
 
 export const EXPORT_DEFAULT = {
   defaultQuality: 85,

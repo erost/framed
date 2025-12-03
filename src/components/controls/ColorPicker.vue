@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useFrameConfig } from '@/composables/useFrameConfig';
 import { COLOR_PRESETS, COLOR_MODES } from '@/utils/constants';
 
@@ -94,33 +94,35 @@ defineProps({
   },
 });
 
-const { backgroundColor, updateBackgroundColor } = useFrameConfig();
+const { 
+  backgroundMode,
+  updateBackgroundColor, 
+  updateBackgroundMode 
+} = useFrameConfig();
 
-// Track which mode is selected using COLOR_MODES constants
-const selectedMode = ref(COLOR_MODES.WHITE);
 // Custom color state for the color input (defaults to gray)
 const customColor = ref(COLOR_PRESETS.GRAY);
 
 /**
  * Check if white preset is active
  */
-const isWhiteActive = computed(() => selectedMode.value === COLOR_MODES.WHITE);
+const isWhiteActive = computed(() => backgroundMode.value === COLOR_MODES.WHITE);
 
 /**
  * Check if black preset is active
  */
-const isBlackActive = computed(() => selectedMode.value === COLOR_MODES.BLACK);
+const isBlackActive = computed(() => backgroundMode.value === COLOR_MODES.BLACK);
 
 /**
  * Check if custom mode is active
  */
-const isCustomActive = computed(() => selectedMode.value === COLOR_MODES.CUSTOM);
+const isCustomActive = computed(() => backgroundMode.value === COLOR_MODES.CUSTOM);
 
 /**
  * Handle white preset selection
  */
 const handleSelectWhite = () => {
-  selectedMode.value = COLOR_MODES.WHITE;
+  updateBackgroundMode(COLOR_MODES.WHITE);
   updateBackgroundColor(COLOR_PRESETS.WHITE);
 };
 
@@ -128,7 +130,7 @@ const handleSelectWhite = () => {
  * Handle black preset selection
  */
 const handleSelectBlack = () => {
-  selectedMode.value = COLOR_MODES.BLACK;
+  updateBackgroundMode(COLOR_MODES.BLACK);
   updateBackgroundColor(COLOR_PRESETS.BLACK);
 };
 
@@ -136,7 +138,8 @@ const handleSelectBlack = () => {
  * Handle custom mode selection (when clicking the custom button)
  */
 const handleSelectCustom = () => {
-  selectedMode.value = COLOR_MODES.CUSTOM;
+  updateBackgroundMode(COLOR_MODES.CUSTOM);
+  updateBackgroundColor(customColor.value);
 };
 
 /**
@@ -145,34 +148,9 @@ const handleSelectCustom = () => {
  */
 const handleCustomColorChange = (event) => {
   const value = event.target.value.toUpperCase();
-  selectedMode.value = COLOR_MODES.CUSTOM;
   customColor.value = value;
-  updateBackgroundColor(value);
+  handleSelectCustom();
 };
-
-/**
- * Watch backgroundColor changes from external sources
- * (e.g., reset button) to determine which mode should be active
- */
-watch(backgroundColor, (newColor) => {
-  if (newColor === COLOR_PRESETS.WHITE) {
-    selectedMode.value = COLOR_MODES.WHITE;
-  } else if (newColor === COLOR_PRESETS.BLACK) {
-    selectedMode.value = COLOR_MODES.BLACK;
-  } else {
-    selectedMode.value = COLOR_MODES.CUSTOM;
-    customColor.value = newColor;
-  }
-});
-
-/**
- * Watch selectedMode changes to update background color for custom mode
- */
-watch(selectedMode, (mode) => {
-  if (mode === COLOR_MODES.CUSTOM) {
-    updateBackgroundColor(customColor.value);
-  }
-});
 </script>
 
 <style scoped>
