@@ -24,11 +24,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Mise install
+        uses: jdx/mise-action@v3
         with:
-          node-version: '24'
-          cache: 'npm'
+          version: 2026.3.3
+          install: true
 
       - name: Install dependencies
         run: npm ci
