@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import pluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
 
 export default [
   // Ignore patterns
@@ -20,20 +21,8 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        console: 'readonly',
-        // Node globals
-        process: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        global: 'readonly',
-        // ES2021 globals
-        Promise: 'readonly',
+        ...globals.browser,
+        ...globals.node,
       },
     },
     rules: {
