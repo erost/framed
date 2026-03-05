@@ -252,7 +252,7 @@ export function useCanvasRenderer(options = {}) {
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      throw new Error(`Failed to download image: ${error.message}`);
+      throw new Error(`Failed to download image: ${error.message}`, { cause: error });
     }
   };
 

@@ -88,7 +88,7 @@ export function useImageState() {
         ...imageData,
       };
     } catch (error) {
-      throw new Error(`Failed to process image: ${error.message}`);
+      throw new Error(`Failed to process image: ${error.message}`, { cause: error });
     }
   };
 
