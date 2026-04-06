@@ -44,7 +44,7 @@ export function useCanvasRenderer(options = {}) {
    * @param {string} value - New mime type value
    */
   const updateFormat = (value) => {
-    const validFormats = IMAGE_FORMATS.map(f => f.mimeType);
+    const validFormats = IMAGE_FORMATS.map((f) => f.mimeType);
     if (!validFormats.includes(value)) {
       throw new Error('Not a valid image format');
     }
@@ -202,12 +202,8 @@ export function useCanvasRenderer(options = {}) {
     const image2 = imageState.images.value[1];
 
     // Extract valid characters from filenames (1-10 chars)
-    const image1Part = image1?.fileName
-      ? extractValidFilenameChars(image1.fileName)
-      : '';
-    const image2Part = image2?.fileName
-      ? extractValidFilenameChars(image2.fileName)
-      : '';
+    const image1Part = image1?.fileName ? extractValidFilenameChars(image1.fileName) : '';
+    const image2Part = image2?.fileName ? extractValidFilenameChars(image2.fileName) : '';
 
     // Use UUID if no valid characters found
     const part1 = image1Part || generateUuidV1Short();
