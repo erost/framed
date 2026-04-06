@@ -59,7 +59,7 @@ export const IMAGE_CONSTRAINTS = {
 export const FRAME_SIZE_OPTIONS = [
   { label: '1024px', value: 1024 },
   { label: '2048px', value: 2048 },
-  { label: '4096px', value: 4096 }
+  { label: '4096px', value: 4096 },
 ];
 
 /**
